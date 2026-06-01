@@ -1,0 +1,22 @@
+{
+  "name": "ameng-skill",
+  "owner": {
+    "name": "A梦 (ameng)",
+    "email": "ameng@ameng.blog"
+  },
+  "metadata": {
+    "description": "A梦 分享的 Agent Skills 合集 / Agent Skills shared by A梦",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "ameng-skill",
+      "description": "A梦 的实用 Agent Skills：调研、内容、工具等，跨 Claude Code / Codex / OpenClaw / Hermes 使用。",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/ameng-skill-scout"
+      ]
+    }
+  ]
+}
