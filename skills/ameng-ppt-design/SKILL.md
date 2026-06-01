@@ -2,8 +2,8 @@
 name: ameng-ppt-design
 description: >
   有设计主见的 HTML 演示文稿/PPT 生成器：把大纲/讲稿/想法做成全离线、可放映的静态 HTML 幻灯片，
-  并内置「右上角工具栏」——✎ 编辑（点任意文字就地改、保存到本地、存可恢复的历史版本）
-  + ⤓ 导出（一键 PDF / 可编辑 PPTX / PNG / HTML）。
+  并内置「右上角悬浮工具栏」——✎ 编辑（点任意文字就地改，点「完成」自动存一个可恢复的版本，
+  历史里带 diff 对比）+ ⤓ 导出（逐页截图拼装成 PDF / PPTX，保全部样式；PNG；完整自包含 HTML）。
   工业纸感 + 杂志/瑞士双风 + 叙事弧 + 反 AI 味纪律：OKLCH token 系统 + 6 主题 + 版式库 +
   16:9/9:16/Swiss + 自托管 distinctive 字体（禁 Inter/Playfair）+ 键盘放映 + 逐页 PNG 自检 +
   validate 纪律校验。产物是用户真看得见的 HTML，可放映、可就地编辑、可一键导出多种格式。
@@ -25,10 +25,11 @@ metadata:
 一个 OKLCH token 系统（`assets/base.css` + `assets/components.css`）+ 一个主题 = 一套外观；
 一个版式块 = 一种页型。**始终从模板复制，不从零写。**
 
-比普通 HTML deck 多两件事，都在**右上角工具栏**：
+比普通 HTML deck 多两件事，都在**右上角悬浮工具栏**（默认只是一个低调的 `⋯` handle，hover 才展开；
+随主题明暗自动变色；不占内容位）：
 
-- **✎ 编辑** —— 点任意文字就地修改；**保存**到本地（localStorage，刷新仍在）；**存历史**为可恢复的版本快照。
-- **⤓ 导出** —— 一键 **PDF**（浏览器打印引擎，OKLCH 完美）/ 可编辑 **PPTX** / **PNG** / **HTML（含编辑）**。
+- **✎ 编辑** —— 点任意文字就地修改；点「**完成**」退出并**自动存一个版本**（localStorage，刷新仍在）；「**历史**」里带 **diff 对比**，可一键恢复。
+- **⤓ 导出** —— **逐页截图→拼装**：**PDF**（jsPDF）/ **PPTX**（每页整图）保全部样式 · **PNG**（当前页 / 全部 zip）· **HTML**（样式字体内联，完整自包含）。
 
 ## 给你什么
 
@@ -87,35 +88,34 @@ node scripts/validate.mjs slides/my-talk/index.html     # 封禁字体/硬编码
 ### Step 6 · 编辑 & 导出 & 交付
 见下节「右上角工具栏」。HTML 可键盘放映 / 投屏 / 发链接。
 
-## 右上角工具栏（编辑 & 导出）
+## 右上角悬浮工具栏（编辑 & 导出）
 
-打开任意生成的演示，右上角有两个控件（**仅屏幕可见**，放映/导出/打印时自动隐藏）：
+打开任意生成的演示，右上角默认只有一个低调的 `⋯` handle（**仅屏幕可见**，放映/导出/打印时自动隐藏）。
+**hover 或点它** → 展开浮层（ghost 文字按钮，随明暗主题变色，不固定占位、不挡内容）：
 
-### ✎ 编辑
+### ✎ 编辑 → 完成（自动存版本）
 - 点「编辑」进入编辑模式 → 标题/正文/标签等文字出现虚线框，**点进去直接改**。
-- **保存**：写入本浏览器（localStorage，按文件路径区分）；下次打开自动还原你的编辑。
-- **存历史**：把当前内容存成一个带时间戳的**版本快照**。
-- **历史**：右侧抽屉列出所有版本，可**恢复**（整份回退到该版本）或删除。
-- **完成**：退出编辑模式（编辑保留）。`Esc` 也可退出。
+- 点「**完成**」：退出编辑 + **自动把当前内容存成一个带时间戳的版本**（localStorage，按文件路径区分；下次打开自动还原）。`Esc` 同效。
+- 「**历史**」：右侧抽屉列出每个版本，**显示与上一版的文字差异（P3：旧 → 新）**，便于判断恢复哪一版；可**恢复**或删除。
 - 编辑模式下方向键/空格/快捷键归文字光标所有，不会误翻页或触发放映快捷键。
+- 「**全屏**」：进入放映（点按手势，避开浏览器对 F 键全屏的限制；F 键依然可用）。
 
-> 编辑只动文字，不动结构/样式。要换版式仍是改 HTML。版本快照存在本地，离线、不上传。
+> 编辑只动文字，不动结构/样式。要换版式仍是改 HTML。版本只存在本地，离线、不上传。
 
-### ⤓ 导出
-- **PDF**：走浏览器打印引擎，OKLCH **完美还原**、零依赖、全离线。一键。
-- **PPTX**：自托管 PptxGenJS 生成**可编辑** PowerPoint（按真实布局放文本框 + 图片，**近似保真**；要像素级再用 `render.sh`）。
-- **PNG（当前页 / 全部）**：自托管 html2canvas 出图（近似；本设计用 OKLCH，浏览器截图库可能不支持时会提示改用 `render.sh` 出像素级 PNG）。
-- **HTML（含编辑）**：把当前（含你的编辑）导出成 `.html`，放回 deck 目录即保留样式。
+### ⤓ 导出（逐页截图 → 拼装，保全部样式）
+导出统一走「**先把每页渲染成高清 PNG（modern-screenshot，OKLCH 保真），再拼装**」——
+所以背景/高亮带/截图框/grain 等样式**一个都不丢**（不像浏览器打印会丢背景）：
+- **PDF**：每页整图按精确比例合成（jsPDF）。
+- **PPTX**：每页一张满版整图（PptxGenJS）——放映/演示用最稳。
+- **PNG**：当前页单张，或全部打包成 **zip**（JSZip）。
+- **HTML（完整）**：把当前（含编辑）的演示导出成**自包含** `.html`——所有 CSS 内联、字体 base64 嵌入、运行时内联，单文件独立打开即带全样式、可键盘放映。
 
-PPTX/PNG 用到的库**一次性**装好即可离线（仓库已内置 `assets/vendor/`；若缺失运行）：
+导出库**仓库已内置** `assets/vendor/`（committed，开箱离线可用，全 MIT）。要刷新/重装：
 ```bash
-./scripts/fetch-export-libs.sh        # 下载 pptxgenjs + html2canvas 到 assets/vendor/（PDF/HTML 不需要）
+./scripts/fetch-export-libs.sh        # modern-screenshot + jspdf + pptxgenjs + jszip
 ```
-**像素级保真路线**（推荐做正式 PDF/PNG）：
-```bash
-./scripts/render.sh slides/my-talk/index.html pdf       # 逐页 @2x 合成、精确比例、纯本地 Chrome
-./scripts/render.sh slides/my-talk/index.html png        # 逐页 PNG
-```
+> 注：浏览器导出在 `http://`（含本地服务器）下最稳；若直接 `file://` 双击打开，浏览器安全策略可能拦截截图/字体读取，
+> 此时改用本地服务器（`python3 -m http.server`），或用 `scripts/render.sh` 出像素级 PNG/PDF。
 
 ## 纪律红线（anti-slop，完整见 references/）
 
@@ -145,12 +145,12 @@ ameng-ppt-design/
 ├── assets/
 │   ├── base.css            (OKLCH token + slide 原语 + .hl + grain + 分段 accent + 打印分页)
 │   ├── components.css      (chrome / terminal / frame / card--num / data-hero / 背景)
-│   ├── toolbar.css         (右上角工具栏 / 编辑态 / 版本抽屉 / toast)
+│   ├── toolbar.css         (悬浮 dock / 编辑态 / 版本抽屉+diff / toast / 截图辅助)
 │   ├── fonts.css + fonts/  (自托管 @font-face，无网络)
 │   ├── runtime.js          (键盘放映 + fit + 备注 + 总览 + 切明暗 + chrome + 色域)
-│   ├── editor.js           (就地编辑 + 本地保存 + 版本历史)
-│   ├── export.js           (导出 PDF / PPTX / PNG / HTML)
-│   ├── vendor/             (PptxGenJS + html2canvas，离线导出用；MIT)
+│   ├── editor.js           (悬浮 dock + 就地编辑 + 完成自动存版本 + 历史 diff + 全屏)
+│   ├── export.js           (逐页截图→拼装：PDF / PPTX / PNG / 完整 HTML)
+│   ├── vendor/             (modern-screenshot + jspdf + pptxgenjs + jszip；MIT)
 │   ├── fx-runtime.js + fx/ (opt-in Canvas 背景，默认关)
 │   └── themes/*.css        (6 主题)
 ├── templates/              (ppt-16x9 / ppt-9x16 / ppt-swiss / layouts-gallery)
@@ -171,5 +171,5 @@ T 浅色/深色   ? / H 快捷键帮助   #/N 深链(render.sh 用它逐页导�
 
 ## License / 致谢
 MIT © **A梦 (ameng)**。可自由使用、修改、分享，请保留署名。
-内置 `assets/vendor/`：[PptxGenJS](https://github.com/gitbrent/PptxGenJS)（MIT）、[html2canvas](https://github.com/niklasvh/html2canvas)（MIT）。
+内置 `assets/vendor/`（全 MIT）：[modern-screenshot](https://github.com/qq15725/modern-screenshot)、[jsPDF](https://github.com/parallax/jsPDF)、[PptxGenJS](https://github.com/gitbrent/PptxGenJS)、[JSZip](https://github.com/Stuk/jszip)。
 部分反 AI-slop 规则借鉴 [pbakaus/impeccable](https://github.com/pbakaus/impeccable)（Apache-2.0）。

@@ -26,7 +26,11 @@
   src: url("./fonts/JetBrainsMono.woff2") format("woff2");
   font-weight: 400 700; font-display: swap; font-style: normal;
 }
-/* CJK: drop a subset woff2 here for distinctive Chinese, else system serif/sans. */
+/* CJK (OPT-IN, off by default): the system CJK stack below (PingFang / Source Han /
+   Noto) is already high quality and zero-weight, so we do NOT @font-face a CJK file
+   by default — that avoided a 404 on every load. To self-host distinctive Chinese,
+   subset 思源黑/宋 to woff2 (see scripts/fetch-fonts.sh "OPTIONAL" section), drop the
+   files in ./fonts/, then UNCOMMENT the two blocks below.
 @font-face {
   font-family: "PPT Han Serif";
   src: url("./fonts/SourceHanSerifSC-subset.woff2") format("woff2");
@@ -37,6 +41,7 @@
   src: url("./fonts/SourceHanSansSC-subset.woff2") format("woff2");
   font-weight: 300 700; font-display: swap;
 }
+*/
 
 :root {
   /* Display = distinctive Latin grotesque + CJK 黑体/sans. CJK is SANS by default:

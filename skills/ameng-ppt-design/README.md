@@ -9,14 +9,15 @@
 
 ## 比普通 HTML deck 多的两件事（右上角工具栏）
 
-| ✎ 编辑 | ⤓ 导出 |
+| ✎ 编辑 | ⤓ 导出（逐页截图→拼装，保全部样式） |
 |--------|--------|
-| 点任意文字**就地修改** | 一键 **PDF**（打印引擎，OKLCH 完美） |
-| **保存**到本地（刷新仍在） | 可编辑 **PPTX**（PptxGenJS，近似保真） |
-| **存历史**为可恢复的版本快照 | **PNG**（当前页/全部，html2canvas） |
-| **历史**抽屉：浏览 + 恢复 + 删除 | **HTML**（含编辑，放回目录即用） |
+| 点任意文字**就地修改** | **PDF**（每页整图合成，jsPDF） |
+| 点「**完成**」**自动存一个版本**（刷新仍在） | **PPTX**（每页满版整图，PptxGenJS） |
+| **历史**带 **diff 对比**：旧→新，一键恢复 | **PNG**（当前页 / 全部 zip） |
+| 悬浮 `⋯` handle，hover 展开，随主题变色 | **HTML**（CSS/字体内联，完整自包含单文件） |
 
-> 工具栏仅屏幕可见；放映/导出/打印时自动隐藏。编辑与版本存在本浏览器 localStorage，离线、不上传。
+> dock 默认只是个低调 `⋯`，hover 才展开、不挡内容；放映/导出/打印时自动隐藏。
+> 编辑与版本存在本浏览器 localStorage，离线、不上传。导出统一先把每页渲染成高清 PNG（modern-screenshot，OKLCH 保真）再拼装，所以背景/高亮带/grain 一个都不丢。
 
 ## 快速开始
 
@@ -28,10 +29,11 @@ node scripts/validate.mjs slides/my-talk/index.html   # 纪律自检
 ./scripts/render.sh slides/my-talk/index.html pdf      # 像素级 PDF（本地 Chrome）
 ```
 
-导出 PPTX/PNG 用到的库已内置 `assets/vendor/`；若缺失：
+导出库已内置 `assets/vendor/`（开箱离线可用）；要刷新：
 ```bash
-./scripts/fetch-export-libs.sh                 # 下载 pptxgenjs + html2canvas（PDF/HTML 不需要）
+./scripts/fetch-export-libs.sh                 # modern-screenshot + jspdf + pptxgenjs + jszip
 ```
+> 浏览器导出在 `http://`（本地服务器）下最稳；直接 `file://` 双击可能被浏览器拦截截图，改用本地服务器或 `render.sh`。
 
 ## 主题 & 比例
 
@@ -54,7 +56,7 @@ cp -r skills/ameng-ppt-design ~/.claude/skills/ameng-ppt-design
 ameng-ppt-design/
 ├── SKILL.md / README.md
 ├── assets/   base.css · components.css · toolbar.css · runtime.js · editor.js · export.js
-│             · fonts.css + fonts/ · vendor/ (PptxGenJS+html2canvas) · themes/*.css · fx/
+│             · fonts.css + fonts/ · vendor/ (modern-screenshot+jspdf+pptxgenjs+jszip) · themes/*.css · fx/
 ├── templates/  ppt-16x9 · ppt-9x16 · ppt-swiss · layouts-gallery
 ├── scripts/    new-ppt.sh · fetch-fonts.sh · fetch-export-libs.sh · render.sh · validate.mjs
 └── references/ 8 篇按需加载的设计/版式/纪律文档
@@ -62,5 +64,5 @@ ameng-ppt-design/
 
 ## License / 致谢
 
-MIT © **A梦 (ameng)**。内置 vendor：[PptxGenJS](https://github.com/gitbrent/PptxGenJS)（MIT）、[html2canvas](https://github.com/niklasvh/html2canvas)（MIT）。
+MIT © **A梦 (ameng)**。内置 vendor（全 MIT）：[modern-screenshot](https://github.com/qq15725/modern-screenshot)、[jsPDF](https://github.com/parallax/jsPDF)、[PptxGenJS](https://github.com/gitbrent/PptxGenJS)、[JSZip](https://github.com/Stuk/jszip)。
 部分反 AI-slop 规则借鉴 [pbakaus/impeccable](https://github.com/pbakaus/impeccable)（Apache-2.0）。

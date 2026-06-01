@@ -115,6 +115,10 @@ body {
      ancestor of .deck, so body's computed color would keep the light value
      under [data-theme="dark"]. */
   color: var(--ink-1);
+  /* paint the letterbox (area around the scaled stage) so toggling dark mode (T)
+     covers the WHOLE viewport — no light edges leaking. Derived from --bg so it
+     flips automatically with the theme; slightly recessed = intentional backdrop. */
+  background: color-mix(in oklab, var(--bg) 90%, #000);
 }
 .deck__stage {
   position: relative;
