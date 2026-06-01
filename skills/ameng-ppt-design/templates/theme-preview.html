@@ -9,40 +9,54 @@
 <link rel="stylesheet" href="../assets/components.css">
 <link rel="stylesheet" id="theme-link" href="../assets/themes/industrial-paper.css">
 <style>
-  /* picker bar — a utilitarian tool chrome, not part of the deck design */
-  .picker{
-    position: fixed; top: 0; left: 0; right: 0; height: 52px; z-index: 50;
-    display: flex; align-items: center; gap: 6px; padding: 0 14px;
-    background: oklch(99% 0 0); border-bottom: 1px solid oklch(88% 0.01 95);
-    font: 500 13px/1 system-ui, sans-serif; color: oklch(30% 0.02 260); overflow-x: auto;
-  }
-  .picker b { font-weight: 700; margin-right: 6px; white-space: nowrap; }
-  .picker__sep { flex: 0 0 1px; align-self: stretch; margin: 10px 6px; background: oklch(88% 0.01 95); }
-  .picker button{
-    flex: 0 0 auto; cursor: pointer; height: 32px; padding: 0 12px; border-radius: 999px;
-    border: 1px solid oklch(82% 0.01 95); background: #fff; color: oklch(30% 0.02 260);
-    font: 500 13px/1 system-ui, sans-serif; transition: .15s;
-  }
-  .picker button:hover { border-color: oklch(64% 0.17 45); color: oklch(54% 0.17 45); }
-  .picker button.is-active { background: oklch(64% 0.17 45); color: #fff; border-color: transparent; }
-  body.has-picker .deck { inset: 52px 0 0 0; }
-  body.is-export .picker { display: none; }
-  /* preview never shows the injected page-number / progress */
+  /* ---- picker chrome (a tool UI; deliberately neutral so it never competes
+         with the theme being previewed) ---------------------------------- */
+  :root { --pk-ink:#1c1b1a; --pk-mut:#6b6864; --pk-line:#e4e1db; --pk-accent:#c2410c; }
+  .pick { position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+    background: #fbfaf8; border-bottom: 1px solid var(--pk-line);
+    box-shadow: 0 2px 14px -8px rgba(0,0,0,.18);
+    font-family: system-ui, -apple-system, "PingFang SC", sans-serif; }
+  .pick__row { display: flex; align-items: center; gap: 14px; padding: 11px 20px; }
+  .pick__now { min-width: 230px; }
+  .pick__now b { display: block; font-size: 18px; font-weight: 800; color: var(--pk-ink); letter-spacing: .01em; }
+  .pick__now span { display: block; font-size: 12.5px; color: var(--pk-mut); margin-top: 2px; }
+  .pick__themes { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; }
+  .pick__themes button { cursor: pointer; height: 40px; padding: 0 18px; border-radius: 10px;
+    border: 1.5px solid var(--pk-line); background: #fff; color: var(--pk-ink);
+    font: 600 15px/1 system-ui, "PingFang SC", sans-serif; transition: .14s; }
+  .pick__themes button:hover { border-color: var(--pk-accent); color: var(--pk-accent); }
+  .pick__themes button.on { background: var(--pk-ink); color: #fff; border-color: var(--pk-ink); }
+  .pick__themes button .kbd { font: 600 11px/1 ui-monospace, monospace; opacity: .5; margin-right: 7px; }
+  .pick__side { display: flex; align-items: center; gap: 8px; }
+  .pick__nav, .pick__dark { cursor: pointer; height: 40px; border-radius: 10px; border: 1.5px solid var(--pk-line);
+    background: #fff; color: var(--pk-ink); font: 600 15px/1 system-ui, sans-serif; }
+  .pick__nav { width: 42px; font-size: 18px; }
+  .pick__dark { padding: 0 16px; }
+  .pick__nav:hover, .pick__dark:hover { border-color: var(--pk-accent); color: var(--pk-accent); }
+  .pick__hint { padding: 0 20px 10px; font-size: 12.5px; color: var(--pk-mut); }
+  .pick__hint kbd { font: 600 11.5px/1 ui-monospace, monospace; background: #f0eee9; border: 1px solid var(--pk-line);
+    border-radius: 5px; padding: 3px 6px; color: var(--pk-ink); }
+  body.has-pick .deck { inset: 96px 0 0 0; }      /* leave room for the 2-line picker */
+  body.is-export .pick { display: none; }
   .slide__num, .deck__progress { display: none !important; }
+  @media (max-width: 1000px) { .pick__now { display: none; } }
 </style>
 </head>
-<body class="has-picker">
-  <div class="picker" id="picker">
-    <b>主题预览</b>
-    <button data-theme="industrial-paper" class="is-active">工业纸感</button>
-    <button data-theme="neo-brutalist">新粗野</button>
-    <button data-theme="editorial">杂志</button>
-    <button data-theme="dark-luxe">暗调质感</button>
-    <button data-theme="ink-wash">中式水墨</button>
-    <span class="picker__sep"></span>
-    <button id="darkBtn">明 / 暗</button>
-    <span class="picker__sep"></span>
-    <span id="cur" style="white-space:nowrap;color:oklch(55% 0.02 260)"></span>
+<body class="has-pick">
+  <div class="pick" id="pick">
+    <div class="pick__row">
+      <div class="pick__now"><b id="pkName">工业纸感</b><span id="pkTrait"></span></div>
+      <div class="pick__themes" id="pkThemes"></div>
+      <div class="pick__side">
+        <button class="pick__nav" id="pkPrev" title="上一套（←）">‹</button>
+        <button class="pick__nav" id="pkNext" title="下一套（→）">›</button>
+        <button class="pick__dark" id="pkDark" title="明暗（D）">◐ 明/暗</button>
+      </div>
+    </div>
+    <div class="pick__hint">
+      <kbd>←</kbd> <kbd>→</kbd> 切换主题 · <kbd>1</kbd>–<kbd>5</kbd> 直选 · <kbd>D</kbd> 明 / 暗 ·
+      看准了就把模板 <code>#theme-link</code> 指到对应主题。
+    </div>
   </div>
 
   <div class="deck deck--chrome" data-grain>
@@ -80,38 +94,66 @@
 <script>
 (function () {
   var q = new URLSearchParams(location.search);
-  var THEMES = { "industrial-paper": "工业纸感（旗舰）", "neo-brutalist": "新粗野 Neo-Brutalist",
-    "editorial": "杂志 Editorial", "dark-luxe": "暗调质感 Dark-Luxe", "ink-wash": "中式水墨 Ink-Wash" };
+  // ordered list: [id, 中文名, 一句话气质]
+  var THEMES = [
+    ["industrial-paper", "工业纸感（旗舰）", "暖纸 + 颗粒 + 软色带 + terminal · 有主张、已上线"],
+    ["neo-brutalist",    "新粗野 Brutalist", "黑框 + 硬投影 + 实心色块 + 零圆角 · 生猛、响亮"],
+    ["editorial",        "杂志 Editorial",   "衬线 + 疏朗留白 + 首字下沉 + 细下划线 · 安静、考究"],
+    ["dark-luxe",        "暗调质感 Dark-Luxe", "渐变深底 + 毛玻璃 + 暖金辉光 · 电影感、高级"],
+    ["ink-wash",         "中式水墨 Ink-Wash", "宋体 + 朱砂红 + 留白 + 印章 + 一角墨晕 · 雅、静、东方"]
+  ];
   var link = document.getElementById("theme-link"), deck = document.querySelector(".deck"),
-      stage = deck.querySelector(".deck__stage"), cur = document.getElementById("cur");
+      stage = deck.querySelector(".deck__stage"),
+      nameEl = document.getElementById("pkName"), traitEl = document.getElementById("pkTrait"),
+      themesEl = document.getElementById("pkThemes");
   var isExport = q.has("export");
-  if (isExport) document.body.classList.remove("has-picker"), document.body.classList.add("is-export");
+  if (isExport) { document.body.classList.remove("has-pick"); document.body.classList.add("is-export"); }
+  var cur = 0;
+
+  // build theme buttons (with number-key hints)
+  THEMES.forEach(function (t, i) {
+    var b = document.createElement("button");
+    b.innerHTML = '<span class="kbd">' + (i + 1) + '</span>' + t[1].replace(/\s.*$/, "");
+    b.title = t[1];
+    b.addEventListener("click", function () { setTheme(i); });
+    themesEl.appendChild(b);
+  });
+  var btns = themesEl.querySelectorAll("button");
+
+  function setTheme(i) {
+    cur = (i + THEMES.length) % THEMES.length;
+    var t = THEMES[cur];
+    link.href = "../assets/themes/" + t[0] + ".css";
+    nameEl.textContent = t[1]; traitEl.textContent = t[2];
+    btns.forEach(function (b, j) { b.classList.toggle("on", j === cur); });
+  }
+  function cycle(d) { setTheme(cur + d); }
+  function toggleDark() {
+    if (deck.getAttribute("data-theme") === "dark") deck.removeAttribute("data-theme");
+    else deck.setAttribute("data-theme", "dark");
+  }
+  document.getElementById("pkPrev").addEventListener("click", function () { cycle(-1); });
+  document.getElementById("pkNext").addEventListener("click", function () { cycle(1); });
+  document.getElementById("pkDark").addEventListener("click", toggleDark);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight") { cycle(1); e.preventDefault(); }
+    else if (e.key === "ArrowLeft") { cycle(-1); e.preventDefault(); }
+    else if (e.key === "d" || e.key === "D") toggleDark();
+    else if (/^[1-9]$/.test(e.key) && +e.key <= THEMES.length) setTheme(+e.key - 1);
+  });
 
   function fit() {
-    var top = document.body.classList.contains("has-picker") ? 52 : 0;
+    var top = document.body.classList.contains("has-pick") ? 96 : 0;
     var s = Math.min(window.innerWidth / stage.offsetWidth, (window.innerHeight - top) / stage.offsetHeight);
     deck.style.setProperty("--fit", s.toFixed(4));
   }
-  function setTheme(name) {
-    if (!THEMES[name]) name = "industrial-paper";
-    link.href = "../assets/themes/" + name + ".css";
-    Array.prototype.forEach.call(document.querySelectorAll(".picker [data-theme]"), function (b) { b.classList.toggle("is-active", b.getAttribute("data-theme") === name); });
-    if (cur) cur.textContent = THEMES[name];
-  }
-  Array.prototype.forEach.call(document.querySelectorAll(".picker [data-theme]"), function (b) {
-    b.addEventListener("click", function () { setTheme(b.getAttribute("data-theme")); });
-  });
-  var darkBtn = document.getElementById("darkBtn");
-  if (darkBtn) darkBtn.addEventListener("click", function () {
-    if (deck.getAttribute("data-theme") === "dark") deck.removeAttribute("data-theme");
-    else deck.setAttribute("data-theme", "dark");
-  });
+  window.addEventListener("resize", fit);
 
   // URL params for screenshotting: ?theme=ink-wash&dark=1&export=1
-  setTheme(q.get("theme") || "industrial-paper");
+  var want = q.get("theme"), idx = 0;
+  THEMES.forEach(function (t, i) { if (t[0] === want) idx = i; });
+  setTheme(idx);
   if (q.get("dark")) deck.setAttribute("data-theme", "dark");
-
-  window.addEventListener("resize", fit);
   fit();
 })();
 </script>
