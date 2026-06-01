@@ -4,7 +4,7 @@ description: >
   有设计主见的 HTML 演示文稿/PPT 生成器：把大纲/讲稿/想法做成全离线、可放映的静态 HTML 幻灯片，
   并内置「右上角悬浮工具栏」——✎ 编辑（点任意文字就地改，点「完成」自动存一个可恢复的版本，
   历史里带 diff 对比）+ ⤓ 导出（逐页截图拼装成 PDF / PPTX，保全部样式；PNG；完整自包含 HTML）。
-  工业纸感 + 杂志/瑞士双风 + 叙事弧 + 反 AI 味纪律：OKLCH token 系统 + 6 主题 + 版式库 +
+  工业纸感 + 杂志/瑞士双风 + 叙事弧 + 反 AI 味纪律：OKLCH token 系统 + 5 主题 + 版式库 +
   16:9/9:16/Swiss + 自托管 distinctive 字体（禁 Inter/Playfair）+ 键盘放映 + 逐页 PNG 自检 +
   validate 纪律校验。产物是用户真看得见的 HTML，可放映、可就地编辑、可一键导出多种格式。
   当用户要「做 PPT / 幻灯片 / slides / deck / 演示 / 路演 / 分享稿 / 小红书图文 / pitch deck /
@@ -34,7 +34,7 @@ metadata:
 ## 给你什么
 
 - **OKLCH token 设计系统**：`base.css`（tokens + slide 原语 + 行内高亮带 `.hl` + film grain + 分段 accent 色域）+ `components.css`（编辑式 chrome / terminal / 截图框 / 编号卡 / Swiss Data Hero / 离线背景）
-- **6 套主题**（`assets/themes/*.css`）：**`industrial-paper`（旗舰：暖纸 + ember + grain，带深色变体）** · `editorial-ink`（杂志）· `swiss-signal`（瑞士国际主义）· `obsidian-tech`（深色技术）· `porcelain`（轻奢/小红书）· `blueprint`（数据/咨询，仅此一处用蓝）
+- **5 套差异化主题**（`assets/themes/*.css`，**不是换皮**——排版/构图/密度/装饰/气质都不同，见 [references/themes.md](references/themes.md)）：**`industrial-paper`（旗舰：暖纸 + grain + 软色带，中密度）** · `neo-brutalist`（粗野：黑框 + 硬投影 + 实心色块，零圆角）· `editorial`（杂志：衬线 + 疏朗 + 首字下沉 + 细下划线）· `dark-luxe`（暗调：渐变底 + 毛玻璃 + 暖金辉光）· `swiss-intl`（瑞士：超大字 + 左对齐网格 + 红色关键词 + 极简）
 - **三种比例/模板**：`ppt-16x9.html`（旗舰）· `ppt-9x16.html`（竖屏 小红书/短视频）· `ppt-swiss.html`（瑞士数据风）· `layouts-gallery.html`（版式目录）
 - **右上角工具栏**：`assets/editor.js`（就地编辑 + 本地保存 + 版本历史）+ `assets/export.js`（PDF/PPTX/PNG/HTML 导出）+ `assets/toolbar.css`
 - **自托管 distinctive 字体**：Bricolage Grotesque（display）/ Host Grotesk（body）/ JetBrains Mono（mono）+ 思源黑/宋（CJK）。`scripts/fetch-fonts.sh` 一次性下载 → 之后全离线。**禁 Inter/Roboto/Playfair/Cormorant/IBM Plex**。
@@ -48,7 +48,7 @@ metadata:
 然后确认三件事（或基于已有内容给有主见的默认再确认）：
 
 1. **内容 & 观众 & 页数** —— 讲什么、给谁、几页？（15min≈10 页 / 30min≈20 页 / 45min≈25-30 页）
-2. **主题** —— 默认 `industrial-paper`。技术分享→`obsidian-tech`；瑞士数据→`swiss-signal`；小红书→`porcelain`（配 9:16）；正式报表→`blueprint`。
+2. **主题** —— **先开 `templates/theme-preview.html` 直观对比再定**。默认 `industrial-paper`；要态度→`neo-brutalist`；叙事/品牌→`editorial`（也最配 9:16）；夜场/产品发布→`dark-luxe`；数据/强排版→`swiss-intl`。
 3. **比例** —— 16:9（演讲）/ 9:16（手机·小红书）/ swiss（数据驱动）。
 
 ## 工作流
@@ -69,13 +69,13 @@ open slides/my-talk/index.html
 
 ### Step 3 · 选主题（先看，再定）+ 分段色域
 **别让用户只凭文字选主题** —— 打开 **`templates/theme-preview.html`**（`open` 或本地服务器），
-顶部一排按钮可**实时切换 6 套主题 + 明暗**，同一页代表性内容直接对比，看准了再定。
-（6 套主题的静态预览图见 `screenshots/`，README 里有画廊。）
+顶部一排按钮可**实时切换 5 套主题 + 明暗**，同一页代表性内容直接对比，看准了再定。
+（5 套主题的静态预览图见 `screenshots/`，README 里有画廊。）
 选定后在模板里硬编码 `#theme-link`；放映时 `T` 键在该主题浅/深之间切换。给每段设 `data-section` + `data-accent`，chrome 自动跟随切色域。见 [references/themes.md](references/themes.md)。
 
 ### Step 4 · 逐页搭建（核心规则）
 - **从模板复制最接近的 `.slide` 块**替换内容，不从零写。版式见 [references/layouts.md](references/layouts.md)。
-- **用 token 不用 hex**；**禁蓝**（除 blueprint）。
+- **用 token 不用 hex**；**禁蓝**（默认全场禁蓝）。
 - **一页一个核心信息**；标题陈述结论。行内高亮带 `.hl` 只圈关键短语，全场一个 accent。
 - 截图走 [references/screenshot-framing.md](references/screenshot-framing.md)；没图用 `.frame__placeholder`（不造假 UI）。
 - **数据必须真实可溯源**；无真实数据 → 文字版式，绝不编数字/假图表。
@@ -135,7 +135,7 @@ node scripts/validate.mjs slides/my-talk/index.html     # 封禁字体/硬编码
 - [design-direction.md](references/design-direction.md) — 品味锚点（先读/先填）
 - [anti-slop-checklist.md](references/anti-slop-checklist.md) — 纪律闸门
 - [design-system.md](references/design-system.md) — token + 组件完整清单 + 新建主题
-- [themes.md](references/themes.md) — 6 主题何时用
+- [themes.md](references/themes.md) — 5 主题何时用
 - [layouts.md](references/layouts.md) — 版式与 helper class
 - [authoring-guide.md](references/authoring-guide.md) — 叙事弧 + 完整流程 + 实例
 - [screenshot-framing.md](references/screenshot-framing.md) — 截图美化
@@ -156,7 +156,7 @@ ameng-ppt-design/
 │   ├── export.js           (逐页截图→拼装：PDF / PPTX / PNG / 完整 HTML)
 │   ├── vendor/             (modern-screenshot + jspdf + pptxgenjs + jszip；MIT)
 │   ├── fx-runtime.js + fx/ (opt-in Canvas 背景，默认关)
-│   └── themes/*.css        (6 主题)
+│   └── themes/*.css        (5 主题)
 ├── templates/              (ppt-16x9 / ppt-9x16 / ppt-swiss / layouts-gallery)
 ├── scripts/                (new-ppt.sh / fetch-fonts.sh / fetch-export-libs.sh / render.sh / validate.mjs)
 ├── references/             (8 篇，按需加载)

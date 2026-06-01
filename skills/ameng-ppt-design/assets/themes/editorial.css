@@ -1,0 +1,75 @@
+/* THEME: editorial — 杂志/文学感。衬线标题 + 大量留白（低密度）+ 细发丝线 +
+   首字下沉 + 行内细下划线高亮。气质冷静、考究、克制；构图靠栏宽与留白，不靠色块。
+   与 brutalist 的高密度块状相反：这里是疏朗、纸感、排版优先。 */
+:root {
+  --bg:          oklch(97.5% 0.004 92);
+  --surface-1:   oklch(99% 0.003 92);
+  --surface-2:   oklch(95% 0.006 92);
+  --line:        oklch(84% 0.008 80);
+  --line-strong: oklch(60% 0.01 70);
+  --ink-1: oklch(22% 0.012 50); --ink-2: oklch(38% 0.012 50); --ink-3: oklch(55% 0.012 50);
+  --accent:      oklch(50% 0.15 28);        /* restrained rust-red, used sparingly */
+  --accent-ink:  oklch(98% 0.01 80);
+  --accent-2:    oklch(45% 0.06 250);
+  --accent-soft: oklch(92% 0.04 40);
+  /* serif everywhere — the magazine register */
+  --ppt-display: "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", Georgia, "Times New Roman", serif;
+  --ppt-body:    "Source Han Serif SC", "Songti SC", Georgia, "Times New Roman", serif;
+  --r-1: 2px; --r-2: 3px; --r-3: 4px;
+  --track-tight: -0.01em; --leading-body: 1.7;
+  --pad: clamp(3.2rem, 1.4rem + 6vw, 7rem);             /* airy, generous margins */
+  --shadow-1: none; --shadow-2: 0 8px 30px -16px oklch(40% 0.02 50 / 0.2); --shadow-3: 0 16px 44px -22px oklch(40% 0.02 50 / 0.25);
+}
+.deck[data-grain] .deck__stage::after { opacity: 0.28; }   /* faint paper tooth */
+
+/* eyebrow = small-caps tracked label, NOT a loud accent kicker */
+.eyebrow { color: var(--ink-3); font-weight: var(--w-med); letter-spacing: 0.24em; font-family: var(--ppt-body); }
+.h1, .h2, .display, .zh-mega { font-weight: var(--w-semi); letter-spacing: -0.005em; line-height: 1.12; }
+.h3 { font-family: var(--ppt-display); font-weight: var(--w-semi); }
+.lead { font-style: italic; color: var(--ink-2); max-width: 40ch; }
+.quote { font-style: italic; }
+
+/* highlight = thin elegant underline (not a block) */
+.hl { color: var(--ink-1); }
+.hl::before { height: 0.1em; bottom: 0.02em; transform: none; opacity: 1; background: var(--accent); border-radius: 0; left: 0; right: 0; }
+
+/* drop-cap on the first body paragraph of a slide — signature editorial move */
+.slide p.body:first-of-type::first-letter,
+.slide .lead:first-of-type::first-letter {
+  font-family: var(--ppt-display); font-size: 3.1em; line-height: 0.74; float: left;
+  margin: 0.04em 0.1em 0 0; color: var(--accent); font-weight: var(--w-bold); font-style: normal;
+}
+
+/* cards become ruled sections (top hairline), not boxes */
+.card { background: transparent; border: 0; border-top: 2px solid var(--ink-1); border-radius: 0;
+  box-shadow: none; padding: var(--s-4) 0 0; }
+.card--soft { background: transparent; }
+.card--accent { background: transparent; border-top-color: var(--accent); }
+.card--accent :where(.h2, .h3, .lead, .body, p, h2, h3, li) { color: var(--ink-1); }
+.tag { background: transparent; border: 0; border-bottom: 1px solid var(--line-strong);
+  border-radius: 0; padding: 0 0 0.15em; color: var(--ink-2); font-family: var(--ppt-body); }
+.rule { background: var(--line-strong); }
+
+/* code/terminal: soften to a paper code block (editorial doesn't do dark terminals) */
+.terminal { background: var(--surface-2); color: var(--ink-1); border: 1px solid var(--line);
+  box-shadow: none; border-radius: 2px; }
+.terminal::before { color: var(--line-strong); }
+.terminal .cmd::before { color: var(--accent); }
+.terminal .comment { color: var(--ink-3); }
+
+/* thin, restrained bars */
+.bar__track { height: 6px; background: var(--surface-2); }
+
+/* chrome = elegant serif line with a hairline rule */
+.chrome-top { font-family: var(--ppt-display); text-transform: none; letter-spacing: 0.02em;
+  border-bottom: 1px solid var(--line); color: var(--ink-3); }
+.chrome-top__sec { color: var(--ink-2); }
+.chrome-foot { font-family: var(--ppt-display); border-top: 1px solid var(--line); }
+
+/* DARK = "night edition": ink paper, warm cream type */
+.deck[data-theme="dark"] {
+  --bg: oklch(19% 0.012 60); --surface-1: oklch(23% 0.012 60); --surface-2: oklch(22% 0.012 60);
+  --line: oklch(34% 0.012 60); --line-strong: oklch(58% 0.012 60);
+  --ink-1: oklch(94% 0.012 86); --ink-2: oklch(78% 0.012 84); --ink-3: oklch(60% 0.012 78);
+  --accent: oklch(68% 0.15 32); --accent-ink: oklch(16% 0.02 40);
+}

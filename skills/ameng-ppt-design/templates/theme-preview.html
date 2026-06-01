@@ -35,11 +35,10 @@
   <div class="picker" id="picker">
     <b>主题预览</b>
     <button data-theme="industrial-paper" class="is-active">工业纸感</button>
-    <button data-theme="editorial-ink">杂志</button>
-    <button data-theme="swiss-signal">瑞士</button>
-    <button data-theme="obsidian-tech">深色技术</button>
-    <button data-theme="porcelain">轻奢</button>
-    <button data-theme="blueprint">蓝图</button>
+    <button data-theme="neo-brutalist">新粗野</button>
+    <button data-theme="editorial">杂志</button>
+    <button data-theme="dark-luxe">暗调质感</button>
+    <button data-theme="swiss-intl">瑞士</button>
     <span class="picker__sep"></span>
     <button id="darkBtn">明 / 暗</button>
     <span class="picker__sep"></span>
@@ -50,7 +49,7 @@
     <div class="deck__stage">
       <div class="chrome-top">
         <span class="chrome-top__brand">主题预览 · <b>THEME</b></span>
-        <span class="chrome-top__meta"><span class="chrome-top__sec">预览 · PREVIEW</span><span class="chrome-top__page">01 / 06</span></span>
+        <span class="chrome-top__meta"><span class="chrome-top__sec">预览 · PREVIEW</span><span class="chrome-top__page">01 / 05</span></span>
       </div>
       <div class="chrome-foot"><span><b>SPEAKER</b> 你的名字</span><span class="mono">2026 · Vol.01</span></div>
 
@@ -81,8 +80,8 @@
 <script>
 (function () {
   var q = new URLSearchParams(location.search);
-  var THEMES = { "industrial-paper": "工业纸感（旗舰）", "editorial-ink": "杂志", "swiss-signal": "瑞士",
-    "obsidian-tech": "深色技术", "porcelain": "轻奢", "blueprint": "蓝图" };
+  var THEMES = { "industrial-paper": "工业纸感（旗舰）", "neo-brutalist": "新粗野 Neo-Brutalist",
+    "editorial": "杂志 Editorial", "dark-luxe": "暗调质感 Dark-Luxe", "swiss-intl": "瑞士 Swiss" };
   var link = document.getElementById("theme-link"), deck = document.querySelector(".deck"),
       stage = deck.querySelector(".deck__stage"), cur = document.getElementById("cur");
   var isExport = q.has("export");

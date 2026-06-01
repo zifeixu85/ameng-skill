@@ -1,0 +1,76 @@
+/* THEME: swiss-intl — 瑞士国际主义。超大无衬线字 + 严格左对齐网格 + 信号红单色 +
+   细分隔线 + 极简无装饰 + 大量负空间。气质理性、强排版、克制。
+   与其它主题差异：构图左上对齐（非居中）、字号极大、几乎零装饰/零阴影、红色仅作信号。 */
+:root {
+  --bg:          oklch(99% 0 0);
+  --surface-1:   oklch(100% 0 0);
+  --surface-2:   oklch(95.5% 0 0);
+  --line:        oklch(82% 0 0);
+  --line-strong: oklch(18% 0 0);
+  --ink-1: oklch(17% 0 0); --ink-2: oklch(34% 0 0); --ink-3: oklch(52% 0 0);
+  --accent:      oklch(57% 0.23 27);        /* signal red */
+  --accent-ink:  oklch(99% 0 0);
+  --accent-2:    oklch(45% 0 0);            /* neutral grey as second series */
+  --accent-soft: oklch(92% 0.06 27);
+  --ppt-display: "Helvetica Neue", "PingFang SC", "Source Han Sans SC", system-ui, sans-serif;
+  --ppt-body:    "Helvetica Neue", "PingFang SC", "Source Han Sans SC", system-ui, sans-serif;
+  --r-1: 0px; --r-2: 0px; --r-3: 0px; --r-pill: 0px;
+  --track-tight: -0.035em;
+  /* oversized type scale — Swiss is loud through TYPOGRAPHY, not color */
+  --fs-h1: clamp(3.4rem, 1.6rem + 5.6vw, 6.4rem);
+  --fs-h2: clamp(2.4rem, 1.4rem + 3vw, 4.2rem);
+  --fs-display: clamp(4.2rem, 2rem + 7.5vw, 8.4rem);
+  --pad: clamp(2.6rem, 1.2rem + 4.6vw, 5.6rem);
+  --shadow-1: none; --shadow-2: none; --shadow-3: none;   /* flat — no shadows */
+}
+.deck[data-grain] .deck__stage::after { display: none; }
+
+/* flush top-left composition — override the centered cover layout */
+.center { justify-content: flex-start; align-items: flex-start; }
+.slide { gap: var(--s-5); }
+.zh-mega, .display, .h1 { font-weight: 800; letter-spacing: -0.04em; line-height: 0.98; }
+.h2 { font-weight: var(--w-bold); }
+
+/* eyebrow = tiny tracked neutral label, top-left */
+.eyebrow { color: var(--ink-1); letter-spacing: 0.16em; font-weight: var(--w-bold); }
+
+/* highlight = red emphasis text (Swiss colours the keyword, doesn't band it) */
+.hl { color: var(--accent); }
+.hl::before { display: none; }
+.hl--full { background: var(--accent); color: var(--accent-ink); border-radius: 0; padding: 0 0.12em; }
+
+/* cards / tags become ruled, no fills, no boxes */
+.card { background: transparent; border: 0; border-top: 3px solid var(--line-strong);
+  border-radius: 0; box-shadow: none; padding: var(--s-4) 0 0; }
+.card--soft { background: transparent; }
+.card--accent { background: transparent; border-top-color: var(--accent); }
+.card--accent :where(.h2, .h3, .lead, .body, p, h2, h3, li) { color: var(--ink-1); }
+.tag { background: transparent; border: 0; border: 1px solid var(--line-strong); border-radius: 0;
+  color: var(--ink-1); text-transform: uppercase; font-weight: var(--w-bold); padding: 0.2em 0.6em; }
+.rule { height: 2px; background: var(--line-strong); }
+
+/* squared, flat bars; red signal */
+.bar__track { background: var(--surface-2); height: 14px; }
+.bar__fill { box-shadow: none; }
+
+/* giant KPI — Swiss loves a huge number */
+.data-hero__num { letter-spacing: -0.05em; }
+
+/* terminal: squared + neutral (de-emphasised; Swiss isn't terminal-y) */
+.terminal { border-radius: 0; background: oklch(17% 0 0); color: oklch(90% 0 0); border: 0; box-shadow: none; }
+.terminal .cmd::before { color: var(--accent); }
+
+/* chrome = thin ruled grid line, bold caps */
+.chrome-top { border-bottom: 2px solid var(--line-strong); color: var(--ink-1);
+  text-transform: uppercase; font-weight: var(--w-bold); letter-spacing: 0.1em; }
+.chrome-top__brand, .chrome-top__brand b { color: var(--ink-1); }
+.chrome-top__sec { color: var(--accent); }
+.chrome-foot { border-top: 2px solid var(--line-strong); color: var(--ink-2); }
+
+/* DARK = ink ground, white type, red holds */
+.deck[data-theme="dark"] {
+  --bg: oklch(15% 0 0); --surface-1: oklch(19% 0 0); --surface-2: oklch(23% 0 0);
+  --line: oklch(34% 0 0); --line-strong: oklch(92% 0 0);
+  --ink-1: oklch(96% 0 0); --ink-2: oklch(80% 0 0); --ink-3: oklch(62% 0 0);
+  --accent: oklch(64% 0.22 27); --accent-ink: oklch(99% 0 0);
+}

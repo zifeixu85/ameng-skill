@@ -19,7 +19,7 @@
 > Flat or subtly tactile, looks printed on good paper. OKLCH-grade muted palette.
 
 如果 deck 用了别的主题，把「ember/terracotta」换成该主题的强调色（swiss → signal red、
-porcelain → muted rose、obsidian → teal），其余约束不变。
+editorial → muted rose、obsidian → teal），其余约束不变。
 
 ---
 

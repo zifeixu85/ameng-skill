@@ -1,0 +1,57 @@
+/* THEME: dark-luxe — 暗调质感（cinematic）。深底渐变 + 玻璃拟态卡片（毛玻璃 + 细亮边）
+   + 暖金强调 + 柔和辉光。气质高级、克制、有光泽。深色为默认。
+   与其它主题差异：表面是半透明玻璃、强调带辉光、背景是径向渐变而非平涂。 */
+:root {
+  --bg:          oklch(15% 0.012 60);
+  --surface-1:   oklch(100% 0 0 / 0.055);              /* glass: translucent, not solid */
+  --surface-2:   oklch(100% 0 0 / 0.085);
+  --line:        oklch(100% 0 0 / 0.12);
+  --line-strong: oklch(100% 0 0 / 0.22);
+  --ink-1: oklch(96% 0.008 85); --ink-2: oklch(80% 0.01 80); --ink-3: oklch(62% 0.012 75);
+  --accent:      oklch(82% 0.13 85);                   /* warm gold */
+  --accent-ink:  oklch(18% 0.04 80);
+  --accent-2:    oklch(72% 0.10 30);                   /* copper */
+  --accent-soft: oklch(82% 0.13 85 / 0.18);
+  --ppt-display: "Bricolage Grotesque", "PingFang SC", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
+  --ppt-body:    "Host Grotesk", "PingFang SC", "Source Han Sans SC", system-ui, sans-serif;
+  --r-1: 8px; --r-2: 16px; --r-3: 24px;
+  --pad: clamp(2.6rem, 1.2rem + 4.4vw, 5.2rem);
+  --shadow-1: 0 2px 10px oklch(0% 0 0 / 0.4);
+  --shadow-2: 0 24px 60px -22px oklch(0% 0 0 / 0.7);
+  --shadow-3: 0 40px 100px -30px oklch(0% 0 0 / 0.8);
+}
+/* cinematic radial-gradient stage instead of flat fill */
+.deck__stage { background: radial-gradient(125% 110% at 18% 0%, oklch(24% 0.02 70), oklch(12% 0.01 60) 65%); }
+.deck[data-grain] .deck__stage::after { opacity: 0.18; mix-blend-mode: screen; }
+
+.eyebrow { color: var(--accent); letter-spacing: 0.18em; text-shadow: 0 0 16px oklch(82% 0.13 85 / 0.5); }
+.h1, .display, .zh-mega { font-weight: var(--w-bold); letter-spacing: -0.02em; }
+
+/* highlight = soft glowing gold band */
+.hl { color: var(--ink-1); text-shadow: 0 0 20px oklch(82% 0.13 85 / 0.45); }
+.hl::before { background: var(--accent); opacity: 0.9; filter: blur(0.4px); box-shadow: 0 0 22px oklch(82% 0.13 85 / 0.55); }
+.hl--full { color: var(--accent-ink); background: var(--accent); box-shadow: 0 0 26px oklch(82% 0.13 85 / 0.55); }
+
+/* glassmorphism cards / tags / frames / terminal */
+.card { background: var(--surface-1); border: 1px solid var(--line);
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: var(--shadow-2); }
+.card--soft { background: oklch(100% 0 0 / 0.03); }
+.card--accent { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--accent-ink); border-color: transparent; }
+.tag { background: oklch(100% 0 0 / 0.08); border: 1px solid var(--line);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: var(--ink-2); }
+.frame { background: var(--surface-1); border: 1px solid var(--line);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.terminal { background: oklch(100% 0 0 / 0.05); color: oklch(90% 0.01 80);
+  border: 1px solid var(--line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.terminal::before { color: var(--ink-3); }
+.terminal .cmd::before { color: var(--accent); }
+
+/* glowing data bars + KPI */
+.bar__track { background: oklch(100% 0 0 / 0.08); }
+.bar__fill { box-shadow: 0 0 14px oklch(82% 0.13 85 / 0.6); }
+.data-hero__num { text-shadow: 0 0 40px oklch(82% 0.13 85 / 0.25); }
+
+.chrome-top__sec { color: var(--accent); }
+.rule { background: var(--line); }
+
+/* dark-only luxe — T toggle is intentionally a no-op (no light counterpart). */

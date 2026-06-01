@@ -46,7 +46,7 @@
 :root {
   /* Display = distinctive Latin grotesque + CJK 黑体/sans. CJK is SANS by default:
      serif CJK (宋/楷) reads heavy & old-fashioned at mega display sizes. Themes that
-     WANT serif CJK (editorial-ink, porcelain) override this per-theme. */
+     WANT serif CJK (editorial) override this per-theme. */
   --ppt-display: "Bricolage Grotesque", "PingFang SC", "Source Han Sans SC",
                   "Microsoft YaHei", system-ui, sans-serif;
   /* Body = humanist grotesque + CJK sans */

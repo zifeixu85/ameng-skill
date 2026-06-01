@@ -39,15 +39,19 @@ node scripts/validate.mjs slides/my-talk/index.html   # 纪律自检
 ## 主题 & 比例
 
 - 比例：`16x9`（演讲）· `9x16`（小红书/竖屏）· `swiss`（数据驱动）
-- **6 套主题**（同一页代表性内容预览，点开 `templates/theme-preview.html` 可实时切换对比 + 明暗）：
+- **5 套差异化主题** —— 同一页内容、不同风格。**不是换皮**：排版、构图、密度、装饰、气质都不同。点开 `templates/theme-preview.html` 可**实时切换对比 + 明暗**：
 
-| 工业纸感（旗舰） | 杂志 | 瑞士 |
+| `industrial-paper` 工业纸感（旗舰） | `neo-brutalist` 新粗野 | `editorial` 杂志 |
 |---|---|---|
-| ![industrial-paper](screenshots/industrial-paper.png) | ![editorial-ink](screenshots/editorial-ink.png) | ![swiss-signal](screenshots/swiss-signal.png) |
-| **深色技术** | **轻奢 / 小红书** | **蓝图 / 咨询** |
-| ![obsidian-tech](screenshots/obsidian-tech.png) | ![porcelain](screenshots/porcelain.png) | ![blueprint](screenshots/blueprint.png) |
+| ![industrial-paper](screenshots/industrial-paper.png) | ![neo-brutalist](screenshots/neo-brutalist.png) | ![editorial](screenshots/editorial.png) |
+| 暖纸 + grain + 软色带 + terminal | 黑框 + 硬投影 + 实心色块 + 零圆角 | 衬线 + 疏朗 + 首字下沉 + 细下划线 |
 
-> 选主题时**打开预览页直观对比**，别只看名字。截图由 `./scripts/shoot-themes.sh` 生成。
+| `dark-luxe` 暗调质感 | `swiss-intl` 瑞士 | |
+|---|---|---|
+| ![dark-luxe](screenshots/dark-luxe.png) | ![swiss-intl](screenshots/swiss-intl.png) | |
+| 渐变底 + 毛玻璃 + 暖金辉光 | 超大字 + 左对齐网格 + 红关键词 + 极简 | |
+
+> 选主题时**打开预览页直观对比**，别只看名字。截图由 `./scripts/shoot-themes.sh` 生成（同一页内容渲染每套主题）。
 
 ## 安装
 

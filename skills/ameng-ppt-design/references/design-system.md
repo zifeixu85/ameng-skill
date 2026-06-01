@@ -43,12 +43,12 @@
 base.css 备好一组可换的 accent，按 `data-accent` 给某段重绑 `--accent`：
 `--pal-ember`(45) · `--pal-sand`(75) · `--pal-cinnabar`(30) · `--pal-olive`(130) ·
 `--pal-mint`(160) · `--pal-magenta`(348) · `--pal-cyan`(215)。
-**禁蓝默认**——`--pal-*` 里没有纯蓝；蓝只在 `blueprint` 报告主题出现。
+**禁蓝默认**——`--pal-*` 里没有纯蓝；蓝只在 `swiss-intl` 报告主题出现。
 
 ## 2. 字体
 
 族（主题可换，**禁 Inter/Roboto**，见 fonts.css 封禁清单）：
-- `--font-display` → 标题（**Bricolage Grotesque（拉丁）+ 黑体（CJK，PingFang / 思源黑）**；serif CJK 仅 `editorial-ink` / `porcelain` 两个杂志风主题保留）
+- `--font-display` → 标题（**Bricolage Grotesque（拉丁）+ 黑体（CJK，PingFang / 思源黑）**；serif CJK 仅 `editorial` / `editorial` 两个杂志风主题保留）
 - `--font-body` → 正文（Host Grotesk + CJK 黑体）
 - `--font-mono` → 数字/代码/元数据（JetBrains Mono，**tabular-nums**）
 
@@ -66,7 +66,7 @@ CJK 巨标题用 `.zh-mega`（`clamp(3.2rem,1.4rem+6vw,7.5rem)`，瑞士式极�
 - **模块化比例选一个并贯彻**：命名比例 `1.25`（major third）/ `1.333`（perfect fourth）/ `1.5`（perfect fifth）——一份 deck 只用一个比例排字阶，别混。**旗舰建议 1.333**（perfect fourth，对比够狠又不撕裂）。
 - **`clamp()` 上界护栏**：`max ≤ 2.5 × min`，超了大屏会「喊叫」、破坏缩放/reflow。自检：`--fs-display` `3.6→7rem` 比值 1.94，合规。
 - **ALL-CAPS tracking 区间 `0.05–0.12em`**：只给短 uppercase label / eyebrow / 拉丁小标，**不给 body**（正文 tracking > 0.05em 会打散字组、拖慢阅读）。注意：我们 `--track-wide` 默认 0.16em **偏大，应收到 0.12em 上界**。CJK 永不加 wide tracking。
-- **暗底文字补偿三轴**（落到 `obsidian-tech` / `industrial-paper[data-theme=dark]` 直接用）：浅字落暗底会显得更轻，**三轴一起补**——`line-height +0.05~0.1`、`letter-spacing +0.01~0.02em`、body 字重 **+1 档**（如 reg→med）。只补一轴不够。
+- **暗底文字补偿三轴**（落到 `dark-luxe` / `industrial-paper[data-theme=dark]` 直接用）：浅字落暗底会显得更轻，**三轴一起补**——`line-height +0.05~0.1`、`letter-spacing +0.01~0.02em`、body 字重 **+1 档**（如 reg→med）。只补一轴不够。
 
 ## 3. 间距 / 圆角 / 阴影
 
@@ -77,7 +77,7 @@ CJK 巨标题用 `.zh-mega`（`clamp(3.2rem,1.4rem+6vw,7.5rem)`，瑞士式极�
 圆角：`--r-1 6` `--r-2 12` `--r-3 20`（px）`--r-pill 999`。一个 deck 只用**一个圆角家族**（主题整体改写）。
 阴影：`--shadow-1`（极轻） / `--shadow-2`（卡片/`.frame`/`.terminal`） / `--shadow-3`（弹层/`.frame--shadow`）。克制。
 
-> **暗模式深度来自表面亮阶，不靠发光/阴影**（impeccable colorize）：暗底主题（`obsidian-tech`）的层次用 **3 档 L** 表达——如 `15% / 20% / 25%`，**同 hue、同 chroma，只变 L**，越抬起越亮。禁「深底 + 彩色 box-shadow 发光」（那是 AI 暗模式套路，见 [anti-slop-checklist.md](anti-slop-checklist.md)）。
+> **暗模式深度来自表面亮阶，不靠发光/阴影**（impeccable colorize）：暗底主题（`dark-luxe`）的层次用 **3 档 L** 表达——如 `15% / 20% / 25%`，**同 hue、同 chroma，只变 L**，越抬起越亮。禁「深底 + 彩色 box-shadow 发光」（那是 AI 暗模式套路，见 [anti-slop-checklist.md](anti-slop-checklist.md)）。
 
 ## 4. 舞台几何 & 动效
 
@@ -122,7 +122,7 @@ CJK 巨标题用 `.zh-mega`（`clamp(3.2rem,1.4rem+6vw,7.5rem)`，瑞士式极�
 2. 顶部留一行意图注释（风格 / 适用场景）。
 3. 在 `:root` 里**只覆盖需要变的 token**：颜色、`--ppt-display/body/mono`、必要的 `--r-*`/`--track-*`/`--shadow-*`/`--pad`。
 4. 颜色**只用 OKLCH**，遵守封禁字体清单与禁蓝默认；中性色带 0.005–0.01 的 warm/brand tint。
-5. 需要时追加极少量结构微调（示例：swiss `.card` 用 `--line-strong` 边框；blueprint 给 `td/.num` 加 `tabular-nums`；obsidian 让 `.eyebrow` 用等宽）。
+5. 需要时追加极少量结构微调（示例：swiss `.card` 用 `--line-strong` 边框；swiss-intl 给 `td/.num` 加 `tabular-nums`；obsidian 让 `.eyebrow` 用等宽）。
 6. **加深色变体**（`T` 键浅/深切换的另一半）：在主题文件末尾写一个 `.deck[data-theme="dark"] { … }` 块，**重定义** `--bg / --surface-* / --line* / --ink-1/2/3 / --accent*`（深底用暖/冷要跟 light 同色相，别突然冷蓝；`--ink-1` 要在深底上够亮，禁纯黑底）。需要时再补 `--shadow-*` 和 `.deck[data-theme="dark"][data-grain] .deck__stage::after { opacity:.25 }`（深色下颗粒调淡）。
 7. **文字色继承的坑（必读）**：标题（`.h1/.zh-mega` 等）**不写自己的 color**，靠继承。`base.css` 已在 **`.deck { color: var(--ink-1) }`** 处统一兜底——因为 `data-theme="dark"` 加在 `.deck` 上，而 `body` 是 `.deck` 的祖先，文字色若只挂在 `body` 上会在深色作用域**外**解析、停在浅色墨色 → 标题在深底上隐形。所以：**别把正文色只写在 `body`/`html` 上**；只要主题在 `.deck[data-theme="dark"]` 里重定义了 `--ink-1`，继承的标题会自动翻白。`.lead/.body/.hl` 各自显式 `color:var(--ink-*)` 不受影响。
 8. 交付：把模板 `#theme-link` 的 `href` 锁成这个主题文件即可；放映 `T` 在该主题的 `:root`（浅）与 `.deck[data-theme="dark"]`（深）之间切换，不再是多主题循环。

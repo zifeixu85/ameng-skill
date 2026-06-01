@@ -1,0 +1,70 @@
+/* THEME: neo-brutalist — 生（raw）· 响（loud）· 块（blocky）。
+   黑白底 + 一记响色 + 硬边框 + 实心偏移投影（无模糊）+ 零圆角 + 无颗粒。
+   与 industrial-paper 的差异不只在配色：构图更块状、边框更重、阴影是硬投影、强调用实心色块。 */
+:root {
+  --bg:          oklch(98% 0 0);
+  --surface-1:   oklch(100% 0 0);
+  --surface-2:   oklch(95% 0 0);
+  --line:        oklch(15% 0 0);            /* lines are INK (brutalist draws hard rules) */
+  --line-strong: oklch(15% 0 0);
+  --ink-1: oklch(15% 0 0); --ink-2: oklch(28% 0 0); --ink-3: oklch(45% 0 0);
+  --accent:      oklch(63% 0.25 28);        /* one loud signal red */
+  --accent-ink:  oklch(99% 0 0);
+  --accent-2:    oklch(80% 0.18 95);        /* loud secondary (amber) */
+  --accent-soft: oklch(90% 0.10 60);
+  --ppt-display: "Bricolage Grotesque", "PingFang SC", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
+  --ppt-body:    "Host Grotesk", "PingFang SC", "Source Han Sans SC", system-ui, sans-serif;
+  --r-1: 0px; --r-2: 0px; --r-3: 0px; --r-pill: 0px;     /* zero radius everywhere */
+  --track-tight: -0.03em;
+  --shadow-1: 3px 3px 0 var(--ink-1);                    /* HARD offset shadows, no blur */
+  --shadow-2: 6px 6px 0 var(--ink-1);
+  --shadow-3: 10px 10px 0 var(--ink-1);
+  --pad: clamp(2.2rem, 1rem + 3.4vw, 4.4rem);
+}
+/* heavy frame around the whole stage */
+.deck__stage { border: 7px solid var(--ink-1); }
+.deck[data-grain] .deck__stage::after { display: none; }   /* brutalism: no texture */
+
+/* eyebrow = inverted solid block */
+.eyebrow { display: inline-block; background: var(--ink-1); color: var(--bg);
+  padding: 0.28em 0.7em; letter-spacing: 0.12em; font-weight: var(--w-bold); }
+/* headings: tight, heavy */
+.h1, .display, .zh-mega { font-weight: 800; letter-spacing: -0.035em; }
+
+/* highlight = solid block with hard drop-shadow (not a soft band) */
+.hl { color: var(--bg); background: var(--accent); padding: 0 0.14em;
+  box-shadow: 4px 4px 0 var(--ink-1); white-space: nowrap; }
+.hl::before { display: none; }
+.hl--full { color: var(--bg); background: var(--accent); box-shadow: 4px 4px 0 var(--ink-1); }
+
+/* cards / tags / frames: thick ink border + hard shadow */
+.card { border: 3px solid var(--ink-1); box-shadow: 6px 6px 0 var(--ink-1); background: var(--bg); }
+.card--soft { background: var(--surface-2); }
+.card--accent { background: var(--accent); color: var(--bg); }
+.tag { border: 2px solid var(--ink-1); background: var(--bg); color: var(--ink-1);
+  text-transform: uppercase; font-weight: var(--w-bold); padding: 0.22em 0.7em; }
+.frame { border: 3px solid var(--ink-1); box-shadow: 6px 6px 0 var(--ink-1); }
+.terminal { border: 3px solid var(--ink-1); box-shadow: 6px 6px 0 var(--ink-1);
+  background: oklch(15% 0 0); color: oklch(92% 0 0); }
+.terminal::before { color: oklch(60% 0 0); }
+.terminal .cmd::before { color: var(--accent); }
+
+/* blocky bars: bordered track, square fill */
+.bar__track { border: 2px solid var(--ink-1); background: var(--bg); height: 18px; }
+.bar__fill { box-shadow: none; }
+
+/* chrome = bold ruled bars */
+.chrome-top { border-bottom: 3px solid var(--ink-1); color: var(--ink-1);
+  text-transform: uppercase; font-weight: var(--w-bold); }
+.chrome-top__brand, .chrome-top__brand b, .chrome-top__sec { color: var(--ink-1); }
+.chrome-foot { border-top: 3px solid var(--ink-1); color: var(--ink-1); font-weight: var(--w-med); }
+.rule { height: 3px; background: var(--ink-1); }
+
+/* DARK = inverted (black paper, white ink, white offset shadows) */
+.deck[data-theme="dark"] {
+  --bg: oklch(16% 0 0); --surface-1: oklch(20% 0 0); --surface-2: oklch(24% 0 0);
+  --line: oklch(96% 0 0); --line-strong: oklch(96% 0 0);
+  --ink-1: oklch(96% 0 0); --ink-2: oklch(82% 0 0); --ink-3: oklch(64% 0 0);
+  --accent: oklch(70% 0.24 28); --accent-ink: oklch(12% 0 0);
+  --shadow-1: 3px 3px 0 var(--ink-1); --shadow-2: 6px 6px 0 var(--ink-1); --shadow-3: 10px 10px 0 var(--ink-1);
+}
