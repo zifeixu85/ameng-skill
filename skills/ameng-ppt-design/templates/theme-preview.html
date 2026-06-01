@@ -59,31 +59,24 @@
     </div>
   </div>
 
-  <div class="deck deck--chrome" data-grain>
+  <!-- 标准 16:9 舞台；不加 deck--chrome（预览不需要顶/脚栏，避免占高导致下方被裁切） -->
+  <div class="deck" data-grain>
     <div class="deck__stage">
-      <div class="chrome-top">
-        <span class="chrome-top__brand">主题预览 · <b>THEME</b></span>
-        <span class="chrome-top__meta"><span class="chrome-top__sec">预览 · PREVIEW</span><span class="chrome-top__page">01 / 05</span></span>
-      </div>
-      <div class="chrome-foot"><span><b>SPEAKER</b> 你的名字</span><span class="mono">2026 · Vol.01</span></div>
-
-      <section class="slide is-active" data-section="预览 · PREVIEW" data-accent="ember">
+      <section class="slide is-active center" data-section="预览 · PREVIEW" data-accent="ember">
         <span class="eyebrow" data-anim="fade">THEME PREVIEW · 主题预览</span>
         <h2 class="zh-mega" data-anim="rise">从 <span class="hl">想法</span> 到 <span class="hl">成品</span></h2>
-        <div class="grid-2 fill" style="--gap:var(--s-7);align-items:start;margin-top:var(--s-5)">
+        <div class="grid-2 fill" style="--gap:var(--s-7);align-items:center;margin-top:var(--s-5)">
           <div class="stack" style="--gap:var(--s-5)">
             <p class="lead">同一页内容，看看每套主题是什么气质：配色、字体、高亮带、图表。</p>
             <div class="bars" style="max-width:30rem">
               <div class="bar"><span class="body">立即购买</span><div class="bar__track"><div class="bar__fill" style="--v:78%"></div></div><span class="bar__val">78%</span></div>
               <div class="bar"><span class="body">免费试用</span><div class="bar__track"><div class="bar__fill" style="--v:54%;background:var(--accent-2)"></div></div><span class="bar__val">54%</span></div>
-              <div class="bar"><span class="body">加入候补</span><div class="bar__track"><div class="bar__fill" style="--v:31%;background:var(--ink-3)"></div></div><span class="bar__val">31%</span></div>
             </div>
           </div>
           <div class="terminal" data-anim="rise">
             <div class="cmd">deploy --env=prod</div>
             <div class="ok">build</div>
             <div class="ok">migrate</div>
-            <div class="ok">healthcheck</div>
             <div class="comment"># shipped, not a demo.</div>
           </div>
         </div>
