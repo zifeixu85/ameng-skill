@@ -19,7 +19,8 @@
 
   var DECK_ID = "ameng-ppt:" + (deck.getAttribute("data-ppt-id")
     || (location.pathname.replace(/\/index\.html?$/i, "") || document.title || "deck"));
-  var K_DOC = DECK_ID + ":doc", K_VERS = DECK_ID + ":pageVersions", K_BASE = DECK_ID + ":base", MAX_VERS = 40;
+  // v2 keys: discard any stale per-page history written by an earlier build
+  var K_DOC = DECK_ID + ":doc2", K_VERS = DECK_ID + ":pageVersions2", K_BASE = DECK_ID + ":base2", MAX_VERS = 40;
   function lsGet(k, fb) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; } catch (e) { return fb; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 

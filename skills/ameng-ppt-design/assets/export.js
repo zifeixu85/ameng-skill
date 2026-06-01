@@ -120,20 +120,38 @@
       p.defineLayout({ name: "PPT", width: inW, height: inH }); p.layout = "PPT";
       var snapTransparent = function () { return ms.domToPng(stage, { width: stageW, height: stageH, scale: 2, style: { transform: "none" } }); };
       var chain = slides.reduce(function (pr, _, i) {
-        var els, bgUrl;
+        var els, indiv, bgUrl, decoUrl, indivImgs = [];
         return pr.then(function () { show(i); return raf2(); }).then(function () {
           els = leaves(stage);
-          deck.classList.add("ppt-cap-bg"); return raf2();                              // 1) background only
+          // MUST be cut individually: top progress bar + each text-overlay color block (.hl)
+          indiv = Array.prototype.slice.call(stage.querySelectorAll(".deck__progress, .hl, .hl--full")).filter(function (el) {
+            var r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+            return r.width > 1 && r.height > 1 && cs.visibility !== "hidden" && cs.display !== "none";
+          });
+          deck.classList.add("ppt-cap-bg"); return raf2();                              // 1) background only (no progress/content)
         }).then(function () { return snapStage(ms); }).then(function (u) {
           bgUrl = u; deck.classList.remove("ppt-cap-bg");
-          els.forEach(function (el) { el.setAttribute("data-ppt-hide-text", ""); });
-          deck.classList.add("ppt-cap-deco"); return raf2();                            // 2) decorations, text hidden, bg transparent
-        }).then(function () { return snapTransparent(); }).then(function (decoUrl) {
-          deck.classList.remove("ppt-cap-deco"); els.forEach(function (el) { el.removeAttribute("data-ppt-hide-text"); });
+          els.forEach(function (el) { el.setAttribute("data-ppt-hide-text", ""); });    // hide text (also empties .hl bands)
+          return raf2().then(function () {                                              // 2) each individual block → its own transparent image
+            return indiv.reduce(function (q, el) {
+              return q.then(function () { return ms.domToPng(el, { scale: 2, style: { transform: "none" } }); })
+                .then(function (u2) { indivImgs.push({ url: u2, r: el.getBoundingClientRect() }); });
+            }, Promise.resolve());
+          });
+        }).then(function () {
+          indiv.forEach(function (el) { el.setAttribute("data-ppt-skip-deco", ""); });  // exclude individuals from the deco layer
+          deck.classList.add("ppt-cap-deco"); return raf2();                            // 3) remaining decorations, text hidden, bg transparent
+        }).then(function () { return snapTransparent(); }).then(function (du) {
+          decoUrl = du; deck.classList.remove("ppt-cap-deco");
+          indiv.forEach(function (el) { el.removeAttribute("data-ppt-skip-deco"); });
+          els.forEach(function (el) { el.removeAttribute("data-ppt-hide-text"); });
           var slide = p.addSlide();
           slide.addImage({ data: bgUrl, x: 0, y: 0, w: inW, h: inH });                   // layer 1: background
-          slide.addImage({ data: decoUrl, x: 0, y: 0, w: inW, h: inH });                 // layer 2: decorations (transparent)
+          slide.addImage({ data: decoUrl, x: 0, y: 0, w: inW, h: inH });                 // layer 2: other decorations
           var srect = stage.getBoundingClientRect(), scale = srect.width / (stage.offsetWidth || stageW) || 1;
+          indivImgs.forEach(function (im) {                                              // layer 3: progress bar + each color block, individually
+            slide.addImage({ data: im.url, x: in_((im.r.left - srect.left) / scale), y: in_((im.r.top - srect.top) / scale), w: in_(im.r.width / scale), h: in_(im.r.height / scale) });
+          });
           els.forEach(function (el) {
             var r = el.getBoundingClientRect(); if (!r.width || !r.height) return;
             var txt = (el.innerText || el.textContent || "").replace(/ /g, " ").replace(/[ \t]+/g, " ").replace(/\n{2,}/g, "\n").trim();
@@ -154,7 +172,7 @@
         return p.writeFile({ fileName: deckName() + "-editable.pptx" }).then(function () { toast("可编辑 PPTX 已导出（背景图 + 装饰图 + 可编辑文字）"); });
       }).catch(function (e) {
         deck.classList.remove("ppt-cap-bg", "ppt-cap-deco");
-        Array.prototype.forEach.call(stage.querySelectorAll("[data-ppt-hide-text]"), function (el) { el.removeAttribute("data-ppt-hide-text"); });
+        Array.prototype.forEach.call(stage.querySelectorAll("[data-ppt-hide-text],[data-ppt-skip-deco]"), function (el) { el.removeAttribute("data-ppt-hide-text"); el.removeAttribute("data-ppt-skip-deco"); });
         show(saved); deck.classList.remove("ppt-exporting"); hideCover(cover); throw e;
       });
     }).catch(function () { toast("可编辑 PPTX 失败：缺库跑 scripts/fetch-export-libs.sh；file:// 请用本地服务器"); });

@@ -98,15 +98,19 @@
 /* disable entry animation so the activated slide is settled before snapshot */
 .deck.ppt-exporting .slide [data-anim] { animation: none !important; opacity: 1 !important; transform: none !important; }
 .ppt-export-cover { position: fixed; inset: 0; z-index: 1300; display: grid; place-items: center; color: var(--ink-3); font: var(--w-med, 500) 13px/1 var(--font-body); }
-/* background-only pass: keep stage/slide bg + grain, hide all content + chrome */
+/* background-only pass: keep stage/slide bg + grain, hide all content + chrome
+   (progress bar is cut as its own image, so hide it here too) */
 .deck.ppt-cap-bg .slide > *,
 .deck.ppt-cap-bg .chrome-top,
 .deck.ppt-cap-bg .chrome-foot,
-.deck.ppt-cap-bg .slide__num { visibility: hidden !important; }
-/* decoration pass: transparent page bg + no grain, so only components remain */
+.deck.ppt-cap-bg .slide__num,
+.deck.ppt-cap-bg .deck__progress { visibility: hidden !important; }
+/* decoration pass: transparent page bg + no grain, so only components remain;
+   elements exported individually (progress, .hl color blocks) are excluded */
 .deck.ppt-cap-deco .deck__stage { background: transparent !important; }
 .deck.ppt-cap-deco .slide { background: transparent !important; }
 .deck.ppt-cap-deco .deck__stage::after { display: none !important; }
+.deck.ppt-cap-deco [data-ppt-skip-deco] { visibility: hidden !important; }
 /* hide just the boxed text (so it stays editable, never baked into an image) */
 [data-ppt-hide-text], [data-ppt-hide-text] * { color: transparent !important; -webkit-text-fill-color: transparent !important; text-shadow: none !important; }
 [data-ppt-hide-text]::before, [data-ppt-hide-text]::after, [data-ppt-hide-text] *::before, [data-ppt-hide-text] *::after { color: transparent !important; -webkit-text-fill-color: transparent !important; }
