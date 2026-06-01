@@ -97,7 +97,7 @@
   var TEXT_SEL = ".eyebrow,.display,.zh-mega,.h1,.h2,.h3,.lead,.body,.quote,.quote__by,.tag,.num," +
     ".data-hero__num,.data-hero__label,.data-hero__src,.bar__val,.cmd,.comment,.ok," +
     ".chrome-top__brand,.chrome-top__sec,.chrome-top__page,.chrome-foot span,.slide__num," +
-    "h1,h2,h3,h4,p,li,blockquote,figcaption";
+    ".card__tags span,.frame__placeholder,h1,h2,h3,h4,p,li,blockquote,figcaption";
   function leaves(root) {
     var m = Array.prototype.slice.call(root.querySelectorAll(TEXT_SEL));
     return m.filter(function (el) {
@@ -107,26 +107,32 @@
       return !m.some(function (o) { return o !== el && el.contains(o); });
     });
   }
-  // Hybrid: render each slide WITH GLYPHS HIDDEN (keeps bands/terminals/frames/
-  // grain/backgrounds) as a full-bleed background image, then overlay EDITABLE
-  // text boxes — decorations look ~original, text stays editable, no doubling.
+  // Three layers per slide: (1) BACKGROUND image (page/section bg + grain only),
+  // (2) DECORATION image (terminals/frames/charts/bands — TEXT HIDDEN — transparent
+  // elsewhere), (3) EDITABLE text boxes. Text is never rasterized; background is a
+  // separate picture from the decorations.
   function exportPPTXEditable() {
-    toast("正在导出可编辑 PPTX（保真版）…");
+    toast("正在导出可编辑 PPTX（背景/装饰分层）…");
     Promise.all([ensureLib("modern-screenshot.js", "modernScreenshot"), ensureLib("pptxgen.bundle.js", "PptxGenJS")]).then(function (l) {
       var ms = l[0], Pptx = l[1];
       var saved = curIdx(), cover = showCover(); deck.classList.add("ppt-exporting");
       var p = new Pptx(), in_ = function (px) { return px / 96; }, inW = in_(stageW), inH = in_(stageH);
       p.defineLayout({ name: "PPT", width: inW, height: inH }); p.layout = "PPT";
+      var snapTransparent = function () { return ms.domToPng(stage, { width: stageW, height: stageH, scale: 2, style: { transform: "none" } }); };
       var chain = slides.reduce(function (pr, _, i) {
-        var els;
+        var els, bgUrl;
         return pr.then(function () { show(i); return raf2(); }).then(function () {
           els = leaves(stage);
-          els.forEach(function (el) { el.style.color = "transparent"; el.style.textShadow = "none"; });   // hide glyphs, keep decorations
-          return raf2();
-        }).then(function () { return snapStage(ms); }).then(function (url) {
-          els.forEach(function (el) { el.style.color = ""; el.style.textShadow = ""; });                  // restore
+          deck.classList.add("ppt-cap-bg"); return raf2();                              // 1) background only
+        }).then(function () { return snapStage(ms); }).then(function (u) {
+          bgUrl = u; deck.classList.remove("ppt-cap-bg");
+          els.forEach(function (el) { el.setAttribute("data-ppt-hide-text", ""); });
+          deck.classList.add("ppt-cap-deco"); return raf2();                            // 2) decorations, text hidden, bg transparent
+        }).then(function () { return snapTransparent(); }).then(function (decoUrl) {
+          deck.classList.remove("ppt-cap-deco"); els.forEach(function (el) { el.removeAttribute("data-ppt-hide-text"); });
           var slide = p.addSlide();
-          slide.addImage({ data: url, x: 0, y: 0, w: inW, h: inH });                                       // decorations-only background
+          slide.addImage({ data: bgUrl, x: 0, y: 0, w: inW, h: inH });                   // layer 1: background
+          slide.addImage({ data: decoUrl, x: 0, y: 0, w: inW, h: inH });                 // layer 2: decorations (transparent)
           var srect = stage.getBoundingClientRect(), scale = srect.width / (stage.offsetWidth || stageW) || 1;
           els.forEach(function (el) {
             var r = el.getBoundingClientRect(); if (!r.width || !r.height) return;
@@ -145,9 +151,10 @@
       }, Promise.resolve());
       return chain.then(function () {
         show(saved); deck.classList.remove("ppt-exporting"); hideCover(cover);
-        return p.writeFile({ fileName: deckName() + "-editable.pptx" }).then(function () { toast("可编辑 PPTX 已导出（装饰转图片 + 文字可在 PPT 里改）"); });
+        return p.writeFile({ fileName: deckName() + "-editable.pptx" }).then(function () { toast("可编辑 PPTX 已导出（背景图 + 装饰图 + 可编辑文字）"); });
       }).catch(function (e) {
-        Array.prototype.forEach.call(stage.querySelectorAll(TEXT_SEL), function (el) { el.style.color = ""; el.style.textShadow = ""; });
+        deck.classList.remove("ppt-cap-bg", "ppt-cap-deco");
+        Array.prototype.forEach.call(stage.querySelectorAll("[data-ppt-hide-text]"), function (el) { el.removeAttribute("data-ppt-hide-text"); });
         show(saved); deck.classList.remove("ppt-exporting"); hideCover(cover); throw e;
       });
     }).catch(function () { toast("可编辑 PPTX 失败：缺库跑 scripts/fetch-export-libs.sh；file:// 请用本地服务器"); });

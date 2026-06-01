@@ -1,91 +1,71 @@
 /* ============================================================================
    ameng-ppt-design · toolbar.css
-   A floating, auto-hiding control dock (top-right): a faint handle that reveals
-   ghost-text actions on hover — never a solid bar over the content. Theme-aware
-   because the dock lives INSIDE .deck (inherits the dark-mode token scope).
-   Also: in-place edit affordance, version-history drawer with diff, toast,
-   and the off-screen capture helper used by image export. Screen-only.
+   Always-visible, low-key text toolbar (top-right) — no handle, no hover reveal.
+   Lives inside .deck so it inherits the dark-mode token scope. Plus: in-place
+   edit affordance, editable speaker-notes overlay, version-history drawer w/ diff,
+   toast, and the background/decoration capture helpers for editable-PPTX export.
    ============================================================================ */
 
-/* ---- floating dock ------------------------------------------------------- */
-.ppt-dock {
-  position: fixed; top: 10px; right: 10px; z-index: 1000;
-  font-family: var(--font-body);
-}
-.ppt-dock__handle {
-  width: 32px; height: 32px; border-radius: var(--r-pill);
-  display: grid; place-items: center; cursor: pointer;
-  font-size: 15px; line-height: 1; color: var(--ink-2);
-  background: color-mix(in oklab, var(--surface-1) 65%, transparent);
-  border: 1px solid color-mix(in oklab, var(--line-strong) 55%, transparent);
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  box-shadow: var(--shadow-1);
-  opacity: .45; transition: opacity .2s, color .2s, border-color .2s;
-}
-.ppt-dock:hover .ppt-dock__handle,
-.ppt-dock.is-open .ppt-dock__handle { opacity: 1; color: var(--accent); border-color: var(--accent); }
-
+/* ---- always-visible dock (subtle text actions) -------------------------- */
+.ppt-dock { position: fixed; top: 10px; right: 12px; z-index: 1000; font-family: var(--font-body); }
 .ppt-dock__panel {
-  position: absolute; top: 0; right: 38px;
-  display: flex; gap: 3px; align-items: center;
-  padding: 4px; border-radius: var(--r-pill);
-  background: color-mix(in oklab, var(--surface-1) 90%, transparent);
-  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
-  border: 1px solid var(--line-strong); box-shadow: var(--shadow-2);
-  white-space: nowrap;
-  opacity: 0; transform: translateY(-3px) scale(.97); transform-origin: top right;
-  pointer-events: none; transition: opacity .18s var(--ease), transform .18s var(--ease);
+  display: flex; gap: 2px; align-items: center; white-space: nowrap;
+  opacity: .72; transition: opacity .15s;
 }
-.ppt-dock:hover .ppt-dock__panel,
-.ppt-dock.is-open .ppt-dock__panel { opacity: 1; transform: none; pointer-events: auto; }
+.ppt-dock:hover .ppt-dock__panel { opacity: 1; }
 
-/* ghost-text actions (weakened buttons, not solid chips) */
 .ppt-act {
   appearance: none; -webkit-appearance: none; cursor: pointer; white-space: nowrap;
-  display: inline-flex; align-items: center; gap: 5px;
-  height: 28px; padding: 0 11px; border-radius: var(--r-pill);
-  font: var(--w-med, 500) 12.5px/1 var(--font-body);
-  color: var(--ink-2); background: transparent; border: 1px solid transparent;
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 26px; padding: 0 9px; border-radius: var(--r-1);
+  font: var(--w-med, 500) 12px/1 var(--font-body);
+  color: var(--ink-3); background: transparent; border: 1px solid transparent;
   transition: background .15s, color .15s;
 }
-.ppt-act:hover { background: color-mix(in oklab, var(--accent) 13%, transparent); color: var(--accent); }
+.ppt-act:hover { background: color-mix(in oklab, var(--accent) 12%, transparent); color: var(--accent); }
 .ppt-act--primary { color: var(--accent); }
-.ppt-act__ico { font-size: 13px; opacity: .85; }
+.ppt-act__ico { font-size: 12px; opacity: .8; }
 .ppt-act[hidden] { display: none; }
+.ppt-badge {
+  display: inline-block; margin-left: 4px; min-width: 15px; height: 14px; padding: 0 4px;
+  border-radius: var(--r-pill); background: var(--accent); color: var(--accent-ink);
+  font: var(--w-semi, 600) 9px/14px var(--font-mono); text-align: center; vertical-align: top;
+}
+.ppt-badge[hidden] { display: none; }
 
-/* export sub-menu (click to open, anchored under its action) */
+/* export sub-menu (click to open) */
 .ppt-sub { position: relative; }
 .ppt-sub__list {
-  display: none; position: absolute; top: calc(100% + 6px); right: 0;
-  min-width: 196px; padding: 6px;
-  background: var(--surface-1); border: 1px solid var(--line-strong);
-  border-radius: var(--r-2); box-shadow: var(--shadow-2);
+  display: none; position: absolute; top: calc(100% + 6px); right: 0; min-width: 210px; padding: 6px;
+  background: var(--surface-1); border: 1px solid var(--line-strong); border-radius: var(--r-2); box-shadow: var(--shadow-2);
 }
 .ppt-sub.is-open .ppt-sub__list { display: block; }
 .ppt-sub__item {
-  display: flex; justify-content: space-between; gap: 14px; align-items: baseline;
-  width: 100%; text-align: left; cursor: pointer;
-  padding: 8px 10px; border: 0; border-radius: var(--r-1);
-  background: transparent; color: var(--ink-1); font: var(--w-med, 500) 12.5px/1.25 var(--font-body);
+  display: flex; justify-content: space-between; gap: 14px; align-items: baseline; width: 100%; text-align: left; cursor: pointer;
+  padding: 8px 10px; border: 0; border-radius: var(--r-1); background: transparent; color: var(--ink-1); font: var(--w-med, 500) 12.5px/1.25 var(--font-body);
 }
 .ppt-sub__item:hover { background: var(--surface-2); color: var(--accent); }
 .ppt-sub__item small { color: var(--ink-3); font: 400 10.5px/1 var(--font-mono); white-space: nowrap; }
 .ppt-sub__sep { height: 1px; margin: 5px 6px; background: var(--line); }
 
 /* ---- in-place editable affordance --------------------------------------- */
-.deck.is-editing [data-ppt-edit] {
-  outline: 1px dashed color-mix(in oklab, var(--accent) 50%, transparent);
-  outline-offset: 3px; border-radius: 3px; cursor: text;
-}
+.deck.is-editing [data-ppt-edit] { outline: 1px dashed color-mix(in oklab, var(--accent) 50%, transparent); outline-offset: 3px; border-radius: 3px; cursor: text; }
 .deck.is-editing [data-ppt-edit]:hover { outline-style: solid; background: color-mix(in oklab, var(--accent) 7%, transparent); }
 .deck.is-editing [data-ppt-edit]:focus { outline: 2px solid var(--accent); background: color-mix(in oklab, var(--accent) 9%, transparent); }
+
+/* ---- editable speaker-notes overlay (S) --------------------------------- */
+.ppt-notes-overlay.ppt-notes-edit { cursor: text; }
+.ppt-notes-overlay.ppt-notes-edit:focus { outline: 2px solid var(--accent); outline-offset: 3px; }
+.ppt-notes-overlay.ppt-notes-edit::before {
+  content: "讲者备注 · 可直接编辑（不计入版本）"; display: block;
+  font: 500 10px/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 9px;
+}
 
 /* ---- version-history drawer + diff -------------------------------------- */
 .ppt-history {
   position: fixed; inset: 0 0 0 auto; width: min(420px, 90vw); z-index: 1100;
-  background: var(--surface-1); border-left: 1px solid var(--line-strong);
-  box-shadow: var(--shadow-3); padding: 20px 18px; overflow: auto;
-  transform: translateX(100%); transition: transform var(--dur) var(--ease);
+  background: var(--surface-1); border-left: 1px solid var(--line-strong); box-shadow: var(--shadow-3);
+  padding: 20px 18px; overflow: auto; transform: translateX(100%); transition: transform var(--dur) var(--ease);
 }
 .ppt-history.is-open { transform: none; }
 .ppt-history__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -97,7 +77,6 @@
 .ppt-ver__when { font: var(--w-med, 500) 13px/1.3 var(--font-body); color: var(--ink-1); display: flex; justify-content: space-between; gap: 8px; }
 .ppt-ver__tag { font: 400 10.5px/1 var(--font-mono); color: var(--accent); }
 .ppt-ver__diff { margin-top: 8px; font: 400 11.5px/1.55 var(--font-body); color: var(--ink-2); max-height: 150px; overflow: auto; }
-.ppt-ver__diff .pg { color: var(--ink-3); font-family: var(--font-mono); margin-right: 4px; }
 .ppt-ver__diff .del { color: oklch(52% 0.16 25); text-decoration: line-through; opacity: .85; }
 .ppt-ver__diff .add { color: oklch(52% 0.14 150); }
 .ppt-ver__diff .nochg { color: var(--ink-3); font-style: italic; }
@@ -108,53 +87,33 @@
 
 /* ---- toast --------------------------------------------------------------- */
 .ppt-toast {
-  position: fixed; bottom: 22px; left: 50%; z-index: 1200;
-  padding: 10px 16px; border-radius: var(--r-pill);
+  position: fixed; bottom: 22px; left: 50%; z-index: 1200; padding: 10px 16px; border-radius: var(--r-pill);
   background: var(--ink-1); color: var(--bg); font: var(--w-med, 500) 13px/1 var(--font-body);
-  opacity: 0; pointer-events: none;
-  transform: translateX(-50%) translateY(16px);
+  opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(16px);
   transition: opacity .25s var(--ease), transform .25s var(--ease);
 }
 .ppt-toast.is-show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ---- image export ---------------------------------------------------------
-   We snapshot the whole .deck__stage per slide, so chrome (角标/小标题/页脚/
-   slide__num) — all inside the stage — IS included. Only disable animations so
-   the activated slide is settled. The dock/help/toast sit OUTSIDE the stage so
-   they're never in the snapshot; .ppt-export-cover hides the on-screen flip. */
+/* ---- export capture helpers --------------------------------------------- */
+/* disable entry animation so the activated slide is settled before snapshot */
 .deck.ppt-exporting .slide [data-anim] { animation: none !important; opacity: 1 !important; transform: none !important; }
-.ppt-export-cover {
-  position: fixed; inset: 0; z-index: 1300; display: grid; place-items: center;
-  color: var(--ink-3); font: var(--w-med, 500) 13px/1 var(--font-body);
-}
-
-/* ---- editable speaker notes (shown only in edit mode, on the active slide) - */
-.deck.is-editing .slide.is-active .notes {
-  display: block; position: absolute; left: 0; right: 0; bottom: 0; z-index: 6;
-  max-height: 34%; overflow: auto; margin: 0; padding: 28px 18px 14px; outline: none;
-  background: color-mix(in oklab, var(--surface-1) 93%, transparent);
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-  border-top: 1px solid var(--accent);
-  font: 400 13.5px/1.55 var(--font-body); color: var(--ink-2);
-}
-.deck.is-editing .slide.is-active .notes::before {
-  content: "讲者备注（可编辑 · 放映时按 S 查看）"; position: absolute; left: 18px; top: 8px;
-  font: 500 10px/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--accent);
-}
-
-/* ---- history count badge on the 历史 action ------------------------------- */
-.ppt-badge {
-  display: inline-block; margin-left: 5px; min-width: 16px; height: 15px; padding: 0 4px;
-  border-radius: var(--r-pill); background: var(--accent); color: var(--accent-ink);
-  font: var(--w-semi, 600) 9.5px/15px var(--font-mono); text-align: center; vertical-align: top;
-}
-.ppt-badge[hidden] { display: none; }
+.ppt-export-cover { position: fixed; inset: 0; z-index: 1300; display: grid; place-items: center; color: var(--ink-3); font: var(--w-med, 500) 13px/1 var(--font-body); }
+/* background-only pass: keep stage/slide bg + grain, hide all content + chrome */
+.deck.ppt-cap-bg .slide > *,
+.deck.ppt-cap-bg .chrome-top,
+.deck.ppt-cap-bg .chrome-foot,
+.deck.ppt-cap-bg .slide__num { visibility: hidden !important; }
+/* decoration pass: transparent page bg + no grain, so only components remain */
+.deck.ppt-cap-deco .deck__stage { background: transparent !important; }
+.deck.ppt-cap-deco .slide { background: transparent !important; }
+.deck.ppt-cap-deco .deck__stage::after { display: none !important; }
+/* hide just the boxed text (so it stays editable, never baked into an image) */
+[data-ppt-hide-text], [data-ppt-hide-text] * { color: transparent !important; -webkit-text-fill-color: transparent !important; text-shadow: none !important; }
+[data-ppt-hide-text]::before, [data-ppt-hide-text]::after, [data-ppt-hide-text] *::before, [data-ppt-hide-text] *::after { color: transparent !important; -webkit-text-fill-color: transparent !important; }
 
 /* ---- presentation mode (fullscreen): hide ALL authoring chrome + help ----- */
 :fullscreen .ppt-dock, :fullscreen .ppt-history, :fullscreen .ppt-toast, :fullscreen .ppt-help { display: none !important; }
 :-webkit-full-screen .ppt-dock, :-webkit-full-screen .ppt-history, :-webkit-full-screen .ppt-toast, :-webkit-full-screen .ppt-help { display: none !important; }
 
-@media (prefers-reduced-motion: reduce) {
-  .ppt-history, .ppt-toast, .ppt-dock__panel { transition: none; }
-}
+@media (prefers-reduced-motion: reduce) { .ppt-history, .ppt-toast { transition: none; } }
 @media print { .ppt-dock, .ppt-history, .ppt-toast { display: none !important; } }

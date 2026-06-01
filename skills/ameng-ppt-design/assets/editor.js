@@ -1,11 +1,11 @@
 /* ============================================================================
    ameng-ppt-design · editor.js
-   Floating dock (top-right, reveals on top-edge hover, theme-aware, inside .deck)
-   with in-place editing + auto-versioned, PER-PAGE history.
-     • 编辑 → 就地改文字（含讲者备注）→ 完成（退出 + 自动存当前页一个版本）
-     • 历史 → 只看「当前页」的版本，带与上一版的文字 diff，可一键恢复；
-              「历史」按钮带角标显示当前页有几个版本（无修改不显示）
-     • 全屏 → 放映（点按手势）；进入全屏自动退出编辑、并隐藏 dock/帮助
+   Always-visible, low-key text toolbar (top-right, inside .deck → theme-aware):
+     • 编辑 → 就地改文字 → 完成（退出 + 对正文改过的页各存一版；去重，不重复存）
+     • 历史 → 只看当前页：默认版=版本1 + 与上一版的文字 diff，可恢复（保留你的备注）；
+              「历史」仅在本页有 ≥2 个版本时显示数字角标
+     • 全屏 → 放映（点按手势）；进入全屏自动退出编辑 + 隐藏全部操作 UI
+   讲者备注：按 S 打开浮层即可直接编辑（默认可编辑、写回、随 :doc 保存、不计入版本）。
    localStorage, offline, screen-only (hidden on ?export/?print).
    ============================================================================ */
 (function () {
@@ -54,32 +54,24 @@
   function currentIdx() { for (var i = 0; i < slides.length; i++) if (slides[i].classList.contains("is-active")) return i; return 0; }
   function refreshActive() { if (window.PptDeck && typeof window.PptDeck.show === "function") window.PptDeck.show(currentIdx()); }
 
-  // baseline (pristine) captured once, so the first edit only versions changed pages
   (function init() {
     if (!lsGet(K_BASE, null)) lsSet(K_BASE, captureNoNotes());        // default version 1 (content only)
     var doc = lsGet(K_DOC, null);
     if (doc && doc.length === slides.length) slides.forEach(function (s, i) { if (typeof doc[i] === "string") s.innerHTML = doc[i]; });
   })();
 
-  // --- edit mode (text + speaker notes) -------------------------------------
+  // --- edit mode (slide text only; notes are edited via the S overlay) -------
   var editing = false;
   function markEditable(on) {
     editableEls().forEach(function (el) {
       if (on) { el.setAttribute("contenteditable", "true"); el.setAttribute("data-ppt-edit", ""); el.spellcheck = false; }
       else { el.removeAttribute("contenteditable"); el.removeAttribute("data-ppt-edit"); el.removeAttribute("spellcheck"); }
     });
-    slides.forEach(function (s) {                                   // speaker notes editable too (shown in edit mode via CSS)
-      var n = s.querySelector(".notes");
-      if (!n) return;
-      if (on) { n.setAttribute("contenteditable", "true"); n.setAttribute("data-ppt-edit", ""); n.spellcheck = false; }
-      else { n.removeAttribute("contenteditable"); n.removeAttribute("data-ppt-edit"); n.removeAttribute("spellcheck"); }
-    });
   }
   function setEditing(on) {
     if (on === editing) return;
     editing = on;
     deck.classList.toggle("is-editing", on);
-    dock.classList.toggle("is-open", on);
     bEdit.hidden = on; bDone.hidden = !on;
     markEditable(on);
     if (!on) {
@@ -97,7 +89,7 @@
   }
   document.addEventListener("fullscreenchange", function () { if (document.fullscreenElement && editing) setEditing(false); });
 
-  // --- per-page version store -----------------------------------------------
+  // --- per-page versions (deduped: never store a state we already have) ------
   function autoVersion() {
     lsSet(K_DOC, capture());                          // persist full (incl. notes) so notes survive reload
     var doc = captureNoNotes();                        // notes excluded → editing notes never makes a version
@@ -106,8 +98,11 @@
     var now = new Date().toISOString(), changed = 0;
     for (var i = 0; i < doc.length; i++) {
       var list = vmap[i] || [];
-      var prev = list.length ? list[0].html : (base[i] != null ? base[i] : null);
-      if (doc[i] !== prev) { list.unshift({ t: now, html: doc[i] }); if (list.length > MAX_VERS) list = list.slice(0, MAX_VERS); vmap[i] = list; changed++; }
+      var known = list.map(function (v) { return v.html; }); if (base[i] != null) known.push(base[i]);
+      if (known.indexOf(doc[i]) === -1) {              // only store genuinely new content (restore/undo won't dup)
+        list.unshift({ t: now, html: doc[i] }); if (list.length > MAX_VERS) list = list.slice(0, MAX_VERS);
+        vmap[i] = list; changed++;
+      }
     }
     if (changed) lsSet(K_VERS, vmap);
     updateBadge();
@@ -120,10 +115,10 @@
     refreshActive(); lsSet(K_DOC, capture()); updateBadge();
   }
 
-  // --- dock (inside .deck → theme scope) ------------------------------------
+  // --- toolbar: ALWAYS visible, low-key text buttons (no handle/hover) -------
   var dock = document.createElement("div");
   dock.className = "ppt-dock"; dock.id = "ppt-dock";
-  dock.innerHTML = '<div class="ppt-dock__handle" id="ppt-dock-handle" title="编辑 / 导出 / 历史">⋯</div><div class="ppt-dock__panel" id="ppt-dock-panel"></div>';
+  dock.innerHTML = '<div class="ppt-dock__panel" id="ppt-dock-panel"></div>';
   deck.appendChild(dock);
   var panel = dock.querySelector("#ppt-dock-panel");
   function act(html, cls) { var b = document.createElement("button"); b.type = "button"; b.className = "ppt-act" + (cls ? " " + cls : ""); b.innerHTML = html; return b; }
@@ -137,40 +132,21 @@
   bDone.addEventListener("click", function () { setEditing(false); });
   bFull.addEventListener("click", fullscreen);
   bHist.addEventListener("click", function () { renderHistory(); drawer.classList.add("is-open"); });
-  dock.querySelector("#ppt-dock-handle").addEventListener("click", function () { dock.classList.toggle("is-open"); });
-
-  // reveal on top-edge hover (no blocking element — uses mousemove threshold)
-  var closeT;
-  function openDock() { clearTimeout(closeT); dock.classList.add("is-open"); }
-  function scheduleClose() {
-    clearTimeout(closeT);
-    closeT = setTimeout(function () {
-      if (editing || dock.matches(":hover")) return;
-      if (document.querySelector("#ppt-export-sub.is-open")) return;
-      dock.classList.remove("is-open");
-    }, 480);
-  }
-  document.addEventListener("mousemove", function (e) {
-    if (e.clientY <= 46) openDock();
-    else if (e.clientY > 150 && !dock.contains(e.target)) scheduleClose();
-  });
-  dock.addEventListener("mouseenter", openDock);
-  dock.addEventListener("mouseleave", scheduleClose);
 
   function updateBadge() {
     var n = (lsGet(K_VERS, {})[currentIdx()] || []).length + 1;   // +1 = the default/initial version
     var b = bHist.querySelector(".ppt-badge");
     if (!b) return;
-    if (n >= 2) { b.textContent = n; b.hidden = false; } else { b.hidden = true; }   // show only when there's a real edit
+    if (n >= 2) { b.textContent = n; b.hidden = false; } else { b.hidden = true; }
   }
 
-  // --- history drawer (current page only) + diff ----------------------------
+  // --- history drawer (current page only) + diff + default version ----------
   var drawer = document.createElement("div");
   drawer.className = "ppt-history";
   drawer.innerHTML =
     '<div class="ppt-history__head"><span class="ppt-history__title" id="ppt-hist-title">版本历史</span>' +
     '<button type="button" class="ppt-act" id="ppt-hist-close" style="border:1px solid var(--line-strong)">关闭</button></div>' +
-    '<p class="ppt-history__hint">只显示「当前页」的版本。每次点「完成」若本页有改动就自动存一版（本浏览器，离线）。下方是与上一版的文字差异。</p>' +
+    '<p class="ppt-history__hint">只显示「当前页」的版本，最早一条是默认版本（版本 1）。每次点「完成」若本页正文有改动就自动存一版（本浏览器，离线）。</p>' +
     '<div class="ppt-history__list" id="ppt-hist-list"></div>';
   deck.appendChild(drawer);
   drawer.querySelector("#ppt-hist-close").addEventListener("click", function () { drawer.classList.remove("is-open"); });
@@ -181,9 +157,9 @@
   var tmp = document.createElement("div");
   function textOf(html) { tmp.innerHTML = html || ""; return tmp.textContent.replace(/\s+/g, " ").trim(); }
   function pageDiff(newHtml, oldHtml) {
-    if (oldHtml == null) return '<span class="nochg">初始版本之后的首次改动</span>';
+    if (oldHtml == null) return '<span class="nochg">首次改动</span>';
     var a = textOf(newHtml), b = textOf(oldHtml);
-    if (a === b) return '<span class="nochg">无文字变化（结构/备注等）</span>';
+    if (a === b) return '<span class="nochg">无文字变化</span>';
     return '<span class="del">' + esc(trunc(b, 90)) + '</span><br>→ <span class="add">' + esc(trunc(a, 90)) + '</span>';
   }
   function fmt(iso) { try { return new Date(iso).toLocaleString(); } catch (e) { return iso; } }
@@ -191,14 +167,11 @@
     var idx = currentIdx(), vmap = lsGet(K_VERS, {}), base = lsGet(K_BASE, null) || [], edits = vmap[idx] || [];
     histTitle.textContent = "第 " + (idx + 1) + " 页 · 版本历史";
     histList.innerHTML = "";
-    // newest edit → … → 默认版本（版本 1），永远在列表里
     var entries = edits.map(function (v) { return { t: v.t, html: v.html, base: false }; });
-    entries.push({ t: null, html: (base[idx] != null ? base[idx] : ""), base: true });
+    entries.push({ t: null, html: (base[idx] != null ? base[idx] : ""), base: true });   // 默认版本 = 版本 1
     var total = entries.length, live = captureNoNotes();
     entries.forEach(function (en, j) {
-      var num = total - j;                                          // 默认版本（最后一条）= 版本 1
-      var older = entries[j + 1] ? entries[j + 1].html : null;
-      var isCur = j === 0 && en.html === live[idx];
+      var num = total - j, older = entries[j + 1] ? entries[j + 1].html : null, isCur = j === 0 && en.html === live[idx];
       var card = document.createElement("div");
       card.className = "ppt-ver" + (isCur ? " is-current" : "");
       card.innerHTML = '<div class="ppt-ver__when">' + (en.base ? "默认版本（初始）" : fmt(en.t)) +
@@ -215,16 +188,32 @@
     });
   }
 
-  // keep badge + open history in sync with the active slide (any nav method)
+  // keep badge / open history synced with the active slide (any nav method)
   var moT; var mo = new MutationObserver(function () { clearTimeout(moT); moT = setTimeout(function () { updateBadge(); if (drawer.classList.contains("is-open")) renderHistory(); }, 90); });
   mo.observe(stage, { subtree: true, attributes: true, attributeFilter: ["class"] });
   updateBadge();
 
+  // --- speaker notes: the S overlay is directly editable (writes back) -------
+  (function wireNotes() {
+    var overlay = document.querySelector(".ppt-notes-overlay");
+    if (!overlay) return;
+    overlay.setAttribute("contenteditable", "true"); overlay.spellcheck = false; overlay.classList.add("ppt-notes-edit");
+    overlay.addEventListener("focus", function () {
+      if (!slides[currentIdx()].querySelector(".notes") && /无讲者备注/.test(overlay.textContent)) overlay.innerHTML = "";
+    });
+    overlay.addEventListener("input", function () {
+      var s = slides[currentIdx()], n = s.querySelector(".notes");
+      if (!n) { n = document.createElement("div"); n.className = "notes"; s.appendChild(n); }
+      n.innerHTML = overlay.innerHTML;
+      lsSet(K_DOC, capture());                          // persist (notes are saved, but NOT versioned)
+    });
+  })();
+
   // --- block runtime nav/shortcuts while typing -----------------------------
   document.addEventListener("keydown", function (e) {
-    if (!editing) return;
     var ae = document.activeElement, inText = ae && ae.getAttribute && ae.getAttribute("contenteditable") === "true";
-    if (e.key === "Escape") { if (inText) ae.blur(); setEditing(false); e.stopPropagation(); return; }
+    if (!editing && !(inText && ae.classList && ae.classList.contains("ppt-notes-edit"))) return;
+    if (e.key === "Escape") { if (inText) ae.blur(); if (editing) setEditing(false); e.stopPropagation(); return; }
     if (inText) e.stopPropagation();
   }, true);
   stage.addEventListener("click", function (e) { if (editing) e.stopPropagation(); }, true);
