@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ameng-ppt · 9:16 vertical · 小红书 / 短视频</title>
+<link rel="stylesheet" href="../assets/fonts.css">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/components.css">
+<link rel="stylesheet" id="theme-link" href="../assets/themes/porcelain.css">
+<link rel="stylesheet" href="../assets/toolbar.css">
+</head>
+<body>
+<!-- .deck--9x16 switches the stage to 720×1280 (mobile / 小红书 / 短视频封面)
+     竖屏铁律：每屏只讲「一件事」，字号往大里推，留白往狠里给。 -->
+<div class="deck deck--9x16">
+  <div class="deck__stage">
+
+    <!-- 1 · COVER：zh-mega 大标题 + 行内高亮带（首图就是它） -------------------- -->
+    <section class="slide center" data-accent="magenta"
+             style="text-align:center;align-items:center">
+      <span class="eyebrow" data-anim="fade">敏感肌 · 秋冬护肤</span>
+      <h1 class="zh-mega" data-anim="rise"
+          style="font-size:clamp(3.4rem,12vw,5.6rem);margin-top:var(--s-5)">
+        3 个被<br>低估的<br><span class="hl">修护动作</span></h1>
+      <p class="lead" data-anim="fade" style="margin-top:var(--s-6);max-width:16ch">
+        亲测一个月，泛红肉眼可见地降下来 ✦</p>
+      <div class="notes">竖屏封面：标题占上 1/2，大字号 + 留白，高亮带落在「修护动作」。小红书首图就是它，停 2 秒再翻。</div>
+    </section>
+
+    <!-- 2 · LIST ITEM：每屏一个点（大编号 + 高亮带） ----------------------------- -->
+    <section class="slide" data-accent="cinnabar" style="justify-content:center">
+      <div class="stack" style="--gap:var(--s-5)">
+        <div class="stat__num" data-anim="rise"
+             style="font-size:clamp(5rem,18vw,9rem);color:var(--accent);line-height:.9">01</div>
+        <h2 class="h1" data-anim="rise">先做<span class="hl">减法</span>，<br>再谈护肤</h2>
+        <p class="body" data-anim="fade" style="font-size:1.5rem;max-width:18ch">
+          把功效成分砍到 2 个以内，屏障先修好，其他都是后话。叠太多反而越用越敏感。</p>
+      </div>
+      <div class="notes">竖屏每屏只讲一个点：大编号 + 大标题 + 一段话。高亮带圈住「减法」这个反直觉点。</div>
+    </section>
+
+    <!-- 3 · 竖屏 Data Hero 统计卡（诚实标注「个人体验」） ------------------------ -->
+    <section class="slide center" data-accent="mint"
+             style="align-items:center;text-align:center">
+      <div class="card" data-anim="rise"
+           style="width:100%;align-items:center;padding:var(--s-8) var(--s-6)">
+        <span class="eyebrow">坚持 4 周后</span>
+        <div class="data-hero__num" style="font-size:clamp(6rem,30vw,11rem)">28<span class="unit">天</span></div>
+        <div class="data-hero__label" style="text-align:center;max-width:14ch">
+          泛红从「一片」收到「一点」，上妆也不卡粉了</div>
+        <p class="data-hero__src" style="margin-top:var(--s-4)">* 个人体验，非临床数据，肤质因人而异</p>
+      </div>
+      <div class="notes">竖屏 Data Hero：一个大数字当主角。诚实标注「个人体验，非临床数据」——不夸大、不编临床数字。</div>
+    </section>
+
+    <!-- 4 · 截图框 + 文字（产品/笔记截图统一进框） ------------------------------- -->
+    <section class="slide" data-accent="magenta" style="justify-content:center">
+      <div class="stack" style="--gap:var(--s-5)">
+        <span class="eyebrow" data-anim="fade">我的实际用法</span>
+        <h2 class="h1" data-anim="rise">早 C 晚 A？<br>敏感肌先<span class="hl">缓冲</span></h2>
+        <div class="frame frame--browser frame--shadow" data-anim="rise" style="width:100%">
+          <!-- 真实截图就 <img src="images/routine.png" alt="护肤顺序表">；没图先用诚实占位 -->
+          <div class="frame__placeholder" style="aspect-ratio:4/5">images/routine.png · 我的早晚顺序表</div>
+        </div>
+      </div>
+      <div class="notes">把笔记/产品截图放进统一浏览器框 + 阴影，比裸贴专业一个量级。竖屏占位用 4:5 更顺。没图用 .frame__placeholder，不造假 UI。</div>
+    </section>
+
+    <!-- 5 · 收尾：收藏 + 评论 CTA（贴合小红书互动逻辑） -------------------------- -->
+    <section class="slide center" data-accent="cinnabar"
+             style="align-items:center;text-align:center">
+      <span class="eyebrow" data-anim="fade">最后一步</span>
+      <h2 class="zh-mega" data-anim="rise"
+          style="font-size:clamp(3rem,11vw,5rem);margin-top:var(--s-4)">
+        先<span class="hl">收藏</span><br>再慢慢做 ✦</h2>
+      <p class="lead muted" data-anim="fade" style="margin-top:var(--s-6);max-width:16ch">
+        评论区告诉我你的肤质，<br>帮你排一版专属顺序</p>
+      <div class="notes">竖屏收尾用「收藏 / 评论」CTA，贴合小红书互动逻辑——不写「Get Started」。高亮带落在「收藏」上引导动作。</div>
+    </section>
+
+  </div>
+</div>
+<script src="../assets/runtime.js"></script>
+<script src="../assets/editor.js"></script>
+<script src="../assets/export.js"></script>
+</body>
+</html>

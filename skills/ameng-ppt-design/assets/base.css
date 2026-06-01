@@ -1,0 +1,390 @@
+/* ============================================================================
+   ameng-ppt-design · base.css
+   Token-based design system + slide primitives. DO NOT edit per deck.
+   A theme file (assets/themes/*.css) overrides the tokens in :root only.
+   All colors are OKLCH. No hardcoded hex in layouts — always var(--token).
+   ============================================================================ */
+
+/* ---- 1. Default token contract (a theme overrides these) ----------------- */
+:root {
+  /* Surfaces */
+  --bg:          oklch(98.5% 0.004 95);    /* deck/page background */
+  --surface-1:   oklch(100% 0 0);          /* raised card */
+  --surface-2:   oklch(96% 0.005 95);      /* sunken / subtle fill */
+  --line:        oklch(88% 0.006 95);      /* hairline borders */
+  --line-strong: oklch(78% 0.01 95);
+
+  /* Ink (text) — 3 levels of hierarchy */
+  --ink-1: oklch(22% 0.01 260);            /* primary text / headlines */
+  --ink-2: oklch(44% 0.012 260);           /* secondary text */
+  --ink-3: oklch(60% 0.012 260);           /* muted / captions */
+
+  /* Accent — used SEMANTICALLY (emphasis, data highlight), not decoration.
+     Default is EMBER (warm), not blue: 禁蓝 is a house rule, and a blue default
+     was a latent trap (any deck that forgets to link a theme would render blue). */
+  --accent:     oklch(64% 0.17 45);        /* primary accent — ember (was blue 256) */
+  --accent-ink: oklch(98% 0.01 60);        /* text sitting on accent */
+  --accent-2:   oklch(66% 0.13 184);       /* secondary accent (charts/dual, teal) */
+  --accent-soft: oklch(92% 0.05 50);       /* warm tint background for accent */
+
+  /* Typography families. Theme may swap. Self-hosted/system — NO Inter/Roboto. */
+  --font-display: var(--ppt-display, "Source Han Serif SC", "Songti SC", "Noto Serif CJK SC", Georgia, serif);
+  --font-body:    var(--ppt-body, "PingFang SC", "HarmonyOS Sans SC", "Source Han Sans SC", "Noto Sans CJK SC", system-ui, sans-serif);
+  --font-mono:    var(--ppt-mono, "JetBrains Mono", "Sarasa Mono SC", "DejaVu Sans Mono", ui-monospace, monospace);
+
+  /* Type scale — fluid, anchored to a 1280-wide stage. Big scale CONTRAST. */
+  --fs-eyebrow: clamp(0.72rem, 0.6rem + 0.4vw, 0.92rem);
+  --fs-body:    clamp(1rem, 0.86rem + 0.55vw, 1.32rem);
+  --fs-lead:    clamp(1.3rem, 1rem + 1vw, 1.9rem);
+  --fs-h3:      clamp(1.5rem, 1.1rem + 1.4vw, 2.3rem);
+  --fs-h2:      clamp(2rem, 1.3rem + 2.4vw, 3.4rem);
+  --fs-h1:      clamp(2.8rem, 1.6rem + 4vw, 5rem);
+  --fs-display: clamp(3.6rem, 1.8rem + 6vw, 7rem);
+  --fs-stat:    clamp(3rem, 1.6rem + 5vw, 6rem);
+
+  /* Weights & tracking */
+  --w-light: 300; --w-reg: 400; --w-med: 500; --w-semi: 600; --w-bold: 700;
+  --track-tight: -0.02em;
+  --track-wide:  0.12em;          /* ALL-CAPS labels only; 0.05–0.12em is the sane band */
+  --leading-tight: 1.08;
+  --leading-body:  1.62;
+
+  /* Spacing scale (8px rhythm, non-uniform on purpose) */
+  --s-1: 0.25rem; --s-2: 0.5rem; --s-3: 0.75rem; --s-4: 1rem;
+  --s-5: 1.5rem; --s-6: 2rem; --s-7: 3rem; --s-8: 4.5rem; --s-9: 6.5rem;
+
+  /* Radius & shadow — restrained. One radius family per deck. */
+  --r-1: 6px; --r-2: 12px; --r-3: 20px; --r-pill: 999px;
+  --shadow-1: 0 1px 2px oklch(0% 0 0 / 0.05);
+  --shadow-2: 0 6px 24px -8px oklch(0% 0 0 / 0.14);
+  --shadow-3: 0 24px 64px -20px oklch(0% 0 0 / 0.22);
+
+  /* Deck geometry — a slide is a FIXED stage, scaled to fit the viewport. */
+  --slide-w: 1280px;
+  --slide-h: 720px;               /* 16:9. The 9:16 modifier overrides this. */
+  --pad: clamp(2.5rem, 1rem + 4vw, 5.5rem);
+  --content-max: 1100px;          /* reading width cap so text never over-stretches */
+
+  /* Motion */
+  --dur: 480ms;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Swappable accent palette (set data-accent on .slide for per-section zones).
+     House rule: ONE accent per deck/section, used 60-30-10. 禁蓝 by default —
+     "ink-blue" exists only for the report theme, never a flagship default. */
+  --pal-ember:   oklch(64% 0.17 45);
+  --pal-sand:    oklch(70% 0.12 75);
+  --pal-cinnabar:oklch(58% 0.20 30);
+  --pal-olive:   oklch(58% 0.10 130);
+  --pal-mint:    oklch(72% 0.14 160);
+  --pal-magenta: oklch(62% 0.20 348);
+  --pal-cyan:    oklch(66% 0.13 215);
+}
+
+/* per-section accent re-binding (工业纸感 pattern): one zone = one accent */
+.slide[data-accent="ember"],   .deck[data-accent="ember"]   { --accent: var(--pal-ember); }
+.slide[data-accent="sand"],    .deck[data-accent="sand"]    { --accent: var(--pal-sand); }
+.slide[data-accent="cinnabar"],.deck[data-accent="cinnabar"]{ --accent: var(--pal-cinnabar); }
+.slide[data-accent="olive"],   .deck[data-accent="olive"]   { --accent: var(--pal-olive); }
+.slide[data-accent="mint"],    .deck[data-accent="mint"]    { --accent: var(--pal-mint); }
+.slide[data-accent="magenta"], .deck[data-accent="magenta"] { --accent: var(--pal-magenta); }
+.slide[data-accent="cyan"],    .deck[data-accent="cyan"]    { --accent: var(--pal-cyan); }
+
+/* ---- 2. Reset & page ----------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink-1);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;                /* the deck owns the screen */
+}
+
+/* ---- 3. Deck stage & fit-to-viewport scaling ----------------------------- */
+/* .deck is the fixed 1280×720 (or 720×1280) stage. runtime.js sets --fit
+   to scale it to the window. This keeps layout math simple & pixel-stable. */
+.deck {
+  position: fixed; inset: 0;
+  display: grid; place-items: center;
+  /* color set here (not only on body) so inherited text — headings without an
+     explicit color — re-resolves --ink-1 INSIDE the theme/dark scope. body is an
+     ancestor of .deck, so body's computed color would keep the light value
+     under [data-theme="dark"]. */
+  color: var(--ink-1);
+}
+.deck__stage {
+  position: relative;
+  width: var(--slide-w);
+  height: var(--slide-h);
+  transform: scale(var(--fit, 1));
+  transform-origin: center center;
+  background: var(--bg);
+  overflow: hidden;
+}
+.deck--9x16 { --slide-w: 720px; --slide-h: 1280px; }
+
+/* ---- 4. Slide ------------------------------------------------------------ */
+.slide {
+  position: absolute; inset: 0;
+  padding: var(--pad);
+  display: flex; flex-direction: column;
+  opacity: 0; visibility: hidden;
+  pointer-events: none;
+}
+.slide.is-active { opacity: 1; visibility: visible; pointer-events: auto; }
+
+/* entry animation runs only when a slide becomes active */
+.slide.is-active [data-anim] { animation: var(--anim, ppt-fade-up) var(--dur) var(--ease) both; }
+
+/* ---- 5. Chrome: progress bar, page number, footer ------------------------ */
+.deck__progress {
+  position: absolute; left: 0; top: 0; height: 3px; width: 100%;
+  background: transparent; z-index: 5;
+}
+.deck__progress > i {
+  display: block; height: 100%; width: var(--progress, 0%);
+  background: var(--accent); transition: width var(--dur) var(--ease);
+}
+.slide__num {
+  position: absolute; right: var(--pad); bottom: calc(var(--pad) * 0.55);
+  font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.08em;
+  color: var(--ink-3); z-index: 4;
+}
+.slide__foot {
+  position: absolute; left: var(--pad); bottom: calc(var(--pad) * 0.55);
+  font-size: 0.78rem; letter-spacing: 0.04em; color: var(--ink-3); z-index: 4;
+}
+
+/* ---- 6. Typographic primitives ------------------------------------------ */
+.eyebrow {
+  font-size: var(--fs-eyebrow); font-weight: var(--w-semi);
+  letter-spacing: var(--track-wide); text-transform: uppercase;
+  color: var(--accent);
+}
+.display {
+  font-family: var(--font-display); font-size: var(--fs-display);
+  font-weight: var(--w-bold); line-height: var(--leading-tight);
+  letter-spacing: var(--track-tight); color: var(--ink-1);
+  text-wrap: balance;
+}
+.h1 { font-family: var(--font-display); font-size: var(--fs-h1); font-weight: var(--w-bold);
+      line-height: var(--leading-tight); letter-spacing: var(--track-tight); text-wrap: balance; }
+.h2 { font-family: var(--font-display); font-size: var(--fs-h2); font-weight: var(--w-semi);
+      line-height: 1.15; letter-spacing: var(--track-tight); text-wrap: balance; }
+.h3 { font-size: var(--fs-h3); font-weight: var(--w-semi); line-height: 1.22; }
+/* Reading-width caps are in `ch` (width of "0"). CJK glyphs are ~2× that, so a
+   small ch cap wraps CJK far too early (40ch ≈ 20 汉字). Caps widened for CJK-first
+   decks; for Latin these stay within a comfortable measure. */
+.lead { font-size: var(--fs-lead); color: var(--ink-2); font-weight: var(--w-reg);
+        line-height: 1.4; max-width: 52ch; text-wrap: pretty; }
+.body { font-size: var(--fs-body); color: var(--ink-2); max-width: 72ch; text-wrap: pretty; }
+.muted { color: var(--ink-3); }
+.accent { color: var(--accent); }
+mark { background: var(--accent-soft); color: var(--ink-1); padding: 0 0.18em; border-radius: var(--r-1); }
+
+/* stat / big number */
+.stat { display: flex; flex-direction: column; gap: var(--s-2); }
+.stat__num { font-family: var(--font-display); font-size: var(--fs-stat); font-weight: var(--w-bold);
+             line-height: 1; letter-spacing: var(--track-tight); color: var(--ink-1);
+             font-variant-numeric: tabular-nums; }
+.stat__num .unit { font-size: 0.42em; color: var(--ink-3); margin-left: 0.15em; font-weight: var(--w-med); }
+.stat__label { font-size: var(--fs-eyebrow); letter-spacing: 0.06em; color: var(--ink-3); text-transform: uppercase; }
+
+/* quote */
+.quote { font-family: var(--font-display); font-size: var(--fs-h2); font-weight: var(--w-med);
+         line-height: 1.3; letter-spacing: var(--track-tight); color: var(--ink-1); text-wrap: balance; }
+.quote__by { margin-top: var(--s-5); font-size: var(--fs-body); color: var(--ink-3); }
+
+/* ---- 7. Layout helpers --------------------------------------------------- */
+.stack > * + * { margin-top: var(--gap, var(--s-4)); }
+.cluster { display: flex; flex-wrap: wrap; gap: var(--gap, var(--s-4)); align-items: center; }
+.spread { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--s-6); }
+.fill { flex: 1; min-height: 0; }
+.center { display: flex; flex-direction: column; justify-content: center; height: 100%; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap, var(--s-6)); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap, var(--s-5)); }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap, var(--s-4)); }
+/* bento: deliberate non-uniform composition */
+.bento { display: grid; gap: var(--s-4); grid-template-columns: repeat(6, 1fr); grid-auto-rows: 1fr; }
+.bento > .col-2 { grid-column: span 2; } .bento > .col-3 { grid-column: span 3; }
+.bento > .col-4 { grid-column: span 4; } .bento > .row-2 { grid-row: span 2; }
+
+/* card surface */
+.card {
+  background: var(--surface-1); border: 1px solid var(--line);
+  border-radius: var(--r-2); padding: var(--s-5);
+  display: flex; flex-direction: column; gap: var(--s-3);
+}
+.card--soft { background: var(--surface-2); border-color: transparent; }
+.card--accent { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+/* ALL text inside an accent card flips to ink-on-accent — otherwise .body/.lead/.muted
+   keep their dark color and become unreadable on the accent fill (contrast bug). */
+.card--accent :where(.stat__num, .stat__label, .h2, .h3, .lead, .body, .muted, p, h2, h3, li) {
+  color: var(--accent-ink);
+}
+.card--accent :where(.muted, .body, .data-hero__src, .stat__label) { opacity: 0.85; }
+.card--accent .tag { background: oklch(100% 0 0 / 0.18); border-color: transparent; color: var(--accent-ink); }
+
+/* pill / tag */
+.tag { display: inline-flex; align-items: center; gap: var(--s-2);
+       font-size: var(--fs-eyebrow); letter-spacing: 0.04em; color: var(--ink-2);
+       background: var(--surface-2); border-radius: var(--r-pill);
+       padding: 0.3em 0.85em; border: 1px solid var(--line); }
+
+/* divider */
+.rule { height: 1px; background: var(--line); border: 0; margin: var(--s-5) 0; }
+
+/* simple bar for honest, real-data charts (no fake numbers) */
+.bars { display: flex; flex-direction: column; gap: var(--s-3); }
+.bar { display: grid; grid-template-columns: 9rem 1fr auto; align-items: center; gap: var(--s-4); }
+.bar__track { height: 10px; background: var(--surface-2); border-radius: var(--r-pill); overflow: hidden; }
+.bar__fill { height: 100%; width: var(--v, 0%); background: var(--accent); border-radius: var(--r-pill); }
+.bar__val { font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+/* ---- 8. Speaker notes & overview (driven by runtime.js) ------------------ */
+.notes { display: none; }
+.ppt-notes-overlay {
+  position: fixed; inset: auto 0 0 0; max-height: 42vh; overflow: auto;
+  background: oklch(15% 0.01 260 / 0.97); color: oklch(96% 0 0);
+  font-family: var(--font-body); font-size: 1rem; line-height: 1.6;
+  padding: var(--s-6) var(--s-7); z-index: 50; display: none;
+  border-top: 2px solid var(--accent);
+}
+.ppt-notes-overlay.is-open { display: block; }
+.ppt-overview {
+  position: fixed; inset: 0; background: oklch(12% 0.01 260 / 0.96); z-index: 60;
+  display: none; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--s-4); padding: var(--s-6); overflow: auto; align-content: start;
+}
+.ppt-overview.is-open { display: grid; }
+.ppt-overview__thumb { aspect-ratio: 16/9; border-radius: var(--r-1); overflow: hidden;
+  border: 2px solid transparent; background: var(--bg); cursor: pointer; position: relative; }
+.ppt-overview__thumb.is-current { border-color: var(--accent); }
+.ppt-overview__thumb b { position: absolute; left: 6px; top: 4px; font-family: var(--font-mono);
+  font-size: 0.7rem; color: var(--ink-3); }
+
+/* keyboard-shortcut help affordance — bottom-center, subtle, screen-only.
+   Hover (or click, or press ? / H) reveals the panel. Hidden in print/export. */
+.ppt-help { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 45; }
+.ppt-help__btn {
+  font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em;
+  color: var(--ink-3); background: var(--surface-1); border: 1px solid var(--line);
+  border-radius: var(--r-pill); padding: 0.34em 0.9em; cursor: help;
+  box-shadow: var(--shadow-1); opacity: 0.5; transition: opacity 0.2s var(--ease);
+}
+.ppt-help:hover .ppt-help__btn, .ppt-help.is-open .ppt-help__btn { opacity: 1; }
+.ppt-help__panel {
+  position: absolute; left: 50%; bottom: calc(100% + 8px);
+  transform: translateX(-50%) translateY(6px);
+  width: 232px; background: var(--surface-1); color: var(--ink-1);
+  border: 1px solid var(--line); border-radius: var(--r-2); box-shadow: var(--shadow-3);
+  padding: var(--s-4) var(--s-5); opacity: 0; visibility: hidden;
+  transition: opacity 0.18s var(--ease), transform 0.18s var(--ease);
+}
+.ppt-help:hover .ppt-help__panel, .ppt-help.is-open .ppt-help__panel {
+  opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
+}
+.ppt-help__row { display: flex; align-items: center; gap: 0.6em; padding: 0.3em 0;
+  font-size: 0.78rem; color: var(--ink-2); }
+.ppt-help__row b { margin-left: auto; font-weight: var(--w-med); color: var(--ink-2); }
+.ppt-help__row .k { display: inline-flex; gap: 0.25em; }
+.ppt-help kbd { font-family: var(--font-mono); font-size: 0.68rem; line-height: 1.5;
+  background: var(--surface-2); border: 1px solid var(--line); border-bottom-width: 2px;
+  border-radius: 4px; padding: 0.06em 0.45em; color: var(--ink-1); }
+@media print { .ppt-help { display: none !important; } }
+
+/* ---- 9. Motion keyframes ------------------------------------------------- */
+@keyframes ppt-fade-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes ppt-fade    { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ppt-rise    { from { opacity: 0; transform: translateY(40px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes ppt-wipe    { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes ppt-blur-in { from { opacity: 0; filter: blur(12px); } to { opacity: 1; filter: none; } }
+
+[data-anim="fade"]   { --anim: ppt-fade; }
+[data-anim="rise"]   { --anim: ppt-rise; }
+[data-anim="wipe"]   { --anim: ppt-wipe; }
+[data-anim="blur"]   { --anim: ppt-blur-in; }
+/* stagger children: set --i on each child or use :nth-child below */
+.anim-stagger > * { animation: ppt-fade-up var(--dur) var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 80ms); }
+.anim-stagger > *:nth-child(1){--i:0} .anim-stagger > *:nth-child(2){--i:1}
+.anim-stagger > *:nth-child(3){--i:2} .anim-stagger > *:nth-child(4){--i:3}
+.anim-stagger > *:nth-child(5){--i:4} .anim-stagger > *:nth-child(6){--i:5}
+
+/* Respect reduced motion — accessibility (web rules). */
+@media (prefers-reduced-motion: reduce) {
+  .slide.is-active [data-anim], .anim-stagger > * { animation: none !important; }
+  .deck__progress > i { transition: none; }
+}
+
+/* ---- 9.5 Signature primitives (工业纸感 DNA) ----------------------------- */
+
+/* Film grain / atmosphere — opt-in via data-grain on .deck. Overlay blend. */
+.deck[data-grain] .deck__stage::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 3;
+  opacity: 0.4; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.05 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+/* on light themes flip the grain to dark dots */
+.deck[data-grain][data-theme="light"] .deck__stage::after,
+.deck[data-grain].is-light .deck__stage::after {
+  mix-blend-mode: multiply; opacity: 0.5;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* Inline highlight band — the signature: accent bar behind a key phrase.
+   <span class="hl">关键短语</span>. Sits behind text, slightly skewed off-grid. */
+.hl {
+  position: relative; white-space: nowrap; padding: 0 0.12em;
+  color: var(--ink-1); isolation: isolate;
+}
+.hl::before {
+  content: ""; position: absolute; z-index: -1; left: -0.04em; right: -0.04em;
+  bottom: 0.04em; height: 0.5em; background: var(--accent);
+  opacity: 0.9; transform: skewX(-3deg); border-radius: 1px;
+}
+/* full band = solid inline highlight (red-on-white etc). Real background so it
+   survives layered/dotted slide backgrounds; clones cleanly across line wraps. */
+.hl--full {
+  color: var(--accent-ink); background: var(--accent);
+  padding: 0.04em 0.2em; border-radius: 2px;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.hl--full::before { display: none; }
+
+/* reading-width cap helper */
+.measure { max-width: var(--content-max); }
+
+/* CJK display title tiers (Swiss "极致字号对比" — pair a big tier with small body) */
+.zh-mega { font-family: var(--font-display); font-weight: var(--w-bold);
+  font-size: clamp(3.2rem, 1.4rem + 6vw, 7.5rem); line-height: 1.02;
+  letter-spacing: var(--track-tight); text-wrap: balance; }
+
+/* ---- 10. Print / PDF export (one slide per page, no scaling) -------------
+   The Export ▸ PDF button (export.js) injects an exact @page size for the
+   current ratio before calling print(); these rules also make a manual
+   Cmd/Ctrl+P paginate every slide instead of printing only the active one. */
+@media print {
+  html, body { overflow: visible; background: #fff; margin: 0; padding: 0; }
+  .deck { position: static; display: block; }
+  .deck__stage {
+    position: static; transform: none; box-shadow: none;
+    width: var(--slide-w); height: auto; overflow: visible;
+  }
+  .slide {
+    position: relative; inset: auto;
+    width: var(--slide-w); height: var(--slide-h);
+    opacity: 1 !important; visibility: visible !important; pointer-events: auto;
+    overflow: hidden;
+    break-after: page; page-break-after: always;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  .slide [data-anim] { animation: none !important; opacity: 1 !important; transform: none !important; }
+  /* never print the authoring/runtime chrome */
+  .ppt-toolbar, .ppt-history, .ppt-toast, .ppt-help, .ppt-overview,
+  .ppt-notes-overlay, .deck__progress, .slide__num { display: none !important; }
+}

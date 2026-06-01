@@ -10,6 +10,7 @@ A collection of Agent Skills shared by **A梦 (ameng)**. Works across Claude Cod
 | Skill | 一句话 | 说明 |
 |------|--------|------|
 | [`ameng-skill-scout`](skills/ameng-skill-scout) | 调研某主题下现有的 AI Skill，出研究报告 | 搜索→下载→分析→报告；先问需求，支持仅研究 / +推荐 / +设计方案三档 |
+| [`ameng-ppt-design`](skills/ameng-ppt-design) | 有设计主见的 HTML 演示/PPT 生成器 | OKLCH 设计系统 + 6 主题 + 16:9/9:16/Swiss；右上角**就地编辑 + 版本历史 + 一键导出 PDF/PPTX/PNG/HTML** |
 
 _（更多 Skill 持续增加中……）_
 

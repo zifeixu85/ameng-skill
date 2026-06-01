@@ -15,7 +15,8 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/ameng-skill-scout"
+        "./skills/ameng-skill-scout",
+        "./skills/ameng-ppt-design"
       ]
     }
   ]

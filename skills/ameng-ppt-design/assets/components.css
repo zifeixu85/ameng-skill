@@ -1,0 +1,127 @@
+/* ============================================================================
+   ameng-ppt-design · components.css
+   Higher-level components built on base.css tokens (工业纸感 + 归藏 fusion).
+   Load AFTER base.css, BEFORE the theme link is fine too (uses tokens only).
+   Everything here is offline / cn-ok — no CDN, no network.
+   ============================================================================ */
+
+/* ---- Editorial chrome: top metadata bar + footer (工业纸感) ---------------
+   runtime.js fills .chrome-top__page and the page counter. Put a .chrome-top
+   and .chrome-foot ONCE inside .deck__stage (outside .slide) and they persist. */
+.chrome-top {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 6;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: calc(var(--pad) * 0.42) var(--pad);
+  font-size: 0.72rem; letter-spacing: 0.08em; color: var(--ink-3);
+  font-family: var(--font-mono); text-transform: uppercase;
+}
+.chrome-top__brand { color: var(--ink-2); }
+.chrome-top__brand b { color: var(--ink-1); font-weight: var(--w-semi); }
+.chrome-top__meta { display: flex; gap: var(--s-5); align-items: center; }
+.chrome-top__sec { color: var(--accent); }
+.chrome-foot {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 6;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: calc(var(--pad) * 0.42) var(--pad);
+  font-size: 0.72rem; letter-spacing: 0.06em; color: var(--ink-3);
+}
+.chrome-foot b { color: var(--ink-2); font-weight: var(--w-med); }
+.chrome-foot .mono { font-family: var(--font-mono); }
+/* when chrome is present, give slides breathing room from the bars */
+.deck--chrome .slide { padding-top: calc(var(--pad) + 1.1rem); padding-bottom: calc(var(--pad) + 1.1rem); }
+/* chrome already shows the page counter — suppress the auto-injected one */
+.deck--chrome .slide__num { display: none; }
+
+/* ---- Terminal / code block (the "shipped" feel) ------------------------- */
+.terminal {
+  font-family: var(--font-mono); font-size: 0.92rem; line-height: 1.7;
+  background: oklch(18% 0.015 260); color: oklch(82% 0.01 260);
+  border: 1px solid oklch(30% 0.02 260); border-radius: var(--r-2);
+  padding: var(--s-5) var(--s-5) var(--s-5) var(--s-6);
+  box-shadow: var(--shadow-2); position: relative; overflow: hidden;
+}
+.terminal::before {                       /* traffic-light dots */
+  content: "● ● ●"; position: absolute; top: 0.7rem; left: 0.9rem;
+  font-size: 0.6rem; letter-spacing: 0.25em; color: oklch(45% 0.02 260);
+}
+.terminal > * { margin-top: 1.7rem; }
+.terminal > * ~ * { margin-top: 0; }
+.terminal .cmd::before { content: "$ "; color: var(--accent); }
+.terminal .ok::after { content: " ✓"; color: oklch(72% 0.14 150); }
+.terminal .comment { color: oklch(55% 0.015 260); }
+
+/* ---- Framed screenshot (screenshot beautification, 归藏 + 工业纸感) ------- */
+.frame {
+  border-radius: var(--r-2); overflow: hidden; background: var(--surface-1);
+  border: 1px solid var(--line); box-shadow: var(--shadow-2);
+}
+.frame--browser { padding-top: 2rem; position: relative; }
+.frame--browser::before {                 /* fake browser chrome */
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2rem;
+  background: var(--surface-2); border-bottom: 1px solid var(--line);
+}
+.frame--browser::after {
+  content: "● ● ●"; position: absolute; top: 0.55rem; left: 0.9rem;
+  font-size: 0.55rem; letter-spacing: 0.25em; color: var(--ink-3);
+}
+.frame img, .frame__shot { display: block; width: 100%; height: auto; }
+.frame--shadow { box-shadow: var(--shadow-3); }
+/* drop-in placeholder when a screenshot isn't ready yet (honest, no fake UI) */
+.frame__placeholder {
+  aspect-ratio: 16/10; display: grid; place-items: center;
+  background: var(--surface-2); color: var(--ink-3);
+  font-family: var(--font-mono); font-size: 0.85rem;
+}
+
+/* ---- Numbered editorial card (NOT icon-card-shadow) --------------------- */
+.card--num { position: relative; }
+.card--num .num {
+  position: absolute; top: var(--s-4); right: var(--s-5);
+  font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-3);
+  letter-spacing: 0.1em;
+}
+.card--num .eyebrow { margin-bottom: var(--s-1); }
+.card--num h3, .card--num .h3 { font-family: var(--font-display); }
+.card__tags { display: flex; gap: var(--s-3); margin-top: auto; padding-top: var(--s-3);
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-3); letter-spacing: 0.04em; }
+.card__tags span::after { content: " ·"; color: var(--line-strong); }
+.card__tags span:last-child::after { content: ""; }
+
+/* ---- Swiss Data Hero (归藏): KPI as the visual subject, ~20vw ----------- */
+.data-hero { display: flex; flex-direction: column; gap: var(--s-3); }
+.data-hero__num {
+  font-family: var(--font-display); font-weight: var(--w-bold);
+  font-size: clamp(5rem, 2rem + 14vw, 16rem); line-height: 0.86;
+  letter-spacing: -0.03em; color: var(--ink-1);
+  font-variant-numeric: tabular-nums;
+}
+.data-hero__num .unit { font-size: 0.28em; color: var(--accent); margin-left: 0.1em; }
+.data-hero__label { font-size: var(--fs-lead); color: var(--ink-2); max-width: 38ch; text-wrap: pretty; }
+.data-hero__src { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-3); }
+
+/* ---- Offline CSS backgrounds (light, no WebP, no network) --------------- */
+.bg-dots  { background-image: radial-gradient(var(--line-strong) 1px, transparent 1.4px);
+            background-size: 26px 26px; }
+.bg-grid  { background-image:
+              linear-gradient(var(--line) 1px, transparent 1px),
+              linear-gradient(90deg, var(--line) 1px, transparent 1px);
+            background-size: 64px 64px; }
+.bg-paper { background-image:
+              radial-gradient(120% 80% at 0% 0%, var(--surface-2), transparent 60%); }
+/* keep decorative bg only on hero pages: wrap the area, fade toward content */
+.bg-fade { -webkit-mask-image: linear-gradient(180deg, #000, transparent 70%);
+           mask-image: linear-gradient(180deg, #000, transparent 70%); }
+
+/* ---- Dense content grids: keep cards compact so 4 cells fit a fixed slide -
+   A fixed 1280×720 stage can't auto-shrink text. These tighten dense grids so
+   typical 4-cell content fits without spilling under the footer chrome. If it
+   STILL overflows in the self-check PNG: shorten copy or split into two slides. */
+.bento .card, .grid-3 .card, .grid-4 .card { padding: var(--s-4); gap: var(--s-2); min-height: 0; }
+.bento .card .h3, .grid-3 .card .h3, .grid-4 .card .h3 { line-height: 1.15; }
+.bento, .grid-2, .grid-3, .grid-4 { min-height: 0; }   /* let .fill bound their height */
+
+/* ---- Canvas fx layer (opt-in, driven by assets/fx-runtime.js) ----------- */
+/* A full-bleed layer that the fx system paints into. Default OFF: nothing
+   animates unless an element declares data-fx. Sits behind content; never
+   intercepts pointer events. Put content above it with a higher z-index. */
+.slide-fx { position: absolute; inset: 0; z-index: 0; pointer-events: none; }

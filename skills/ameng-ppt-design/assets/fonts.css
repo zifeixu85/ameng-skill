@@ -1,0 +1,52 @@
+/* ============================================================================
+   ameng-ppt-design · fonts.css
+   SELF-HOSTED distinctive fonts, OFFLINE / cn-ok. No Google Fonts at runtime,
+   no CDN, no network. Run `scripts/fetch-fonts.sh` ONCE to populate
+   assets/fonts/*.woff2 (one-time download, then fully offline).
+   ----------------------------------------------------------------------------
+   Ban-list compliant (设计基线): NO Inter, Roboto, Arial, Open Sans,
+   DM Sans/Serif, Plus Jakarta, Outfit, IBM Plex*, Space*, Instrument*,
+   Fraunces, Newsreader, Lora, Crimson*, Playfair Display, Cormorant*, Syne.
+   Chosen: Display = Bricolage Grotesque · Body = Host Grotesk · Mono = JetBrains Mono.
+   If a .woff2 is missing the stack falls back to system CJK gracefully.
+   ============================================================================ */
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("./fonts/BricolageGrotesque.woff2") format("woff2");
+  font-weight: 200 800; font-display: swap; font-style: normal;
+}
+@font-face {
+  font-family: "Host Grotesk";
+  src: url("./fonts/HostGrotesk.woff2") format("woff2");
+  font-weight: 300 800; font-display: swap; font-style: normal;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("./fonts/JetBrainsMono.woff2") format("woff2");
+  font-weight: 400 700; font-display: swap; font-style: normal;
+}
+/* CJK: drop a subset woff2 here for distinctive Chinese, else system serif/sans. */
+@font-face {
+  font-family: "PPT Han Serif";
+  src: url("./fonts/SourceHanSerifSC-subset.woff2") format("woff2");
+  font-weight: 400 700; font-display: swap;
+}
+@font-face {
+  font-family: "PPT Han Sans";
+  src: url("./fonts/SourceHanSansSC-subset.woff2") format("woff2");
+  font-weight: 300 700; font-display: swap;
+}
+
+:root {
+  /* Display = distinctive Latin grotesque + CJK 黑体/sans. CJK is SANS by default:
+     serif CJK (宋/楷) reads heavy & old-fashioned at mega display sizes. Themes that
+     WANT serif CJK (editorial-ink, porcelain) override this per-theme. */
+  --ppt-display: "Bricolage Grotesque", "PingFang SC", "Source Han Sans SC",
+                  "Microsoft YaHei", system-ui, sans-serif;
+  /* Body = humanist grotesque + CJK sans */
+  --ppt-body:    "Host Grotesk", "PPT Han Sans", "PingFang SC",
+                  "Source Han Sans SC", "Noto Sans CJK SC", system-ui, sans-serif;
+  /* Mono = JetBrains Mono for CLI / version numbers / metadata */
+  --ppt-mono:    "JetBrains Mono", "Sarasa Mono SC", ui-monospace, monospace;
+}

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ameng-ppt · 瑞士国际主义 · Swiss Signal</title>
+<link rel="stylesheet" href="../assets/fonts.css">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/components.css">
+<link rel="stylesheet" id="theme-link" href="../assets/themes/swiss-signal.css">
+<link rel="stylesheet" href="../assets/toolbar.css">
+</head>
+<body>
+<!-- Swiss International：纯白 + 无衬线 + 单一信号红 + 强网格 + 大留白。
+     铁律：不圆角（主题已置 0）、不投影（主题已置 none）、左对齐、ONE accent。
+     极致字号对比：zh-mega 巨标题 + 极小正文。data-section 让 chrome 自动切分段。-->
+<div class="deck deck--chrome" data-grain
+    >
+  <div class="deck__stage">
+
+    <!-- 持久编辑式 chrome -->
+    <div class="chrome-top">
+      <span class="chrome-top__brand">PRODUCT TALK · <b>SIGNAL</b></span>
+      <span class="chrome-top__meta"><span class="chrome-top__sec">序 · INTRO</span>
+        <span class="chrome-top__page">01 / 08</span><span>T 明暗</span></span>
+    </div>
+    <div class="chrome-foot">
+      <span><b>SPEAKER</b> A梦 · 设计系统组</span>
+      <span class="mono">2026.05.30 · Grid 12</span>
+    </div>
+
+    <!-- 1 · COVER：bg-dots 满铺背景 + 内容压在其上 ----------------------------- -->
+    <section class="slide center" data-section="序 · INTRO">
+      <!-- 全铺装饰背景：绝对定位 inset:0，内容在它之上 -->
+      <div class="bg-dots bg-fade" style="position:absolute;inset:0;z-index:0"></div>
+      <div style="position:relative;z-index:1" class="stack" data-anim="fade">
+        <span class="eyebrow">A DATA-FIRST DESIGN SYSTEM</span>
+        <h1 class="zh-mega" data-anim="rise"
+            style="margin:var(--s-4) 0 var(--s-5);max-width:18ch">数字，<br>是这页的<span class="hl--full">主语</span>。</h1>
+        <hr class="rule" style="max-width:34rem;background:var(--line-strong);height:2px">
+        <p class="body" style="max-width:46ch">瑞士国际主义不是一种装饰，是一种纪律：网格先行、字号对比、单一信号色。
+          下面 8 页，把这套纪律拆给你看。</p>
+      </div>
+      <div class="notes">封面：bg-dots 满铺 + bg-fade 向下淡出，内容用相对定位压在其上。zh-mega 巨标题 + 极小正文 = 极致字号对比。hl--full 整块红底白字，是整场唯一的强调色。</div>
+    </section>
+
+    <!-- 2 · 极致字号对比（zh-mega + 极小正文） --------------------------------- -->
+    <section class="slide center" data-section="原则 · PRINCIPLE">
+      <h2 class="zh-mega" data-anim="rise" style="max-width:16ch">少，<br>但更<span class="hl--full">好</span>。</h2>
+      <div class="grid-2" style="--gap:var(--s-8);margin-top:var(--s-6);max-width:64rem">
+        <p class="body" data-anim="fade">Weniger, aber besser —— Dieter Rams 的第十条原则。在数据汇报里，它意味着：
+          一页只留一个结论，其余全部降噪成支撑。</p>
+        <p class="body muted" data-anim="fade">巨标题与正文之间的尺度差，本身就是层级。读者第一眼看到结论，第二眼才看到论据，
+          顺序由字号强制规定，而非由颜色暗示。</p>
+      </div>
+      <div class="notes">极致字号对比：zh-mega 与 .body 拉到 ~5 倍尺度差，层级靠尺度强制，不靠颜色。左对齐、大留白。</div>
+    </section>
+
+    <!-- 3 · DATA HERO：数字当视觉主体（瑞士 KPI） ------------------------------ -->
+    <section class="slide center" data-section="数据 · DATA">
+      <span class="eyebrow" data-anim="fade">RENDER BUDGET · MEDIAN FRAME</span>
+      <div class="data-hero" data-anim="rise" style="margin-top:var(--s-4)">
+        <div class="data-hero__num">8.3<span class="unit">ms</span></div>
+        <div class="data-hero__label">迁移到 token 化网格后，单帧渲染中位数从 14ms 降到
+          <span class="hl">8.3ms</span>，掉帧投诉清零。</div>
+        <div class="data-hero__src">来源：内部 RUM 抽样 7d · n=12,480 sessions（示例数据，发布前替换）</div>
+      </div>
+      <div class="notes">Data Hero：一个真实大数字占屏宽 ~20%，当视觉主语。配真实出处，无真实数据就不要用这一版式。</div>
+    </section>
+
+    <!-- 4 · 12 栏网格感（grid-3 + bento），hairline 分隔 ----------------------- -->
+    <section class="slide" data-section="网格 · GRID">
+      <span class="eyebrow" data-anim="fade">THREE LAYERS OF THE SYSTEM</span>
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-5)">网格把页面切成可计算的列</h3>
+      <hr class="rule" style="background:var(--line-strong);margin:0 0 var(--s-5)">
+      <div class="grid-3 fill anim-stagger" style="--gap:var(--s-6)">
+        <div class="stack" style="--gap:var(--s-3)">
+          <span class="stat__label">01 · FOUNDATION</span>
+          <p class="h3">Tokens</p>
+          <p class="body">颜色、间距、字阶全部变量化。改一处，全场跟随。</p>
+        </div>
+        <div class="stack" style="--gap:var(--s-3)">
+          <span class="stat__label">02 · STRUCTURE</span>
+          <p class="h3">12-Column</p>
+          <p class="body">一切对齐到 12 栏，span 决定占比，留白也落在栏线上。</p>
+        </div>
+        <div class="stack" style="--gap:var(--s-3)">
+          <span class="stat__label">03 · SIGNAL</span>
+          <p class="h3">One Accent</p>
+          <p class="body">全场只有一种红，只用在「需要被看见」的地方。</p>
+        </div>
+      </div>
+      <div class="notes">12 栏网格感：grid-3 等分 + 顶部 hairline rule 分隔。每列结构一致（label / 标题 / 正文），差异在内容不在装饰。</div>
+    </section>
+
+    <!-- 5 · BENTO：非均匀网格，仍守网格线 ------------------------------------- -->
+    <section class="slide" data-section="网格 · GRID">
+      <span class="eyebrow" data-anim="fade">BENTO · DELIBERATE ASYMMETRY</span>
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-5)">不均匀，但不随意</h3>
+      <div class="bento fill anim-stagger" style="grid-auto-rows:minmax(0,1fr)">
+        <div class="card col-4 row-2" style="justify-content:space-between">
+          <span class="stat__label">PRIMARY UNIT</span>
+          <div class="data-hero__num" style="font-size:clamp(3.5rem,9vw,7rem)">12<span class="unit">col</span></div>
+          <p class="body">最大的格子放最重的信息。bento 的非对称仍然吸附在 6 列底栅上。</p>
+        </div>
+        <div class="card col-2"><span class="stat__label">SPAN 2</span><p class="h3">间距</p></div>
+        <div class="card col-2"><span class="stat__label">SPAN 2</span><p class="h3">字阶</p></div>
+        <div class="card col-2 card--accent"><span class="stat__label" style="color:var(--accent-ink);opacity:.8">SIGNAL</span><p class="h3">红色落点</p></div>
+      </div>
+      <div class="notes">bento = 蓄意的非对称：col-4/row-2 的主格 + 三个 span-2，仍吸附在 6 列底栅。唯一的红落在最后一格，作为视线终点。</div>
+    </section>
+
+    <!-- 6 · COMPARISON（左旧右新，唯一 accent 落点） -------------------------- -->
+    <section class="slide" data-section="对比 · COMPARE">
+      <span class="eyebrow" data-anim="fade">BEFORE / AFTER</span>
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-5)">从「凭手感」到「凭网格」</h3>
+      <div class="grid-2 fill" style="--gap:0;border:1px solid var(--line-strong)">
+        <div class="card card--soft" style="border:0;border-right:1px solid var(--line-strong)">
+          <span class="stat__label">BEFORE</span>
+          <p class="h3 muted">每个间距都是 magic number</p>
+          <hr class="rule">
+          <p class="body">37px、22px、随手敲的对齐 · 改版即返工 · 没人说得清规则</p>
+        </div>
+        <div class="card" style="border:0">
+          <span class="tag" style="color:var(--accent)">AFTER ✓</span>
+          <p class="h3">每个间距都来自字阶</p>
+          <hr class="rule" style="background:var(--accent)">
+          <p class="body">8px 节律 · 一处改全场跟 · 新人当天就能对齐</p>
+        </div>
+      </div>
+      <div class="notes">对比页：用一条共享黑边把两栏锁进同一矩形（瑞士网格感）。唯一的红落在右栏 AFTER 的 tag 与分隔线上，引导结论。</div>
+    </section>
+
+    <!-- 7 · TERMINAL（落地证据：已上线） ------------------------------------- -->
+    <section class="slide center" data-section="落地 · SHIP">
+      <span class="eyebrow" data-anim="fade">SHIPPED, NOT A SPEC</span>
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-5)">规则只有进了构建才算数</h3>
+      <div class="terminal" data-anim="rise" style="max-width:46rem">
+        <div class="cmd">tokens build --target=web</div>
+        <div class="ok">generate css variables</div>
+        <div class="ok">lint contrast (WCAG AA)</div>
+        <div class="ok">snapshot 4 breakpoints</div>
+        <div class="comment"># 一份 token 源，三端同步。</div>
+      </div>
+      <div class="notes">terminal 在瑞士主题里依然成立——它本身就是无圆角、深底的「已上线」证据。强调系统不是 PPT，是构建产物。</div>
+    </section>
+
+    <!-- 8 · CLOSE（巨标题收束 + 单 accent 句读） ------------------------------ -->
+    <section class="slide center" data-section="收束 · CLOSE">
+      <h2 class="zh-mega" data-anim="rise" style="max-width:14ch">先定<span class="hl--full">网格</span>，<br>再谈风格。</h2>
+      <hr class="rule" style="max-width:30rem;background:var(--line-strong);height:2px;margin-top:var(--s-6)">
+      <p class="lead" data-anim="fade" style="margin-top:var(--s-5)">
+        — 把这套 token 拿走，从你最乱的那一页开始。</p>
+      <div class="notes">收束：巨标题陈述结论，单一红色作为句读。一条 2px 黑线收尾，不加任何装饰——瑞士的克制本身就是结尾。</div>
+    </section>
+
+  </div>
+</div>
+<script src="../assets/runtime.js"></script>
+<script src="../assets/editor.js"></script>
+<script src="../assets/export.js"></script>
+</body>
+</html>

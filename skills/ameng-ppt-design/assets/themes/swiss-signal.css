@@ -1,0 +1,36 @@
+/* THEME: swiss-signal — 瑞士国际主义。纯白 + 无衬线 + 红色信号 + 强网格。
+   适合：数据/结论先行、严谨汇报、产品原则。参考归藏「瑞士风 Data Hero」。 */
+:root {
+  --bg:          oklch(99% 0 0);
+  --surface-1:   oklch(100% 0 0);
+  --surface-2:   oklch(95.5% 0 0);
+  --line:        oklch(82% 0 0);
+  --line-strong: oklch(20% 0 0);          /* swiss uses hard black rules */
+
+  --ink-1: oklch(16% 0 0);
+  --ink-2: oklch(38% 0 0);
+  --ink-3: oklch(56% 0 0);
+
+  --accent:      oklch(56% 0.22 27);      /* signal red */
+  --accent-ink:  oklch(100% 0 0);
+  --accent-2:    oklch(16% 0 0);          /* black as second "accent" */
+  --accent-soft: oklch(93% 0.05 27);
+
+  --ppt-display: "Helvetica Neue", "PingFang SC", "Source Han Sans SC", Arial, sans-serif;
+  --ppt-body:    "Helvetica Neue", "PingFang SC", "Source Han Sans SC", Arial, sans-serif;
+
+  --r-1: 0px; --r-2: 0px; --r-3: 0px; --r-pill: 0px;   /* swiss = no rounding */
+  --track-tight: -0.025em; --track-wide: 0.2em;
+  --shadow-1: none; --shadow-2: none; --shadow-3: none; /* flat, grid does the work */
+}
+.card { border-width: 1px; border-color: var(--line-strong); }
+
+/* DARK variant (T toggle) — near-black, signal red, hard light hairlines (no rounding/shadow) */
+.deck[data-theme="dark"] {
+  --bg: oklch(13% 0 0); --surface-1: oklch(17% 0 0); --surface-2: oklch(15% 0 0);
+  --line: oklch(32% 0 0); --line-strong: oklch(92% 0 0);
+  --ink-1: oklch(97% 0 0); --ink-2: oklch(72% 0 0); --ink-3: oklch(52% 0 0);
+  --accent: oklch(62% 0.23 27); --accent-ink: oklch(100% 0 0);
+  --accent-2: oklch(97% 0 0); --accent-soft: oklch(30% 0.08 27);
+}
+.deck[data-theme="dark"] .card { border-color: var(--line-strong); }

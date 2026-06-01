@@ -1,0 +1,60 @@
+/* THEME: industrial-paper — 旗舰默认。暖纸感 light + ember 单 accent + 工业质感。
+   品牌人格：有主张的 / 已上线的 / 工业质感（opinionated / shipped / industrial）。
+   像一篇印在好纸上的技术随笔。配 data-grain + 行内 .hl 高亮带 + terminal + 编辑 chrome。
+   参考 工业纸感基线 的 设计基线。默认 light；加 [data-theme="dark"] 切深色。 */
+:root {
+  /* Intentional paper stock, not "default tasteful beige". Pushed off the AI
+     cream band (more chroma, slightly lower L) so it reads as a deliberate warm
+     paper. Name your real print reference in design-direction.md ("unnamed
+     ambition becomes beige"). */
+  --bg:          oklch(96% 0.014 82);      /* warm paper (was 97.5% 0.006 80) */
+  --surface-1:   oklch(99% 0.006 82);
+  --surface-2:   oklch(94% 0.012 80);
+  --line:        oklch(87% 0.01 78);
+  --line-strong: oklch(74% 0.014 72);
+
+  --ink-1: oklch(20% 0.012 60);           /* near-black, warm — 禁纯黑 */
+  --ink-2: oklch(40% 0.014 60);
+  --ink-3: oklch(56% 0.013 60);
+
+  --accent:      var(--pal-ember);        /* ember — 禁蓝 */
+  --accent-ink:  oklch(98% 0.01 80);
+  --accent-2:    var(--pal-olive);        /* restrained secondary for dual data */
+  --accent-soft: oklch(92% 0.04 55);
+
+  /* distinctive self-hosted display (Bricolage) + CJK serif for headline weight */
+  /* CJK display = 黑体 (sans), NOT serif — serif 宋/楷 reads unfriendly at mega size */
+  --ppt-display: "Bricolage Grotesque", "PingFang SC", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
+  --ppt-body:    "Host Grotesk", "PPT Han Sans", "PingFang SC", "Source Han Sans SC", system-ui, sans-serif;
+
+  --r-1: 4px; --r-2: 10px; --r-3: 16px;   /* unified radius — bento identity */
+  --track-tight: -0.02em;
+  --shadow-1: 0 1px 2px oklch(40% 0.03 60 / 0.05);
+  --shadow-2: 0 10px 34px -14px oklch(40% 0.04 60 / 0.18);
+  --shadow-3: 0 28px 72px -24px oklch(35% 0.05 60 / 0.26);
+}
+
+/* DARK variant — opt-in via T 键（给 .deck 加 data-theme="dark"）。
+   暖色深底（espresso paper），不是冷蓝；与暖纸 light 同一品牌色相，整体换肤。 */
+.deck[data-theme="dark"] {
+  --bg:          oklch(17% 0.014 64);     /* warm espresso dark, 禁纯黑 */
+  --surface-1:   oklch(22% 0.016 64);
+  --surface-2:   oklch(20% 0.015 64);
+  --line:        oklch(31% 0.018 64);
+  --line-strong: oklch(46% 0.022 60);
+
+  --ink-1: oklch(95% 0.012 80);           /* warm near-white */
+  --ink-2: oklch(78% 0.016 78);
+  --ink-3: oklch(60% 0.018 72);
+
+  --accent:      oklch(72% 0.17 52);      /* ember 提亮，在暖深底上更跳 */
+  --accent-ink:  oklch(18% 0.03 52);
+  --accent-2:    oklch(72% 0.10 110);     /* warm olive on dark */
+  --accent-soft: oklch(72% 0.17 52 / 0.20);
+
+  --shadow-1: 0 1px 2px oklch(0% 0 0 / 0.30);
+  --shadow-2: 0 12px 36px -14px oklch(0% 0 0 / 0.52);
+  --shadow-3: 0 30px 76px -24px oklch(0% 0 0 / 0.62);
+}
+/* 深色下纸感颗粒过重 → 调淡 */
+.deck[data-theme="dark"][data-grain] .deck__stage::after { opacity: 0.25; }

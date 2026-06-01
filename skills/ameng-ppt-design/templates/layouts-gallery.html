@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ameng-ppt · 版式画廊 · Layouts Gallery</title>
+<link rel="stylesheet" href="../assets/fonts.css">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/components.css">
+<link rel="stylesheet" id="theme-link" href="../assets/themes/industrial-paper.css">
+<link rel="stylesheet" href="../assets/toolbar.css">
+</head>
+<body>
+<!-- 版式画廊：每一页 = 一种命名版式，左下角 .slide__foot 标注版式名，
+     既能当模板抄，也能当「目录」查。工业纸感 + film grain + 编辑 chrome。
+     用法：找到想要的版式 → 拷走那个 <section> → 换文案。 -->
+<div class="deck deck--chrome" data-grain
+    >
+  <div class="deck__stage">
+
+    <div class="chrome-top">
+      <span class="chrome-top__brand">版式画廊 · <b>GALLERY</b></span>
+      <span class="chrome-top__meta"><span class="chrome-top__sec">目录 · CATALOG</span>
+        <span class="chrome-top__page">01 / 11</span><span>T 明暗</span></span>
+    </div>
+    <div class="chrome-foot">
+      <span><b>LAYOUTS GALLERY</b> · 每页一种版式</span>
+      <span class="mono">v1 · 拷走 section 即用</span>
+    </div>
+
+    <!-- 1 · COVER WITH TERMINAL ------------------------------------------------ -->
+    <section class="slide center" data-section="目录 · CATALOG" data-accent="ember">
+      <div class="grid-2" style="--gap:var(--s-8);align-items:center">
+        <div class="stack" style="--gap:var(--s-5)">
+          <span class="eyebrow" data-anim="fade">A VISUAL CATALOG OF LAYOUTS</span>
+          <h1 class="zh-mega" data-anim="rise" style="font-size:clamp(2.8rem,1.4rem+5vw,6rem)">
+            一页一种<br><span class="hl">版式</span></h1>
+          <p class="lead" data-anim="fade">找到想要的，拷走那个 section。</p>
+        </div>
+        <div class="terminal" data-anim="rise">
+          <div class="cmd">open layouts-gallery.html</div>
+          <div class="ok">11 layouts loaded</div>
+          <div class="comment"># 每页左下角是版式名</div>
+        </div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · COVER + TERMINAL</div>
+      <div class="notes">封面版式（短标题版）：左文右终端，仅适合 ≤5 汉字/行 的极短标题。长 CJK 标题改用「标题全宽 + 下方 lead|终端 一行」（见 deck-16x9 的 COVER），否则会在半栏里反复折行。</div>
+    </section>
+
+    <!-- 2 · BIG STATEMENT ----------------------------------------------------- -->
+    <section class="slide center" data-section="陈述 · STATE" data-accent="ember">
+      <h2 class="h1 measure" data-anim="rise">好版式不是装饰，<br>是把<span class="hl">注意力</span>排好队。</h2>
+      <p class="lead muted" style="margin-top:var(--s-6)" data-anim="fade">标题写结论，正文写理由。</p>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · BIG STATEMENT</div>
+      <div class="notes">大陈述版式：一句话、大字号、一个高亮短语。标题直接陈述结论，居中留白。适合论点页。</div>
+    </section>
+
+    <!-- 3 · NUMBERED CARDS (3× card--num) ------------------------------------- -->
+    <section class="slide" data-section="编号卡 · CARDS" data-accent="cinnabar">
+      <span class="eyebrow" data-anim="fade">THREE, IN ORDER</span>
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">三张编号编辑卡（非 icon-card-shadow）</h3>
+      <div class="grid-3 fill anim-stagger">
+        <div class="card card--num"><span class="num">01</span><span class="eyebrow">差异化填充</span>
+          <p class="h3">编号</p><p class="body">mono 编号挂右上角，衬线标题压住，正文交代细节。</p>
+          <div class="card__tags"><span>规则</span><span>顺序</span></div></div>
+        <div class="card card--num"><span class="num">02</span><span class="eyebrow">统一描边</span>
+          <p class="h3">层级</p><p class="body">三卡共用一套描边与圆角——是系统，不是模板网格。</p>
+          <div class="card__tags"><span>系统</span><span>克制</span></div></div>
+        <div class="card card--num"><span class="num">03</span><span class="eyebrow">底部标签</span>
+          <p class="h3">收口</p><p class="body">mono 标签沉到底，给每张卡一个一致的落脚线。</p>
+          <div class="card__tags"><span>对齐</span><span>收口</span></div></div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · NUMBERED CARDS ×3</div>
+      <div class="notes">编号卡版式：eyebrow + 衬线标题 + body + mono 标签。差异在内容，统一在描边。用于「分点 / 步骤 / 维度」。</div>
+    </section>
+
+    <!-- 4 · DATA HERO --------------------------------------------------------- -->
+    <section class="slide center" data-section="数据 · DATA" data-accent="cinnabar">
+      <span class="eyebrow" data-anim="fade">ONE NUMBER, AS THE SUBJECT</span>
+      <div class="data-hero" data-anim="rise" style="margin-top:var(--s-4)">
+        <div class="data-hero__num">3<span class="unit">×</span></div>
+        <div class="data-hero__label">把一个真实大数字当视觉主语——比一句形容词
+          「<span class="hl">大幅提升</span>」有力得多。</div>
+        <div class="data-hero__src">来源：替换为你的真实出处 · 无真实数据就别用这一版式</div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · DATA HERO</div>
+      <div class="notes">Data Hero 版式：数字占屏宽 ~20% 当主角，配 label + 出处。强约束：必须是真实数据，否则换版式。</div>
+    </section>
+
+    <!-- 5 · SCREENSHOT (frame--browser placeholder) --------------------------- -->
+    <section class="slide" data-section="截图 · SHOT" data-accent="mint">
+      <div class="grid-2 fill" style="--gap:var(--s-6);align-items:center">
+        <div class="stack" style="--gap:var(--s-4)">
+          <span class="eyebrow" data-anim="fade">SCREENSHOT, BEAUTIFIED</span>
+          <h3 class="h2" data-anim="rise">截图进统一浏览器框，<br>比裸贴<span class="hl">专业一个量级</span>。</h3>
+          <p class="body">同一套框 + 同一档阴影。没图就用诚实占位，绝不画假 UI。</p>
+        </div>
+        <div class="frame frame--browser frame--shadow" data-anim="rise">
+          <!-- 真实截图就 <img src="images/01-shot.png" alt="...">；没图先用诚实占位 -->
+          <div class="frame__placeholder">images/01-shot.png · 1600px 宽</div>
+        </div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · SCREENSHOT FRAME</div>
+      <div class="notes">截图版式：左文右框。frame--browser 给假浏览器栏，frame--shadow 给深阴影。没图用 .frame__placeholder。</div>
+    </section>
+
+    <!-- 6 · HONEST BARS ------------------------------------------------------- -->
+    <section class="slide center" data-section="图表 · BARS" data-accent="mint">
+      <span class="eyebrow" data-anim="fade">REAL NUMBERS ONLY</span>
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">诚实条形图（只画真实数据）</h3>
+      <div class="bars anim-stagger" style="max-width:48rem">
+        <div class="bar"><span class="body">主系列</span><div class="bar__track"><div class="bar__fill" style="--v:72%"></div></div><span class="bar__val">72%</span></div>
+        <div class="bar"><span class="body">次系列</span><div class="bar__track"><div class="bar__fill" style="--v:48%;background:var(--accent-2)"></div></div><span class="bar__val">48%</span></div>
+        <div class="bar"><span class="body">参照</span><div class="bar__track"><div class="bar__fill" style="--v:25%;background:var(--ink-3)"></div></div><span class="bar__val">25%</span></div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · HONEST BARS</div>
+      <div class="notes">条形图版式：纯 CSS，--v 是真实百分比。强调=accent，副系列=accent-2，参照=ink-3。绝不编数字。</div>
+    </section>
+
+    <!-- 7 · COMPARISON (right accent 落点) ------------------------------------ -->
+    <section class="slide" data-section="对比 · VS" data-accent="cyan">
+      <span class="eyebrow" data-anim="fade">A VERSUS B</span>
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">对比页：右侧是唯一落点</h3>
+      <div class="grid-2 fill" style="--gap:var(--s-5)">
+        <div class="card card--soft"><span class="tag">方案 A</span>
+          <p class="h3 muted">看起来都行，但没有重心</p><p class="body">两边等权 · 读者不知道你推荐谁</p></div>
+        <div class="card card--accent"><span class="tag" style="background:oklch(100% 0 0 /.18);border-color:transparent;color:var(--accent-ink)">方案 B ✓</span>
+          <p class="h3">用 card--accent 指明结论</p><p class="body">唯一的实色块 · 视线终点 · 推荐项</p></div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · COMPARISON</div>
+      <div class="notes">对比版式：左 card--soft（弱）+ 右 card--accent（强）。右侧实色块是唯一落点，替你说出推荐项。</div>
+    </section>
+
+    <!-- 8 · QUOTE ------------------------------------------------------------- -->
+    <section class="slide center" data-section="金句 · QUOTE" data-accent="cyan">
+      <blockquote class="quote measure" data-anim="blur" style="max-width:24ch">“Less, but better.”</blockquote>
+      <p class="quote__by" data-anim="fade">— Dieter Rams</p>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · QUOTE</div>
+      <div class="notes">金句版式：衬线大字、极简、一个署名。用 blur 入场。给节奏一个停顿。</div>
+    </section>
+
+    <!-- 9 · SECTION DIVIDER (full accent bg) ---------------------------------- -->
+    <section class="slide center" data-section="分节 · PART" data-accent="ember"
+             style="background:var(--accent)">
+      <span class="eyebrow" data-anim="fade" style="color:var(--accent-ink);opacity:.75">PART 02</span>
+      <h2 class="zh-mega" data-anim="rise"
+          style="color:var(--accent-ink);font-size:clamp(3rem,1rem+6vw,6.5rem)">进入下一节</h2>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem);color:var(--accent-ink);opacity:.7">版式 · SECTION DIVIDER</div>
+      <div class="notes">分节版式：整页强调色作呼吸点。文字翻成 accent-ink。chrome 的分段标签会跟着切。</div>
+    </section>
+
+    <!-- 10 · BENTO ------------------------------------------------------------ -->
+    <section class="slide" data-section="便当 · BENTO" data-accent="olive">
+      <span class="eyebrow" data-anim="fade">DELIBERATE ASYMMETRY</span>
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-5)">便当版式：非均匀但守网格</h3>
+      <div class="bento fill anim-stagger" style="grid-auto-rows:minmax(0,1fr)">
+        <div class="card col-4 row-2" style="justify-content:space-between">
+          <span class="eyebrow">主格 · col-4 row-2</span>
+          <div class="stat__num" style="font-size:clamp(2.6rem,7vw,5rem)">大块<span class="unit">放重点</span></div>
+          <p class="body">最大的格子承载最重的信息，其余按 6 列底栅切分。</p></div>
+        <div class="card col-2"><span class="eyebrow">col-2</span><p class="h3">附信息</p></div>
+        <div class="card col-2"><span class="eyebrow">col-2</span><p class="h3">附信息</p></div>
+        <div class="card col-2 card--accent"><span class="eyebrow" style="color:var(--accent-ink);opacity:.85">col-2 · 落点</span><p class="h3">视线终点</p></div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · BENTO</div>
+      <div class="notes">便当版式：col-4/row-2 主格 + 三个 col-2，全部吸附 6 列底栅。最后一格用 card--accent 收住视线。</div>
+    </section>
+
+    <!-- 11 · CLOSE / CTA ------------------------------------------------------ -->
+    <section class="slide center" data-section="收束 · CLOSE" data-accent="ember">
+      <div class="grid-2" style="--gap:var(--s-8);align-items:center">
+        <div class="stack" style="--gap:var(--s-5)">
+          <span class="eyebrow" data-anim="fade">YOUR TURN</span>
+          <h2 class="h1" data-anim="rise">挑一种版式，<br>从最难的那页<span class="hl">开始</span>。</h2>
+        </div>
+        <div class="terminal" data-anim="rise">
+          <div class="cmd">cp section#7 my-deck.html</div>
+          <div class="comment"># 拷走 section，换文案，发布</div>
+        </div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · CLOSE + CTA</div>
+      <div class="notes">收尾版式：左文右终端，给一个具体的下一步动作——不写「Get Started」。</div>
+    </section>
+
+  </div>
+</div>
+<script src="../assets/runtime.js"></script>
+<script src="../assets/editor.js"></script>
+<script src="../assets/export.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+/* THEME: porcelain — 轻奢/小红书清透。暖白瓷底 + 柔雾玫瑰 + 大留白。
+   适合：小红书图文、生活方式、品牌种草、温柔叙事。配 9:16 竖屏尤佳。 */
+:root {
+  --bg:          oklch(98% 0.008 30);
+  --surface-1:   oklch(99.5% 0.005 30);
+  --surface-2:   oklch(95% 0.014 28);
+  --line:        oklch(90% 0.018 25);
+  --line-strong: oklch(80% 0.03 22);
+
+  --ink-1: oklch(30% 0.025 25);
+  --ink-2: oklch(46% 0.03 25);
+  --ink-3: oklch(62% 0.03 25);
+
+  --accent:      oklch(66% 0.12 18);      /* muted rose */
+  --accent-ink:  oklch(99% 0.01 30);
+  --accent-2:    oklch(72% 0.08 150);     /* sage */
+  --accent-soft: oklch(94% 0.04 20);
+
+  --ppt-display: "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", Georgia, serif;
+  --ppt-body:    "PingFang SC", "Source Han Sans SC", system-ui, sans-serif;
+
+  --r-1: 10px; --r-2: 18px; --r-3: 28px; /* soft, generous radius */
+  --pad: clamp(2.5rem, 1rem + 5vw, 6rem);
+  --shadow-2: 0 12px 40px -16px oklch(50% 0.06 25 / 0.18);
+}
+
+/* DARK variant (T toggle) — soft warm dark, muted rose lifted */
+.deck[data-theme="dark"] {
+  --bg: oklch(17% 0.014 25); --surface-1: oklch(22% 0.018 25); --surface-2: oklch(19.5% 0.016 25);
+  --line: oklch(31% 0.02 22); --line-strong: oklch(45% 0.025 22);
+  --ink-1: oklch(95% 0.008 25); --ink-2: oklch(74% 0.016 25); --ink-3: oklch(56% 0.02 25);
+  --accent: oklch(72% 0.13 18); --accent-ink: oklch(17% 0.02 22); --accent-soft: oklch(32% 0.05 20);
+}
