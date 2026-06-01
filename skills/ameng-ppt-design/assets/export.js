@@ -107,42 +107,50 @@
       return !m.some(function (o) { return o !== el && el.contains(o); });
     });
   }
+  // Hybrid: render each slide WITH GLYPHS HIDDEN (keeps bands/terminals/frames/
+  // grain/backgrounds) as a full-bleed background image, then overlay EDITABLE
+  // text boxes — decorations look ~original, text stays editable, no doubling.
   function exportPPTXEditable() {
-    toast("正在导出可编辑 PPTX（文字版）…");
-    ensureLib("pptxgen.bundle.js", "PptxGenJS").then(function (Pptx) {
+    toast("正在导出可编辑 PPTX（保真版）…");
+    Promise.all([ensureLib("modern-screenshot.js", "modernScreenshot"), ensureLib("pptxgen.bundle.js", "PptxGenJS")]).then(function (l) {
+      var ms = l[0], Pptx = l[1];
       var saved = curIdx(), cover = showCover(); deck.classList.add("ppt-exporting");
       var p = new Pptx(), in_ = function (px) { return px / 96; }, inW = in_(stageW), inH = in_(stageH);
       p.defineLayout({ name: "PPT", width: inW, height: inH }); p.layout = "PPT";
-      var pageBg = toHex(getComputedStyle(stage).backgroundColor || "#ffffff");
       var chain = slides.reduce(function (pr, _, i) {
+        var els;
         return pr.then(function () { show(i); return raf2(); }).then(function () {
-          var slide = p.addSlide(); slide.background = { color: pageBg };
+          els = leaves(stage);
+          els.forEach(function (el) { el.style.color = "transparent"; el.style.textShadow = "none"; });   // hide glyphs, keep decorations
+          return raf2();
+        }).then(function () { return snapStage(ms); }).then(function (url) {
+          els.forEach(function (el) { el.style.color = ""; el.style.textShadow = ""; });                  // restore
+          var slide = p.addSlide();
+          slide.addImage({ data: url, x: 0, y: 0, w: inW, h: inH });                                       // decorations-only background
           var srect = stage.getBoundingClientRect(), scale = srect.width / (stage.offsetWidth || stageW) || 1;
-          var act = slides[i], abg = getComputedStyle(act).backgroundColor;
-          if (abg && abg !== "rgba(0, 0, 0, 0)" && abg !== "transparent")
-            slide.addShape(p.ShapeType.rect, { x: 0, y: 0, w: inW, h: inH, fill: { color: toHex(abg) }, line: { type: "none" } });
-          leaves(stage).forEach(function (el) {
+          els.forEach(function (el) {
             var r = el.getBoundingClientRect(); if (!r.width || !r.height) return;
+            var txt = (el.innerText || el.textContent || "").replace(/ /g, " ").replace(/[ \t]+/g, " ").replace(/\n{2,}/g, "\n").trim();
+            if (!txt) return;
             var cs = getComputedStyle(el);
-            slide.addText(el.textContent.replace(/\s+/g, " ").trim(), {
+            slide.addText(txt, {
               x: in_((r.left - srect.left) / scale), y: in_((r.top - srect.top) / scale),
-              w: in_(r.width / scale) + 0.1, h: in_(r.height / scale) + 0.06,
+              w: in_(r.width / scale) + 0.12, h: in_(r.height / scale) + 0.08,
               fontSize: Math.max(6, Math.round(parseFloat(cs.fontSize) / scale * 0.75)),
               color: toHex(cs.color), bold: parseInt(cs.fontWeight, 10) >= 600, italic: cs.fontStyle === "italic",
-              align: (cs.textAlign === "center" || cs.textAlign === "right") ? cs.textAlign : "left", valign: "top", margin: 0, wrap: true, autoFit: true
+              align: (cs.textAlign === "center" || cs.textAlign === "right") ? cs.textAlign : "left", valign: "top", margin: 0, wrap: true
             });
-          });
-          Array.prototype.forEach.call(act.querySelectorAll("img"), function (img) {
-            var r = img.getBoundingClientRect(); if (!r.width) return;
-            try { slide.addImage({ path: img.currentSrc || img.src, x: in_((r.left - srect.left) / scale), y: in_((r.top - srect.top) / scale), w: in_(r.width / scale), h: in_(r.height / scale) }); } catch (e) {}
           });
         });
       }, Promise.resolve());
       return chain.then(function () {
         show(saved); deck.classList.remove("ppt-exporting"); hideCover(cover);
-        return p.writeFile({ fileName: deckName() + "-editable.pptx" }).then(function () { toast("可编辑 PPTX 已导出（文字版·样式简化，文字可在 PPT 里改）"); });
-      }).catch(function (e) { show(saved); deck.classList.remove("ppt-exporting"); hideCover(cover); throw e; });
-    }).catch(function () { toast("可编辑 PPTX 失败：缺库跑 scripts/fetch-export-libs.sh"); });
+        return p.writeFile({ fileName: deckName() + "-editable.pptx" }).then(function () { toast("可编辑 PPTX 已导出（装饰转图片 + 文字可在 PPT 里改）"); });
+      }).catch(function (e) {
+        Array.prototype.forEach.call(stage.querySelectorAll(TEXT_SEL), function (el) { el.style.color = ""; el.style.textShadow = ""; });
+        show(saved); deck.classList.remove("ppt-exporting"); hideCover(cover); throw e;
+      });
+    }).catch(function () { toast("可编辑 PPTX 失败：缺库跑 scripts/fetch-export-libs.sh；file:// 请用本地服务器"); });
   }
 
   /* ---- PNG (current / all-zip) ------------------------------------------- */

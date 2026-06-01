@@ -116,10 +116,10 @@
       '<button class="ppt-help__btn" type="button" aria-label="键盘快捷键">? 快捷键</button>' +
       '<div class="ppt-help__panel" role="dialog" aria-label="键盘快捷键">' +
         '<div class="ppt-help__row"><span class="k"><kbd>←</kbd><kbd>→</kbd><kbd>Space</kbd></span><b>翻页</b></div>' +
-        '<div class="ppt-help__row"><span class="k"><kbd>1</kbd>–<kbd>9</kbd><kbd>0</kbd></span><b>跳到第 N 页</b></div>' +
+        '<div class="ppt-help__row"><span class="k"><kbd>1</kbd>–<kbd>9</kbd></span><b>跳到第 N 页</b></div>' +
+        '<div class="ppt-help__row"><span class="k"><kbd>0</kbd> / <kbd>O</kbd></span><b>幻灯片总览</b></div>' +
         '<div class="ppt-help__row"><span class="k"><kbd>F</kbd></span><b>全屏放映</b></div>' +
         '<div class="ppt-help__row"><span class="k"><kbd>S</kbd></span><b>讲者备注</b></div>' +
-        '<div class="ppt-help__row"><span class="k"><kbd>O</kbd></span><b>幻灯片总览</b></div>' +
         '<div class="ppt-help__row"><span class="k"><kbd>T</kbd></span><b>浅色 / 深色</b></div>' +
         '<div class="ppt-help__row"><span class="k"><kbd>?</kbd></span><b>显示 / 隐藏帮助</b></div>' +
       '</div>';
@@ -146,12 +146,13 @@
 
   // --- keyboard --------------------------------------------------------------
   document.addEventListener("keydown", function (e) {
-    // number keys jump to a slide: 1–9 → that slide, 0 → slide 10
-    if (e.key >= "0" && e.key <= "9" && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      var d = e.key === "0" ? 10 : (e.key.charCodeAt(0) - 48);
+    // number keys: 1–9 → jump to that slide · 0 → toggle overview grid
+    if (e.key >= "1" && e.key <= "9" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      var d = e.key.charCodeAt(0) - 48;
       if (d <= slides.length) { show(d - 1); e.preventDefault(); }
       return;
     }
+    if (e.key === "0" && !e.ctrlKey && !e.metaKey && !e.altKey) { toggleOverview(); e.preventDefault(); return; }
     switch (e.key) {
       case "ArrowRight": case "ArrowDown": case "PageDown": case " ": next(); e.preventDefault(); break;
       case "ArrowLeft": case "ArrowUp": case "PageUp": prev(); e.preventDefault(); break;
