@@ -38,8 +38,16 @@ node scripts/validate.mjs slides/my-talk/index.html   # 纪律自检
 
 ## 主题 & 比例
 
-- 主题：`industrial-paper`（旗舰）· `editorial-ink`（杂志）· `swiss-signal`（瑞士）· `obsidian-tech`（深色技术）· `porcelain`（轻奢/小红书）· `blueprint`（数据/咨询）
 - 比例：`16x9`（演讲）· `9x16`（小红书/竖屏）· `swiss`（数据驱动）
+- **6 套主题**（同一页代表性内容预览，点开 `templates/theme-preview.html` 可实时切换对比 + 明暗）：
+
+| 工业纸感（旗舰） | 杂志 | 瑞士 |
+|---|---|---|
+| ![industrial-paper](screenshots/industrial-paper.png) | ![editorial-ink](screenshots/editorial-ink.png) | ![swiss-signal](screenshots/swiss-signal.png) |
+| **深色技术** | **轻奢 / 小红书** | **蓝图 / 咨询** |
+| ![obsidian-tech](screenshots/obsidian-tech.png) | ![porcelain](screenshots/porcelain.png) | ![blueprint](screenshots/blueprint.png) |
+
+> 选主题时**打开预览页直观对比**，别只看名字。截图由 `./scripts/shoot-themes.sh` 生成。
 
 ## 安装
 

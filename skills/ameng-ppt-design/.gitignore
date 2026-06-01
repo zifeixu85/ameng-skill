@@ -1,5 +1,3 @@
+# generated presentations (keep templates, assets, screenshots committed)
 slides/
-*.png
-*.pdf
-*.pptx
 .DS_Store

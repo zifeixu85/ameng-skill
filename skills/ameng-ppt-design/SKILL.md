@@ -67,8 +67,11 @@ metadata:
 open slides/my-talk/index.html
 ```
 
-### Step 3 · 选主题 + 分段色域
-硬编码 `#theme-link` 选定主题；放映时 `T` 键在该主题浅/深之间切换。给每段设 `data-section` + `data-accent`，chrome 自动跟随切色域。见 [references/themes.md](references/themes.md)。
+### Step 3 · 选主题（先看，再定）+ 分段色域
+**别让用户只凭文字选主题** —— 打开 **`templates/theme-preview.html`**（`open` 或本地服务器），
+顶部一排按钮可**实时切换 6 套主题 + 明暗**，同一页代表性内容直接对比，看准了再定。
+（6 套主题的静态预览图见 `screenshots/`，README 里有画廊。）
+选定后在模板里硬编码 `#theme-link`；放映时 `T` 键在该主题浅/深之间切换。给每段设 `data-section` + `data-accent`，chrome 自动跟随切色域。见 [references/themes.md](references/themes.md)。
 
 ### Step 4 · 逐页搭建（核心规则）
 - **从模板复制最接近的 `.slide` 块**替换内容，不从零写。版式见 [references/layouts.md](references/layouts.md)。

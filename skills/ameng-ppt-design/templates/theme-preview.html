@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>主题预览 · Theme Preview</title>
+<link rel="stylesheet" href="../assets/fonts.css">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/components.css">
+<link rel="stylesheet" id="theme-link" href="../assets/themes/industrial-paper.css">
+<style>
+  /* picker bar — a utilitarian tool chrome, not part of the deck design */
+  .picker{
+    position: fixed; top: 0; left: 0; right: 0; height: 52px; z-index: 50;
+    display: flex; align-items: center; gap: 6px; padding: 0 14px;
+    background: oklch(99% 0 0); border-bottom: 1px solid oklch(88% 0.01 95);
+    font: 500 13px/1 system-ui, sans-serif; color: oklch(30% 0.02 260); overflow-x: auto;
+  }
+  .picker b { font-weight: 700; margin-right: 6px; white-space: nowrap; }
+  .picker__sep { flex: 0 0 1px; align-self: stretch; margin: 10px 6px; background: oklch(88% 0.01 95); }
+  .picker button{
+    flex: 0 0 auto; cursor: pointer; height: 32px; padding: 0 12px; border-radius: 999px;
+    border: 1px solid oklch(82% 0.01 95); background: #fff; color: oklch(30% 0.02 260);
+    font: 500 13px/1 system-ui, sans-serif; transition: .15s;
+  }
+  .picker button:hover { border-color: oklch(64% 0.17 45); color: oklch(54% 0.17 45); }
+  .picker button.is-active { background: oklch(64% 0.17 45); color: #fff; border-color: transparent; }
+  body.has-picker .deck { inset: 52px 0 0 0; }
+  body.is-export .picker { display: none; }
+  /* preview never shows the injected page-number / progress */
+  .slide__num, .deck__progress { display: none !important; }
+</style>
+</head>
+<body class="has-picker">
+  <div class="picker" id="picker">
+    <b>主题预览</b>
+    <button data-theme="industrial-paper" class="is-active">工业纸感</button>
+    <button data-theme="editorial-ink">杂志</button>
+    <button data-theme="swiss-signal">瑞士</button>
+    <button data-theme="obsidian-tech">深色技术</button>
+    <button data-theme="porcelain">轻奢</button>
+    <button data-theme="blueprint">蓝图</button>
+    <span class="picker__sep"></span>
+    <button id="darkBtn">明 / 暗</button>
+    <span class="picker__sep"></span>
+    <span id="cur" style="white-space:nowrap;color:oklch(55% 0.02 260)"></span>
+  </div>
+
+  <div class="deck deck--chrome" data-grain>
+    <div class="deck__stage">
+      <div class="chrome-top">
+        <span class="chrome-top__brand">主题预览 · <b>THEME</b></span>
+        <span class="chrome-top__meta"><span class="chrome-top__sec">预览 · PREVIEW</span><span class="chrome-top__page">01 / 06</span></span>
+      </div>
+      <div class="chrome-foot"><span><b>SPEAKER</b> 你的名字</span><span class="mono">2026 · Vol.01</span></div>
+
+      <section class="slide is-active" data-section="预览 · PREVIEW" data-accent="ember">
+        <span class="eyebrow" data-anim="fade">THEME PREVIEW · 主题预览</span>
+        <h2 class="zh-mega" data-anim="rise">从 <span class="hl">想法</span> 到 <span class="hl">成品</span></h2>
+        <div class="grid-2 fill" style="--gap:var(--s-7);align-items:start;margin-top:var(--s-5)">
+          <div class="stack" style="--gap:var(--s-5)">
+            <p class="lead">同一页内容，看看每套主题是什么气质：配色、字体、高亮带、图表。</p>
+            <div class="bars" style="max-width:30rem">
+              <div class="bar"><span class="body">立即购买</span><div class="bar__track"><div class="bar__fill" style="--v:78%"></div></div><span class="bar__val">78%</span></div>
+              <div class="bar"><span class="body">免费试用</span><div class="bar__track"><div class="bar__fill" style="--v:54%;background:var(--accent-2)"></div></div><span class="bar__val">54%</span></div>
+              <div class="bar"><span class="body">加入候补</span><div class="bar__track"><div class="bar__fill" style="--v:31%;background:var(--ink-3)"></div></div><span class="bar__val">31%</span></div>
+            </div>
+          </div>
+          <div class="terminal" data-anim="rise">
+            <div class="cmd">deploy --env=prod</div>
+            <div class="ok">build</div>
+            <div class="ok">migrate</div>
+            <div class="ok">healthcheck</div>
+            <div class="comment"># shipped, not a demo.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var THEMES = { "industrial-paper": "工业纸感（旗舰）", "editorial-ink": "杂志", "swiss-signal": "瑞士",
+    "obsidian-tech": "深色技术", "porcelain": "轻奢", "blueprint": "蓝图" };
+  var link = document.getElementById("theme-link"), deck = document.querySelector(".deck"),
+      stage = deck.querySelector(".deck__stage"), cur = document.getElementById("cur");
+  var isExport = q.has("export");
+  if (isExport) document.body.classList.remove("has-picker"), document.body.classList.add("is-export");
+
+  function fit() {
+    var top = document.body.classList.contains("has-picker") ? 52 : 0;
+    var s = Math.min(window.innerWidth / stage.offsetWidth, (window.innerHeight - top) / stage.offsetHeight);
+    deck.style.setProperty("--fit", s.toFixed(4));
+  }
+  function setTheme(name) {
+    if (!THEMES[name]) name = "industrial-paper";
+    link.href = "../assets/themes/" + name + ".css";
+    Array.prototype.forEach.call(document.querySelectorAll(".picker [data-theme]"), function (b) { b.classList.toggle("is-active", b.getAttribute("data-theme") === name); });
+    if (cur) cur.textContent = THEMES[name];
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".picker [data-theme]"), function (b) {
+    b.addEventListener("click", function () { setTheme(b.getAttribute("data-theme")); });
+  });
+  var darkBtn = document.getElementById("darkBtn");
+  if (darkBtn) darkBtn.addEventListener("click", function () {
+    if (deck.getAttribute("data-theme") === "dark") deck.removeAttribute("data-theme");
+    else deck.setAttribute("data-theme", "dark");
+  });
+
+  // URL params for screenshotting: ?theme=swiss-signal&dark=1&export=1
+  setTheme(q.get("theme") || "industrial-paper");
+  if (q.get("dark")) deck.setAttribute("data-theme", "dark");
+
+  window.addEventListener("resize", fit);
+  fit();
+})();
+</script>
+</body>
+</html>

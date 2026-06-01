@@ -184,12 +184,15 @@
       var num = total - j, older = entries[j + 1] ? entries[j + 1].html : null, isCur = en.html === live[idx];
       var card = document.createElement("div");
       card.className = "ppt-ver" + (isCur ? " is-current" : "");
+      var rowHtml = isCur
+        ? '<span class="ppt-cur-note">这是当前内容</span>'
+        : '<button type="button" class="ppt-act ppt-act--primary" data-act="restore">恢复此版本</button>' + (en.base ? '' : '<button type="button" class="ppt-act" data-act="del">删除</button>');
       card.innerHTML = '<div class="ppt-ver__when">' + (en.base ? "默认版本（初始）" : fmt(en.t)) +
         (isCur ? '<span class="ppt-ver__tag">当前</span>' : '<span class="ppt-ver__tag">版本 ' + num + '</span>') + '</div>' +
         '<div class="ppt-ver__diff">' + (en.base ? '<span class="nochg">这一页的初始内容</span>' : pageDiff(en.html, older)) + '</div>' +
-        '<div class="ppt-ver__row"><button type="button" class="ppt-act ppt-act--primary" data-act="restore">恢复此版本</button>' +
-        (en.base ? '' : '<button type="button" class="ppt-act" data-act="del">删除</button>') + '</div>';
-      card.querySelector('[data-act="restore"]').addEventListener("click", function () {
+        '<div class="ppt-ver__row">' + rowHtml + '</div>';
+      var rb = card.querySelector('[data-act="restore"]');
+      if (rb) rb.addEventListener("click", function () {
         restoreContent(idx, en.html); toast(en.base ? "已恢复本页到默认版本" : "已恢复本页到版本 " + num); drawer.classList.remove("is-open");
       });
       var del = card.querySelector('[data-act="del"]');
