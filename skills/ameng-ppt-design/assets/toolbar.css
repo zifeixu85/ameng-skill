@@ -117,13 +117,42 @@
 }
 .ppt-toast.is-show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ---- capture helper: make every slide paintable while shooting images ---- */
-.deck.ppt-exporting .slide { opacity: 1 !important; visibility: visible !important; }
+/* ---- image export ---------------------------------------------------------
+   We snapshot the whole .deck__stage per slide, so chrome (角标/小标题/页脚/
+   slide__num) — all inside the stage — IS included. Only disable animations so
+   the activated slide is settled. The dock/help/toast sit OUTSIDE the stage so
+   they're never in the snapshot; .ppt-export-cover hides the on-screen flip. */
 .deck.ppt-exporting .slide [data-anim] { animation: none !important; opacity: 1 !important; transform: none !important; }
-.deck.ppt-exporting .ppt-dock,
-.deck.ppt-exporting .ppt-toast,
-.deck.ppt-exporting .ppt-help,
-.deck.ppt-exporting .slide__num { display: none !important; }
+.ppt-export-cover {
+  position: fixed; inset: 0; z-index: 1300; display: grid; place-items: center;
+  color: var(--ink-3); font: var(--w-med, 500) 13px/1 var(--font-body);
+}
+
+/* ---- editable speaker notes (shown only in edit mode, on the active slide) - */
+.deck.is-editing .slide.is-active .notes {
+  display: block; position: absolute; left: 0; right: 0; bottom: 0; z-index: 6;
+  max-height: 34%; overflow: auto; margin: 0; padding: 28px 18px 14px; outline: none;
+  background: color-mix(in oklab, var(--surface-1) 93%, transparent);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  border-top: 1px solid var(--accent);
+  font: 400 13.5px/1.55 var(--font-body); color: var(--ink-2);
+}
+.deck.is-editing .slide.is-active .notes::before {
+  content: "讲者备注（可编辑 · 放映时按 S 查看）"; position: absolute; left: 18px; top: 8px;
+  font: 500 10px/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--accent);
+}
+
+/* ---- history count badge on the 历史 action ------------------------------- */
+.ppt-badge {
+  display: inline-block; margin-left: 5px; min-width: 16px; height: 15px; padding: 0 4px;
+  border-radius: var(--r-pill); background: var(--accent); color: var(--accent-ink);
+  font: var(--w-semi, 600) 9.5px/15px var(--font-mono); text-align: center; vertical-align: top;
+}
+.ppt-badge[hidden] { display: none; }
+
+/* ---- presentation mode (fullscreen): hide ALL authoring chrome + help ----- */
+:fullscreen .ppt-dock, :fullscreen .ppt-history, :fullscreen .ppt-toast, :fullscreen .ppt-help { display: none !important; }
+:-webkit-full-screen .ppt-dock, :-webkit-full-screen .ppt-history, :-webkit-full-screen .ppt-toast, :-webkit-full-screen .ppt-help { display: none !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .ppt-history, .ppt-toast, .ppt-dock__panel { transition: none; }
