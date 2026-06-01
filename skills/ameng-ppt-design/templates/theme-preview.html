@@ -38,7 +38,7 @@
     <button data-theme="neo-brutalist">新粗野</button>
     <button data-theme="editorial">杂志</button>
     <button data-theme="dark-luxe">暗调质感</button>
-    <button data-theme="swiss-intl">瑞士</button>
+    <button data-theme="ink-wash">中式水墨</button>
     <span class="picker__sep"></span>
     <button id="darkBtn">明 / 暗</button>
     <span class="picker__sep"></span>
@@ -81,7 +81,7 @@
 (function () {
   var q = new URLSearchParams(location.search);
   var THEMES = { "industrial-paper": "工业纸感（旗舰）", "neo-brutalist": "新粗野 Neo-Brutalist",
-    "editorial": "杂志 Editorial", "dark-luxe": "暗调质感 Dark-Luxe", "swiss-intl": "瑞士 Swiss" };
+    "editorial": "杂志 Editorial", "dark-luxe": "暗调质感 Dark-Luxe", "ink-wash": "中式水墨 Ink-Wash" };
   var link = document.getElementById("theme-link"), deck = document.querySelector(".deck"),
       stage = deck.querySelector(".deck__stage"), cur = document.getElementById("cur");
   var isExport = q.has("export");
@@ -107,7 +107,7 @@
     else deck.setAttribute("data-theme", "dark");
   });
 
-  // URL params for screenshotting: ?theme=swiss-intl&dark=1&export=1
+  // URL params for screenshotting: ?theme=ink-wash&dark=1&export=1
   setTheme(q.get("theme") || "industrial-paper");
   if (q.get("dark")) deck.setAttribute("data-theme", "dark");
 

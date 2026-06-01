@@ -46,10 +46,10 @@ node scripts/validate.mjs slides/my-talk/index.html   # 纪律自检
 | ![industrial-paper](screenshots/industrial-paper.png) | ![neo-brutalist](screenshots/neo-brutalist.png) | ![editorial](screenshots/editorial.png) |
 | 暖纸 + grain + 软色带 + terminal | 黑框 + 硬投影 + 实心色块 + 零圆角 | 衬线 + 疏朗 + 首字下沉 + 细下划线 |
 
-| `dark-luxe` 暗调质感 | `swiss-intl` 瑞士 | |
+| `dark-luxe` 暗调质感 | `ink-wash` 中式水墨 | |
 |---|---|---|
-| ![dark-luxe](screenshots/dark-luxe.png) | ![swiss-intl](screenshots/swiss-intl.png) | |
-| 渐变底 + 毛玻璃 + 暖金辉光 | 超大字 + 左对齐网格 + 红关键词 + 极简 | |
+| ![dark-luxe](screenshots/dark-luxe.png) | ![ink-wash](screenshots/ink-wash.png) | |
+| 渐变底 + 毛玻璃 + 暖金辉光 | 宋体 + 朱砂红 + 留白 + 印章式标签 + 墨晕 | |
 
 > 选主题时**打开预览页直观对比**，别只看名字。截图由 `./scripts/shoot-themes.sh` 生成（同一页内容渲染每套主题）。
 

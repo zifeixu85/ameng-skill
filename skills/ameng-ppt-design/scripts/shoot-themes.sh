@@ -17,7 +17,7 @@ done
 [ -n "$CHROME" ] || { echo "Chrome/Chromium not found."; exit 1; }
 
 W=1440; H=810
-for t in industrial-paper neo-brutalist editorial dark-luxe swiss-intl; do
+for t in industrial-paper neo-brutalist editorial dark-luxe ink-wash; do
   "$CHROME" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=2 \
     --window-size="${W},${H}" --screenshot="$OUT/$t.png" --virtual-time-budget=2200 \
     "file://$PAGE?theme=$t&export=1" >/dev/null 2>&1 && echo "✓ $t.png" || echo "✗ $t failed"

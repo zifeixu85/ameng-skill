@@ -34,7 +34,7 @@ metadata:
 ## 给你什么
 
 - **OKLCH token 设计系统**：`base.css`（tokens + slide 原语 + 行内高亮带 `.hl` + film grain + 分段 accent 色域）+ `components.css`（编辑式 chrome / terminal / 截图框 / 编号卡 / Swiss Data Hero / 离线背景）
-- **5 套差异化主题**（`assets/themes/*.css`，**不是换皮**——排版/构图/密度/装饰/气质都不同，见 [references/themes.md](references/themes.md)）：**`industrial-paper`（旗舰：暖纸 + grain + 软色带，中密度）** · `neo-brutalist`（粗野：黑框 + 硬投影 + 实心色块，零圆角）· `editorial`（杂志：衬线 + 疏朗 + 首字下沉 + 细下划线）· `dark-luxe`（暗调：渐变底 + 毛玻璃 + 暖金辉光）· `swiss-intl`（瑞士：超大字 + 左对齐网格 + 红色关键词 + 极简）
+- **5 套差异化主题**（`assets/themes/*.css`，**不是换皮**——排版/构图/密度/装饰/气质都不同，见 [references/themes.md](references/themes.md)）：**`industrial-paper`（旗舰：暖纸 + grain + 软色带，中密度）** · `neo-brutalist`（粗野：黑框 + 硬投影 + 实心色块，零圆角）· `editorial`（杂志：衬线 + 疏朗 + 首字下沉 + 细下划线）· `dark-luxe`（暗调：渐变底 + 毛玻璃 + 暖金辉光）· `ink-wash`（中式水墨：宋体 + 朱砂红 + 留白 + 印章式标签 + 一角墨晕）
 - **三种比例/模板**：`ppt-16x9.html`（旗舰）· `ppt-9x16.html`（竖屏 小红书/短视频）· `ppt-swiss.html`（瑞士数据风）· `layouts-gallery.html`（版式目录）
 - **右上角工具栏**：`assets/editor.js`（就地编辑 + 本地保存 + 版本历史）+ `assets/export.js`（PDF/PPTX/PNG/HTML 导出）+ `assets/toolbar.css`
 - **自托管 distinctive 字体**：Bricolage Grotesque（display）/ Host Grotesk（body）/ JetBrains Mono（mono）+ 思源黑/宋（CJK）。`scripts/fetch-fonts.sh` 一次性下载 → 之后全离线。**禁 Inter/Roboto/Playfair/Cormorant/IBM Plex**。
@@ -48,7 +48,7 @@ metadata:
 然后确认三件事（或基于已有内容给有主见的默认再确认）：
 
 1. **内容 & 观众 & 页数** —— 讲什么、给谁、几页？（15min≈10 页 / 30min≈20 页 / 45min≈25-30 页）
-2. **主题** —— **先开 `templates/theme-preview.html` 直观对比再定**。默认 `industrial-paper`；要态度→`neo-brutalist`；叙事/品牌→`editorial`（也最配 9:16）；夜场/产品发布→`dark-luxe`；数据/强排版→`swiss-intl`。
+2. **主题** —— **先开 `templates/theme-preview.html` 直观对比再定**。默认 `industrial-paper`；要态度→`neo-brutalist`；叙事/品牌→`editorial`（也最配 9:16）；夜场/产品发布→`dark-luxe`；中式/雅致/文化→`ink-wash`。
 3. **比例** —— 16:9（演讲）/ 9:16（手机·小红书）/ swiss（数据驱动）。
 
 ## 工作流

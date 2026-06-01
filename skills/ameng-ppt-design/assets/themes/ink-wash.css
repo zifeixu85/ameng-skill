@@ -1,0 +1,85 @@
+/* THEME: ink-wash — 中式水墨。宣纸米底 + 墨色 + 朱砂红（印泥）+ 宋体 +
+   大量留白 + 一角水墨晕染 + 印章式标签。气质：雅、静、东方、克制。
+   与其它主题差异：CJK 衬线、超大留白、朱红仅作"朱批/印"、装饰是墨晕与印章而非色块/边框。 */
+:root {
+  --bg:          oklch(96.5% 0.014 88);              /* 宣纸 warm rice paper */
+  --surface-1:   oklch(98.5% 0.008 88);
+  --surface-2:   oklch(93.5% 0.014 86);
+  --line:        oklch(82% 0.012 75);
+  --line-strong: oklch(40% 0.012 60);                /* 墨线 */
+  --ink-1: oklch(23% 0.01 60); --ink-2: oklch(38% 0.012 58); --ink-3: oklch(54% 0.012 56);
+  --accent:      oklch(50% 0.18 30);                 /* 朱砂 / 印泥红 */
+  --accent-ink:  oklch(97% 0.01 80);
+  --accent-2:    oklch(46% 0.05 150);                /* 黛绿（极淡），双数据用 */
+  --accent-soft: oklch(88% 0.06 32);
+  /* CJK 衬线为主角：宋体/思源宋；Latin 配 Georgia 收尾 */
+  --ppt-display: "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", "STSong", Georgia, serif;
+  --ppt-body:    "Source Han Serif SC", "Songti SC", "STSong", Georgia, serif;
+  --r-1: 2px; --r-2: 3px; --r-3: 4px;
+  --track-tight: 0em; --leading-body: 1.75;
+  --pad: clamp(3.4rem, 1.6rem + 6vw, 7.2rem);        /* 留白：开阔 */
+  --shadow-1: none; --shadow-2: 0 10px 34px -18px oklch(30% 0.02 60 / 0.22); --shadow-3: 0 18px 48px -22px oklch(30% 0.02 60 / 0.28);
+}
+/* 一角水墨晕染 + 宣纸纹（右下角淡墨，向内化开）*/
+.deck__stage { background-image:
+  radial-gradient(60% 44% at 96% 98%, oklch(45% 0.02 250 / 0.10), transparent 60%),
+  radial-gradient(40% 30% at 4% 2%, oklch(45% 0.02 60 / 0.06), transparent 60%); }
+.deck[data-grain] .deck__stage::after { opacity: 0.30; }
+
+/* 印章式 eyebrow：朱红描边小方印感 */
+.eyebrow { display: inline-block; color: var(--accent); border: 1px solid var(--accent);
+  padding: 0.24em 0.6em; letter-spacing: 0.3em; border-radius: 2px;
+  font-family: var(--ppt-display); font-weight: var(--w-med); }
+.h1, .h2, .display, .zh-mega { font-weight: var(--w-semi); letter-spacing: 0.01em; line-height: 1.14; }
+.lead { color: var(--ink-2); max-width: 38ch; }
+.quote { font-style: normal; font-family: var(--ppt-display); }
+.quote__by::before { content: "—— "; }
+
+/* 高亮 = 朱批：淡朱砂水墨衬底（不抢、像印泥晕开），文字仍是墨色 */
+.hl { color: var(--ink-1); }
+.hl::before { height: 0.46em; bottom: 0.04em; left: -0.06em; right: -0.06em;
+  background: var(--accent); opacity: 0.24; transform: skewX(-2deg);
+  border-radius: 2px 7px 3px 6px; }
+.hl--full { color: var(--accent-ink); background: var(--accent); border-radius: 2px; }
+
+/* 卡片 = 顶部墨线 + 左上一点朱印，去盒子化 */
+.card { background: transparent; border: 0; border-top: 1px solid var(--line-strong);
+  border-radius: 0; box-shadow: none; padding: var(--s-4) 0 0; position: relative; }
+.card::before { content: ""; position: absolute; top: -1px; left: 0; width: 2.2rem; height: 3px; background: var(--accent); }
+.card--soft, .card--accent { background: transparent; }
+.card--accent::before { width: 100%; }
+.card--accent :where(.h2, .h3, .lead, .body, p, h2, h3, li) { color: var(--ink-1); }
+.tag { background: transparent; border: 1px solid var(--accent); border-radius: 2px; color: var(--accent);
+  font-family: var(--ppt-display); padding: 0.18em 0.6em; letter-spacing: 0.06em; }
+.rule { height: 1px; background: var(--line-strong); }
+
+/* 代码块 = 宣纸浅底（中式不做深色终端）*/
+.terminal { background: var(--surface-2); color: var(--ink-1); border: 1px solid var(--line);
+  box-shadow: none; border-radius: 3px; }
+.terminal::before { color: var(--line-strong); }
+.terminal .cmd::before { color: var(--accent); }
+.terminal .comment { color: var(--ink-3); }
+.terminal .ok::after { color: var(--accent-2); }
+
+/* 细朱砂条形 */
+.bar__track { height: 7px; background: var(--surface-2); }
+
+/* chrome = 宋体细线，分段标朱红，右上一枚朱印点 */
+.chrome-top { font-family: var(--ppt-display); text-transform: none; letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--line); color: var(--ink-3); }
+.chrome-top__brand b { color: var(--accent); }
+.chrome-top__sec { color: var(--accent); }
+.chrome-foot { font-family: var(--ppt-display); border-top: 1px solid var(--line); }
+
+/* 大数字用宋体衬线，端庄 */
+.data-hero__num { font-family: var(--ppt-display); letter-spacing: 0; }
+
+/* DARK = 墨夜：浓墨底 + 宣白字 + 提亮朱砂 */
+.deck[data-theme="dark"] {
+  --bg: oklch(19% 0.012 60); --surface-1: oklch(23% 0.012 60); --surface-2: oklch(22% 0.012 60);
+  --line: oklch(34% 0.012 60); --line-strong: oklch(66% 0.012 70);
+  --ink-1: oklch(94% 0.012 86); --ink-2: oklch(78% 0.012 82); --ink-3: oklch(60% 0.012 76);
+  --accent: oklch(64% 0.18 32); --accent-ink: oklch(16% 0.02 40); --accent-soft: oklch(64% 0.18 32 / 0.22);
+}
+.deck[data-theme="dark"] .deck__stage { background-image:
+  radial-gradient(60% 44% at 96% 98%, oklch(70% 0.02 250 / 0.08), transparent 60%); }

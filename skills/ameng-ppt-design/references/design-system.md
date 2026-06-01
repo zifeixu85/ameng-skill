@@ -43,7 +43,7 @@
 base.css 备好一组可换的 accent，按 `data-accent` 给某段重绑 `--accent`：
 `--pal-ember`(45) · `--pal-sand`(75) · `--pal-cinnabar`(30) · `--pal-olive`(130) ·
 `--pal-mint`(160) · `--pal-magenta`(348) · `--pal-cyan`(215)。
-**禁蓝默认**——`--pal-*` 里没有纯蓝；蓝只在 `swiss-intl` 报告主题出现。
+**禁蓝默认**——`--pal-*` 里没有纯蓝；全场禁蓝，无主题用蓝。
 
 ## 2. 字体
 
@@ -122,7 +122,7 @@ CJK 巨标题用 `.zh-mega`（`clamp(3.2rem,1.4rem+6vw,7.5rem)`，瑞士式极�
 2. 顶部留一行意图注释（风格 / 适用场景）。
 3. 在 `:root` 里**只覆盖需要变的 token**：颜色、`--ppt-display/body/mono`、必要的 `--r-*`/`--track-*`/`--shadow-*`/`--pad`。
 4. 颜色**只用 OKLCH**，遵守封禁字体清单与禁蓝默认；中性色带 0.005–0.01 的 warm/brand tint。
-5. 需要时追加极少量结构微调（示例：swiss `.card` 用 `--line-strong` 边框；swiss-intl 给 `td/.num` 加 `tabular-nums`；obsidian 让 `.eyebrow` 用等宽）。
+5. 需要时追加极少量结构微调（示例：neo-brutalist `.card` 用粗黑边框 + 硬投影、零圆角；editorial 卡片改顶部发丝线 + 首字下沉；ink-wash 给 `.eyebrow` 加朱砂描边、`.hl` 改朱批晕染——差异要够大）。
 6. **加深色变体**（`T` 键浅/深切换的另一半）：在主题文件末尾写一个 `.deck[data-theme="dark"] { … }` 块，**重定义** `--bg / --surface-* / --line* / --ink-1/2/3 / --accent*`（深底用暖/冷要跟 light 同色相，别突然冷蓝；`--ink-1` 要在深底上够亮，禁纯黑底）。需要时再补 `--shadow-*` 和 `.deck[data-theme="dark"][data-grain] .deck__stage::after { opacity:.25 }`（深色下颗粒调淡）。
 7. **文字色继承的坑（必读）**：标题（`.h1/.zh-mega` 等）**不写自己的 color**，靠继承。`base.css` 已在 **`.deck { color: var(--ink-1) }`** 处统一兜底——因为 `data-theme="dark"` 加在 `.deck` 上，而 `body` 是 `.deck` 的祖先，文字色若只挂在 `body` 上会在深色作用域**外**解析、停在浅色墨色 → 标题在深底上隐形。所以：**别把正文色只写在 `body`/`html` 上**；只要主题在 `.deck[data-theme="dark"]` 里重定义了 `--ink-1`，继承的标题会自动翻白。`.lead/.body/.hl` 各自显式 `color:var(--ink-*)` 不受影响。
 8. 交付：把模板 `#theme-link` 的 `href` 锁成这个主题文件即可；放映 `T` 在该主题的 `:root`（浅）与 `.deck[data-theme="dark"]`（深）之间切换，不再是多主题循环。

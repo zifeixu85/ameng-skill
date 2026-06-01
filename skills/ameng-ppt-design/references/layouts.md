@@ -50,7 +50,7 @@ runtime 自动填 `.chrome-top__page`（页码）和 `.chrome-top__sec`（取当
 > **CJK 文本宽度**：正文 `max-width` 已为 CJK 调宽（lead 52ch / body 72ch）。**不要再给 CJK 段落设更窄的内联 `max-width`**，否则有空间也会提前折行、断在词中间。
 | **close / CTA 收尾** | 行动召唤 | `.slide.center` + `.grid-2` + `.h1` + `.terminal` | 一个**具体**下一步动作，不写「Get Started」 |
 
-## 瑞士专属手法（`deck-swiss.html` / `swiss-intl`）
+## 瑞士数据版式（`ppt-swiss.html` · Swiss Data Hero）
 
 - **极致字号对比**：`.zh-mega` 巨标题 + `.body` 极小正文，~5 倍尺度差，层级靠尺度不靠颜色。
 - **整块强调**：`.hl--full`（整块红底白字）是全场唯一信号色。
