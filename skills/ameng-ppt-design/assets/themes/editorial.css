@@ -29,9 +29,14 @@
 .lead { font-style: italic; color: var(--ink-2); max-width: 40ch; }
 .quote { font-style: italic; }
 
-/* highlight = thin elegant underline (not a block) */
-.hl { color: var(--ink-1); }
-.hl::before { height: 0.1em; bottom: 0.02em; transform: none; opacity: 1; background: var(--accent); border-radius: 0; left: 0; right: 0; }
+/* highlight = thin elegant underline that HUGS the text (real text-decoration,
+   not an absolutely-positioned bar — the bar floated to the line-box bottom,
+   far below CJK glyphs). Scales with font size, wraps cleanly. */
+.hl { color: var(--ink-1); padding: 0; white-space: nowrap;
+  text-decoration: underline; text-decoration-color: var(--accent);
+  -webkit-text-decoration-color: var(--accent);
+  text-decoration-thickness: 0.07em; text-underline-offset: 0.14em; }
+.hl::before { display: none; }
 
 /* drop-cap on the first body paragraph of a slide — signature editorial move */
 .slide p.body:first-of-type::first-letter,
