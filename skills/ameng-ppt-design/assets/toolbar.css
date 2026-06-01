@@ -85,6 +85,15 @@
 .ppt-ver__row .ppt-act--primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
 .ppt-empty { color: var(--ink-3); font: 400 13px/1.6 var(--font-body); padding: 8px 2px; }
 
+/* ---- save/discard confirm (leaving a page mid-edit) --------------------- */
+.ppt-confirm { position: fixed; inset: 0; z-index: 1400; display: none; place-items: center; background: color-mix(in oklab, var(--ink-1) 32%, transparent); }
+.ppt-confirm.is-open { display: grid; }
+.ppt-confirm__card { background: var(--surface-1); border: 1px solid var(--line-strong); border-radius: var(--r-2); box-shadow: var(--shadow-3); padding: 18px 20px; min-width: 300px; max-width: 86vw; }
+.ppt-confirm__msg { font: var(--w-semi, 600) 14px/1.5 var(--font-body); color: var(--ink-1); margin-bottom: 16px; }
+.ppt-confirm__row { display: flex; gap: 8px; justify-content: flex-end; }
+.ppt-confirm__row .ppt-act { border: 1px solid var(--line-strong); height: 30px; padding: 0 12px; }
+.ppt-confirm__row .ppt-act--primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+
 /* ---- toast --------------------------------------------------------------- */
 .ppt-toast {
   position: fixed; bottom: 22px; left: 50%; z-index: 1200; padding: 10px 16px; border-radius: var(--r-pill);

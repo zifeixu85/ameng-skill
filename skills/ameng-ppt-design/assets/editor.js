@@ -62,7 +62,7 @@
   })();
 
   // --- edit mode (slide text only; notes are edited via the S overlay) -------
-  var editing = false;
+  var editing = false, dirty = false, editSnap = null;
   function markEditable(on) {
     editableEls().forEach(function (el) {
       if (on) { el.setAttribute("contenteditable", "true"); el.setAttribute("data-ppt-edit", ""); el.spellcheck = false; }
@@ -75,11 +75,20 @@
     deck.classList.toggle("is-editing", on);
     bEdit.hidden = on; bDone.hidden = !on;
     markEditable(on);
-    if (!on) {
+    if (on) { editSnap = capture(); dirty = false; }
+    else {
       var sel = window.getSelection && window.getSelection(); if (sel) sel.removeAllRanges();
-      var c = autoVersion();
+      var c = autoVersion(); dirty = false;
       toast(c ? ("已保存 " + c + " 页的新版本") : "已退出编辑（内容无改动）");
     }
+  }
+  function discardEditing() {                          // exit edit WITHOUT saving — revert current page to snapshot
+    var idx = currentIdx();
+    if (editSnap && editSnap[idx] != null) slides[idx].innerHTML = editSnap[idx];
+    markEditable(false); editing = false; dirty = false;
+    deck.classList.remove("is-editing"); bEdit.hidden = false; bDone.hidden = true;
+    refreshActive(); lsSet(K_DOC, capture()); updateBadge();
+    toast("已丢弃本页修改");
   }
   function fullscreen() {
     try {
@@ -172,7 +181,7 @@
     entries.push({ t: null, html: (base[idx] != null ? base[idx] : ""), base: true });   // 默认版本 = 版本 1
     var total = entries.length, live = captureNoNotes();
     entries.forEach(function (en, j) {
-      var num = total - j, older = entries[j + 1] ? entries[j + 1].html : null, isCur = j === 0 && en.html === live[idx];
+      var num = total - j, older = entries[j + 1] ? entries[j + 1].html : null, isCur = en.html === live[idx];
       var card = document.createElement("div");
       card.className = "ppt-ver" + (isCur ? " is-current" : "");
       card.innerHTML = '<div class="ppt-ver__when">' + (en.base ? "默认版本（初始）" : fmt(en.t)) +
@@ -210,14 +219,53 @@
     });
   })();
 
-  // --- block runtime nav/shortcuts while typing -----------------------------
+  // --- leaving the page while editing → ask 保存 / 丢弃 -----------------------
+  var confirmEl = document.createElement("div");
+  confirmEl.className = "ppt-confirm";
+  confirmEl.innerHTML = '<div class="ppt-confirm__card"><div class="ppt-confirm__msg">本页有未保存的修改，切换前要怎么处理？</div>' +
+    '<div class="ppt-confirm__row"><button type="button" class="ppt-act ppt-act--primary" data-x="save">保存并切换</button>' +
+    '<button type="button" class="ppt-act" data-x="discard">丢弃修改</button>' +
+    '<button type="button" class="ppt-act" data-x="cancel">取消</button></div></div>';
+  deck.appendChild(confirmEl);
+  function clamp(n) { return Math.max(0, Math.min(slides.length - 1, n)); }
+  function goTo(t) { if (typeof t === "number" && window.PptDeck && window.PptDeck.show) window.PptDeck.show(t); }
+  function confirmLeave(target) {
+    confirmEl.querySelector('[data-x="save"]').onclick = function () { confirmEl.classList.remove("is-open"); setEditing(false); goTo(target); };
+    confirmEl.querySelector('[data-x="discard"]').onclick = function () { confirmEl.classList.remove("is-open"); discardEditing(); goTo(target); };
+    confirmEl.querySelector('[data-x="cancel"]').onclick = function () { confirmEl.classList.remove("is-open"); };
+    confirmEl.classList.add("is-open");
+  }
+  var NAVDIR = { ArrowLeft: -1, ArrowUp: -1, PageUp: -1, ArrowRight: 1, ArrowDown: 1, PageDown: 1 };
+  function navTarget(e) {
+    if (e.key in NAVDIR) return clamp(currentIdx() + NAVDIR[e.key]);
+    if (e.key === "Home") return 0;
+    if (e.key === "End") return slides.length - 1;
+    if (/^[1-9]$/.test(e.key)) { var n = +e.key - 1; return n < slides.length ? n : null; }
+    return null;
+  }
+
   document.addEventListener("keydown", function (e) {
     var ae = document.activeElement, inText = ae && ae.getAttribute && ae.getAttribute("contenteditable") === "true";
-    if (!editing && !(inText && ae.classList && ae.classList.contains("ppt-notes-edit"))) return;
-    if (e.key === "Escape") { if (inText) ae.blur(); if (editing) setEditing(false); e.stopPropagation(); return; }
-    if (inText) e.stopPropagation();
+    var notesFocus = inText && ae.classList && ae.classList.contains("ppt-notes-edit");
+    if (!editing && !notesFocus) return;
+    if (e.key === "Escape") { if (inText) ae.blur(); if (editing) { if (dirty) confirmLeave(null); else setEditing(false); } e.stopPropagation(); return; }
+    if (inText) { e.stopPropagation(); return; }           // typing / caret movement stays in the field
+    if (!editing) return;
+    // editing, but focus is NOT in a text field → treat nav keys as "leave this page"
+    var t = navTarget(e);
+    if (t !== null || e.key === "0" || e.key === "o" || e.key === "O") {
+      e.preventDefault(); e.stopPropagation();
+      if (dirty) confirmLeave(t); else { setEditing(false); goTo(t); }
+      return;
+    }
+    e.stopPropagation();                                   // swallow other runtime shortcuts while editing
   }, true);
-  stage.addEventListener("click", function (e) { if (editing) e.stopPropagation(); }, true);
+  stage.addEventListener("click", function (e) { if (editing) e.stopPropagation(); }, true);   // clicks in edit = caret, never page-flip
+  deck.addEventListener("input", function (e) {            // mark dirty on real text edits (notes don't count)
+    if (!editing) return;
+    var t = e.target;
+    if (t && t.getAttribute && t.getAttribute("contenteditable") === "true" && !(t.classList && t.classList.contains("ppt-notes-edit"))) dirty = true;
+  }, true);
 
   // --- toast -----------------------------------------------------------------
   var toastEl = document.createElement("div"); toastEl.className = "ppt-toast"; deck.appendChild(toastEl);

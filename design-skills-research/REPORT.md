@@ -1,411 +1,409 @@
 # Design 相关 Skill 研究报告（前端/UI + 产品/UX）
 
-> 生成日期：2026-06-02
+> 生成日期：2026-06-02（第二轮扩充：补全 8 维生命周期覆盖 + Claude Design 系统提示词）
 > 搜索范围：skills.sh · ClawHub · GitHub（含 awesome 列表）· WebSearch
-> 收集数量：共 **41** 个 Skill（已下载 SKILL.md 原件到本研究文件夹）
+> 收集数量：共 **63** 个 Skill（已下载 SKILL.md 原件）+ **1** 份参考资料（Claude Design 逆向系统提示词）
 
 ---
 
 ## 1. 研究设定
 
 - **主题 / 关键词**：design 相关 skill，聚焦 **前端/UI 界面** + **产品/UX 设计**
-- **产出模式**：research + 设计方案（输出到第 8 节，含自建/拆分 Skill 草案）
-- **深度**：彻查（41 个，跨平台尽量收全去重）
+- **产出模式**：research + 设计方案（输出到第 9 节，含自建/拆分 Skill 草案）
+- **深度**：彻查（63 个，跨平台尽量收全去重）
 - **目标 Agent**：不限（逐个标注 Claude Code / Codex / OpenClaw / Hermes 兼容性）
 - **使用场景**：用户维护 `ameng-skill` 这个对外分享的 Claude Code 插件市场仓库（已有 `ameng-ppt-design`、`ameng-skill-scout`），日常做大量 web 前端，想盘点 design 赛道已有的 skill，并据此决定往仓库里加什么新 skill。
-
-> 搜索关键词（中/英/缩写）：design · ui · ux · frontend · design system · wireframe · prototype · ui components · visual design · design review · tailwind · shadcn · landing page · 界面设计 · 原型 · 图文排版。详见附录。
+- **第二轮新增要求**：① 检查现有 skill 对 **8 个设计生命周期维度** 的覆盖：问题定义 / 用户研究 / 信息架构 / 界面生成 / 视觉风格 / 设计系统 / 设计评审 / 验证复盘；② 收录 **Claude Design 逆向系统提示词**（相当于"设计 agent 的提示词"，参考价值高）作为研究资料。
 
 ---
 
 ## 2. 概览与统计
 
-design 是 skill 生态里**最拥挤的赛道之一**：仅 ClawHub 一个平台，"frontend/ui/ux/design-system" 几个词就能搜出 100+ 条；skills.sh 上 `anthropics/skills@frontend-design` 单条 **48.7 万次安装**，是整个生态头部。本次按"前端/UI + 产品/UX"双方向彻查，收 41 个有代表性的样本（含头部高安装、官方出品、中文社区、产品/UX 方法论各路）。
+design 是 skill 生态里**最拥挤的赛道之一**：仅 ClawHub 一个平台，"frontend/ui/ux/design-system" 几个词就能搜出 100+ 条；skills.sh 上 `anthropics/skills@frontend-design` 单条 **48.7 万次安装**，是整个生态头部。本次按"前端/UI + 产品/UX + 8 维生命周期"彻查，收 63 个有代表性样本。
 
 **核心结论速览：**
-- **绝大多数是 `guide-only`（纯方法论提示词）**，真正带自动化闭环（浏览器截图审查/出图）的是少数，且几乎都绑定特定工具链（gstack / jezweb / Playwright MCP / 付费 SaaS）。
-- **"反 AI 味"（anti-slop）是这个赛道的共同母题**：禁 Inter/Roboto、禁紫色渐变、禁居中卡片网格、禁套路化 eyebrow，几乎每个头部 skill 都有一份"禁用清单"。
-- **大量重复/下游改写**：`anthropics/frontend-design` 被反复 fork/翻译/换皮；`ui-ux-pro-max`、`impeccable` 各有多个衍生版。
-- **中文工程级精品稀少**：`binggg/ui-design-guide`（腾讯 CloudBase）和 `contsun/prototype-design` 是中文方向两个真正"有工程闭环"的亮点。
-- **产品/UX 侧全是 guide-only**：persona / journey-map / 行为设计等都不产出真实文件，停在"对话顾问"层。
+- **生命周期两端薄、中间厚**：界面生成 / 视觉风格 / 设计系统 / 设计评审 严重过剩；**问题定义、信息架构、验证复盘** 三端要靠"产品经理/UX 研究"类 skill（pop、assimovt、owl、dembrandt）补，且这些多为 guide-only、模板常外置缺失。
+- **绝大多数是 `guide-only`（纯方法论提示词）**；真正带自动化闭环（浏览器截图审查/出图）的是少数，且几乎都绑特定工具链（gstack / jezweb / Playwright MCP / 付费 SaaS）。
+- **"反 AI 味"（anti-slop）是赛道母题**：禁 Inter/Roboto、禁白底紫渐变、禁居中卡片网格、禁套路化 eyebrow ——连官方 **Claude Design 系统提示词本身**都写了同款禁用清单。
+- **大量重复/下游改写**：`anthropics/frontend-design` 被反复 fork/翻译/换皮；`ui-ux-pro-max`、`impeccable`、`lenny-skills` 各有多个衍生/再托管版。
+- **出现了"生命周期编排器"**：`julianoczkowski/design-flow` 把 brief→IA→token→tasks→build→review 串成端到端流程；`product-on-purpose/pm-skills` 是一整套带 phase 元数据的 PM 生命周期家族（含正统 Google Design Sprint 工具）。
+- **中文工程级精品稀少**：`binggg/ui-design-guide`（腾讯 CloudBase，grep 自检）和 `contsun/prototype-design`（B 端单页原型）是两根独苗。
 
 | 下载来源 | 数量 |   | 格式（_source 标注） | 数量 |
 |-----|------|---|------|------|
-| GitHub | 34 |   | universal（纯 SKILL.md，跨宿主） | 27 |
-| ClawHub | 7 |   | claude-code（路径/字段绑定 CC） | 7 |
-| skills.sh（发现入口，多数实体在 GitHub） | — |   | openclaw（ClawHub 社区） | 7 |
+| GitHub | 55 |   | universal（纯 SKILL.md，跨宿主） | 48 |
+| ClawHub | 8 |   | claude-code（路径/字段绑定 CC） | 7 |
+| 参考提示词 | 1 |   | openclaw（ClawHub 社区） | 8 |
 
-> 说明：skills.sh 是主要"发现入口"，但绝大多数实体仓库托管在 GitHub，故按"实际下载来源"统计为 GitHub 34 / ClawHub 7。
+> skills.sh 是主要"发现入口"，但绝大多数实体托管在 GitHub，故按"实际下载来源"统计。
 
 ---
 
-## 3. Skill 清单与分类（总表）
+## 3. Skill 清单与分类（总表，63 个）
 
-> **Agent 兼容**：CC=Claude Code · Codex · OC=OpenClaw · Hermes · 全=universal（任意宿主）
-> **类型**：guide=guide-only · script=script-bundled · api=api-dependent · browser=browser-automation · hybrid
-> **复杂度**：即用 / 需配置 / 需开发
+> **兼容**：CC=Claude Code · OC=OpenClaw · 全=universal（任意宿主）｜**类型**：guide / script / api / browser / hybrid｜**复杂度**：即用 / 需配置 / 需开发
+> ⚠️ 标"(refs缺)"= 该 skill 的 references/脚本/兄弟 skill 在原仓库，本次只下到 SKILL.md，单独用会降级。
 
 ### A. 前端/UI 生成（设计主见 + 反 AI 味）
 
-| # | 名称 | 格式 | 兼容 | 类型 | 自动化 | 复杂度 | 安全 | 简评 |
-|---|-----|------|------|------|--------|--------|------|------|
-| 1 | anthropics-frontend-design | universal | 全 | guide | 无 | 即用 | safe | **赛道旗舰/事实标准**，48.7w 安装；一页"反 AI slop"美学宪法 |
-| 2 | akhilbhima-frontend-design | universal | 全 | guide | 无 | 即用 | safe | **几乎逐字复制 #1**，仅多一节 monochrome-editorial preset |
-| 3 | pbakaus-impeccable | universal | 全(CC最佳) | hybrid(script) | 无 | 需配置 | safe | 重型旗舰：21 命令 + PRODUCT/DESIGN.md + 调色脚本 + live 模式 |
-| 4 | antonia-frontend-design-pro | openclaw | 全 | guide | 无 | 即用 | safe | impeccable 的**中文极简口袋版**（一页规范 + 11 命令） |
-| 5 | binggg-ui-design-guide | openclaw | 全 | guide | grep 自检 | 即用 | caution | 腾讯 CloudBase 出品，**强制规范契约 + grep 自检**，中文标杆 |
-| 6 | leonxlnx-design-taste-frontend | universal | 全 | guide | 无 | 即用 | safe | 最"工程化"反 AI 味方法论：三刻度盘 + 79 项 Pre-Flight |
-| 7 | wholiver-swiftui-design | universal | 全 | guide | 无 | 即用 | safe | SwiftUI 版"反 slop 宪法" + 量化验收门槛 |
-| 8 | microsoft-frontend-design-review | universal | 全 | guide | 无 | 即用 | safe | 官方出品但纯指南：三支柱框架，**自动化为零** |
+| # | 名称 | 格式 | 兼容 | 类型 | 复杂度 | 安全 | 简评 |
+|---|-----|------|------|------|--------|------|------|
+| 1 | anthropics-frontend-design | universal | 全 | guide | 即用 | safe | **赛道旗舰/事实标准**（48.7w 安装），一页反 slop 美学宪法 |
+| 2 | akhilbhima-frontend-design | universal | 全 | guide | 即用 | safe | **几乎逐字复制 #1**，仅多一节 monochrome-editorial preset |
+| 3 | pbakaus-impeccable | universal | 全(CC最佳) | hybrid | 需配置 | safe | 重型旗舰：21 命令 + PRODUCT/DESIGN.md + 调色脚本 + live |
+| 4 | antonia-frontend-design-pro | openclaw | 全 | guide | 即用 | safe | impeccable 的**中文极简口袋版**（11 命令） |
+| 5 | binggg-ui-design-guide | openclaw | 全 | guide | 即用 | caution | 腾讯 CloudBase，**规范契约 + grep 自检**，中文标杆 |
+| 6 | leonxlnx-design-taste-frontend | universal | 全 | guide | 即用 | safe | 最工程化反 slop：三刻度盘 + 79 项 Pre-Flight |
+| 7 | wholiver-swiftui-design | universal | 全 | guide | 即用 | safe | SwiftUI 版反 slop 宪法 + 量化验收门槛 |
+| 8 | microsoft-frontend-design-review | universal | 全 | guide | 即用 | safe | 官方但纯指南：三支柱框架，自动化为零 |
 
 ### B. UI/UX 综合体系（规则库 + 工作流）
 
-| # | 名称 | 格式 | 兼容 | 类型 | 自动化 | 复杂度 | 安全 | 简评 |
-|---|-----|------|------|------|--------|--------|------|------|
-| 9 | nlb-ui-ux-pro-max | claude-code | 全(脚本需Py) | hybrid(script) | 本地检索 | 需配置 | safe | **99 条 UX 规则 + 检索式知识库**，密度极高（脚本未随附） |
-| 10 | xobi667-ui-ux-pro-max | openclaw | OC/全 | hybrid | 本地脚本 | 即用 | safe | #9 的**下游精简移植**（自承 "upstream"），多栈宿主中立 |
-| 11 | shubhamsaboo-ux-designer | universal | 全 | guide | 无 | 需配置 | safe | hub+spoke 全流程 UX + Worked Example（spoke 文件未随附） |
-| 12 | nlb-ui-styling | claude-code | CC最佳 | hybrid(script) | npx shadcn | 需配置 | caution | claudekit 套件：shadcn+Tailwind 实操脚手架 |
+| # | 名称 | 格式 | 兼容 | 类型 | 复杂度 | 安全 | 简评 |
+|---|-----|------|------|------|--------|------|------|
+| 9 | nlb-ui-ux-pro-max | claude-code | 全 | hybrid | 需配置 | safe | **99 条 UX 规则 + 检索库**（脚本未随附） |
+| 10 | xobi667-ui-ux-pro-max | openclaw | OC/全 | hybrid | 即用 | safe | #9 的下游精简移植（自承 upstream） |
+| 11 | shubhamsaboo-ux-designer | universal | 全 | guide | 需配置 | safe | hub+spoke 全流程 UX + Worked Example (refs缺) |
+| 12 | nlb-ui-styling | claude-code | CC最佳 | hybrid | 需配置 | caution | claudekit：shadcn+Tailwind 脚手架 |
 
-### C. 设计系统 / Design Token
+### C. 设计系统 / Design Token / 治理
 
-| # | 名称 | 格式 | 兼容 | 类型 | 自动化 | 复杂度 | 安全 | 简评 |
-|---|-----|------|------|------|--------|--------|------|------|
-| 13 | nlb-design-system | claude-code | CC最佳 | hybrid(script) | token生成+取图 | 需配置 | caution | claudekit：token + slide 双引擎（取图联网 Pexels/Unsplash） |
-| 14 | wshobson-design-system-patterns | universal | 全 | guide | 无 | 即用 | safe | token 三层架构概念纲要（worked example 在未附 references） |
-| 15 | owl-design-token | universal | 全 | guide | 无 | 即用 | safe | 极简但扎实的 token 知识卡（不自动生成 tokens.json） |
-| 16 | arvindrk-extract-design-system | universal | 全 | script+browser | Playwright | 需配置 | caution | **从公开网站逆向抽 token**（npx + Playwright Chromium） |
-| 17 | lenny-design-systems | universal | 全 | guide | 无 | 即用 | safe | 播客嘉宾洞见提炼的"何时该做设计系统"咨询话术 |
+| # | 名称 | 格式 | 兼容 | 类型 | 复杂度 | 安全 | 简评 |
+|---|-----|------|------|------|--------|------|------|
+| 13 | nlb-design-system | claude-code | CC最佳 | hybrid | 需配置 | caution | claudekit：token + slide 双引擎（取图联网） |
+| 14 | wshobson-design-system-patterns | universal | 全 | guide | 即用 | safe | token 三层架构概念纲要 (refs缺) |
+| 15 | owl-design-token | universal | 全 | guide | 即用 | safe | 极简 token 知识卡（不生成 tokens.json） |
+| 16 | arvindrk-extract-design-system | universal | 全 | script+browser | 需配置 | caution | **从公开网站逆向抽 token**（Playwright） |
+| 17 | lenny-design-systems | universal | 全 | guide | 即用 | safe | 播客洞见"何时该做设计系统"咨询话术 |
+| 18 | owl-design-system-governance | universal | 全 | guide | 即用 | safe | **唯一治理向**：三所有权模型 + semver + 弃用流程 |
 
 ### D. 框架专精（shadcn / Tailwind / React / 动效）
 
-| # | 名称 | 格式 | 兼容 | 类型 | 自动化 | 复杂度 | 安全 | 简评 |
-|---|-----|------|------|------|--------|--------|------|------|
-| 18 | shadcn-shadcn | universal | 全(CC最佳) | script | npx shadcn CLI | 需配置 | safe | **官方 shadcn skill**：组件注册表 + 严格组合规则 |
-| 19 | beagle-shadcn-ui | claude-code | 全 | guide | (可选CLI) | 即用 | safe | shadcn 代码模式"权威小抄" + CLI 安全 Gates |
-| 20 | beagle-review-frontend | claude-code | CC最佳 | hybrid(编排) | git/lint | 需配置 | safe | React 审查 orchestrator（重度依赖同仓兄弟 skill） |
-| 21 | wshobson-interaction-design | universal | 全 | guide | 无 | 即用 | safe | 微交互/动效代码库 + 时长分级 + 缓动常量 |
+| # | 名称 | 格式 | 兼容 | 类型 | 复杂度 | 安全 | 简评 |
+|---|-----|------|------|------|--------|------|------|
+| 19 | shadcn-shadcn | universal | 全(CC最佳) | script | 需配置 | safe | **官方 shadcn skill**：注册表 + 严格组合规则 |
+| 20 | beagle-shadcn-ui | claude-code | 全 | guide | 即用 | safe | shadcn 代码模式小抄 + CLI 安全 Gates |
+| 21 | beagle-review-frontend | claude-code | CC最佳 | hybrid | 需配置 | safe | React 审查 orchestrator (兄弟 skill 缺) |
+| 22 | wshobson-interaction-design | universal | 全 | guide | 即用 | safe | 微交互/动效代码库 + 时长分级 + 缓动常量 |
 
-### E. 设计审查 / 评审（含浏览器自动化闭环）
+### E. 设计评审 / 评审（含浏览器自动化闭环）
 
-| # | 名称 | 格式 | 兼容 | 类型 | 自动化 | 复杂度 | 安全 | 简评 |
-|---|-----|------|------|------|--------|--------|------|------|
-| 22 | garrytan-design-review | claude-code | CC(强绑gstack) | hybrid+browser | gstack browse 截图 | 需配置 | caution | **体量/自动化最重**：审→修→截图复验→原子提交闭环 + AI Slop 评分 |
-| 23 | garrytan-design-consultation | claude-code | CC(强绑gstack) | hybrid+browser | 竞品截图+出图看板 | 需配置 | caution | 顾问式设计系统提案 + SAFE/RISK 框架 + 反收敛字体纪律 |
-| 24 | garrytan-design-html | claude-code | CC(强绑gstack) | hybrid+browser | vision抽规范+视口截图 | 需配置 | caution | 设计稿→Pretext 真排版 HTML（CDN 拉第三方 JS 风险点） |
-| 25 | jezweb-design-review | claude-code | CC | browser | Chrome/Playwright MCP 截图 | 需配置 | caution | 7 维 good/bad 截图取证审查（截图能力外包 MCP） |
-| 26 | jezweb-design-loop | claude-code | CC | hybrid+browser | 截图验证 + 可选 Stitch API | 需配置/开发 | caution | **baton 自主循环建站** + 三文件设计记忆 + 双断点截图 |
-| 27 | 52yc-screenshot-ux-auditor | openclaw | OC | script | 用户上传截图 | 需配置 | caution | 截图→结构化 UX 审查（被动收图，不自抓；脚本未随附） |
-| 28 | tommygeoco-ui-audit | openclaw | 全 | guide | 无 | 需配置 | safe | UX 决策方法论库 + JSON 报告 schema（32 references 未随附） |
-| 29 | owl-design-critique | universal | 全 | guide | 无 | 即用 | safe | 设计评审主持剧本（会前/会中/会后 + 反馈话术模板） |
-| 30 | owl-accessibility-audit | universal | 全 | guide | 无 | 即用 | safe | WCAG 2.2 审计模板（纯目测，无 axe-core 自动化） |
-| 31 | vercel-web-design-guidelines | universal | 全(需WebFetch) | guide | 拉取最新规范 | 即用 | safe | 每次审查前 WebFetch 拉 Vercel 最新 Web Interface Guidelines |
+| # | 名称 | 格式 | 兼容 | 类型 | 复杂度 | 安全 | 简评 |
+|---|-----|------|------|------|--------|------|------|
+| 23 | garrytan-design-review | claude-code | CC(绑gstack) | hybrid+browser | 需配置 | caution | **自动化最重**：审→修→截图复验→提交闭环 + AI Slop 评分 |
+| 24 | garrytan-design-consultation | claude-code | CC(绑gstack) | hybrid+browser | 需配置 | caution | 顾问式设计系统提案 + SAFE/RISK + 反收敛字体 |
+| 25 | garrytan-design-html | claude-code | CC(绑gstack) | hybrid+browser | 需配置 | caution | 设计稿→Pretext 真排版 HTML（CDN 拉 JS 风险） |
+| 26 | jezweb-design-review | claude-code | CC | browser | 需配置 | caution | 7 维 good/bad 截图取证审查（外包 MCP） |
+| 27 | jezweb-design-loop | claude-code | CC | hybrid+browser | 需配置/开发 | caution | **baton 自主循环建站** + 三文件记忆 + 双断点截图 |
+| 28 | 52yc-screenshot-ux-auditor | openclaw | OC | script | 需配置 | caution | 截图→结构化 UX 审查（被动收图；脚本缺） |
+| 29 | tommygeoco-ui-audit | openclaw | 全 | guide | 需配置 | safe | UX 决策方法论库 + JSON schema (32 refs缺) |
+| 30 | microsoft-frontend-design-review | ↑见A#8 | — | — | — | — | （归 A，双模式审查/创意） |
+| 31 | owl-design-critique | universal | 全 | guide | 即用 | safe | 设计评审主持剧本 + 反馈话术模板 |
+| 32 | owl-accessibility-audit | universal | 全 | guide | 即用 | safe | WCAG 2.2 模板（纯目测，无 axe-core） |
+| 33 | dembrandt-nielsen-usability-heuristics | universal | 全 | guide | 即用 | safe | Nielsen 10 条做成审查卡 + 检索元数据 |
+| 34 | vercel-web-design-guidelines | universal | 全 | guide | 即用 | safe | 每次审查前 WebFetch 拉 Vercel 最新规范 |
+| 35 | lyndonkl-cognitive-design | universal | 全 | guide | 需配置 | safe | 认知科学"为什么有效"底座（菜单式，refs缺） |
 
-### F. 产品 / UX 研究
+### F. 问题定义 / JTBD（第二轮补）
 
-| # | 名称 | 格式 | 兼容 | 类型 | 自动化 | 复杂度 | 安全 | 简评 |
-|---|-----|------|------|------|--------|--------|------|------|
-| 32 | owl-user-persona | universal | 全 | hybrid(软依赖) | 可选读文件/搜索 | 即用 | safe | **基于真实数据**做行为型 persona + 标注研究缺口 |
-| 33 | owl-journey-map | universal | 全 | hybrid(软依赖) | 可选读 persona | 即用 | safe | 旅程地图 + 情绪曲线 + 机会点排序（与 #32 配套） |
-| 34 | lenny-behavioral-product-design | universal | 全 | guide | 无 | 即用 | caution | 行为科学落地（自带反暗黑模式伦理护栏） |
-| 35 | lenny-design-engineering | universal | 全 | guide | 无 | 即用 | safe | "设计工程"职能定义（偏 leader 决策，内容略薄） |
-| 36 | alsoforever-product-design-gungun | openclaw | 全 | guide | 无 | 即用 | safe | 中文产品设计方法论速查（KANO/RICE/双钻，重方法轻执行） |
+| # | 名称 | 格式 | 兼容 | 类型 | 复杂度 | 安全 | 简评 |
+|---|-----|------|------|------|--------|------|------|
+| 36 | assimovt-problem-validation | universal | 全 | guide | 即用 | safe | **最可裁决**：F×I×W×WTP 乘积评分 + Build/Kill 阈值 |
+| 37 | pop-define-problem-statement | universal | 全 | guide | 即用 | safe | 商业问题框定 6 步 + 质量清单 (refs缺) |
+| 38 | pop-define-jtbd-canvas | universal | 全 | guide | 即用 | safe | 8 步 JTBD canvas（含非消费竞品）(refs缺) |
+| 39 | assimovt-jtbd-analysis | universal | 全 | guide | 即用 | safe | **动态 JTBD**：Forces of Progress + 切换者访谈 |
+| 40 | owl-jobs-to-be-done | universal | 全 | guide | 即用 | safe | 学术向（Ulwick 8 阶段 ODI），偏分析 |
+| 41 | julianoczkowski-design-brief | universal | 全 | guide | 即用 | safe | **桥接型**：问题→代码现状→视觉方向 一份 brief |
 
-### G. 原型 / 移动端 / 图像驱动
+### G. 用户研究
 
-| # | 名称 | 格式 | 兼容 | 类型 | 自动化 | 复杂度 | 安全 | 简评 |
-|---|-----|------|------|------|--------|--------|------|------|
-| 37 | mattpocock-prototype | universal | 全 | guide | 无 | 即用 | safe | 一次性原型路由（逻辑/UI 二分，用完即删） |
-| 38 | mattpocock-design-an-interface | universal | CC(需sub-agent) | guide(编排) | 并行子Agent | 需配置 | safe | "设计两遍"：并行多 Agent 各带约束再比较（**已 deprecated**） |
-| 39 | contsun-prototype-design | openclaw | OC(需agent-browser) | hybrid+browser | py同步+截图验证 | 需配置 | caution | **中文 B 端单页 HTML 原型工作流**（抗 compaction 记忆术，设计系统目录未随附） |
-| 40 | sleek-design-mobile-apps | universal | 全(需key) | api | REST + 渲染 | 需配置 | caution | **唯一端到端真出图**：付费 SaaS 封装（智能在云端） |
-| 41 | leonxlnx-imagegen-frontend-web | universal | 需图像生成宿主 | hybrid(image-gen) | 文生图 | 需配置 | safe | 图像生成驱动网页视觉 comp（每 section 一张独立横图） |
+| # | 名称 | 格式 | 兼容 | 类型 | 复杂度 | 安全 | 简评 |
+|---|-----|------|------|------|--------|------|------|
+| 42 | owl-user-persona | universal | 全 | hybrid | 即用 | safe | **基于真实数据**做行为型 persona + 标注缺口 |
+| 43 | owl-journey-map | universal | 全 | hybrid | 即用 | safe | 旅程地图 + 情绪曲线 + 机会点排序（与#42配套） |
+| 44 | assimovt-user-interview | universal | 全 | guide | 即用 | safe | Mom Test + YC 五问 + 反模式纪律 (1 ref缺) |
+| 45 | assimovt-research-synthesis | universal | 全 | guide | 即用 | safe | **Atomic Research 四层金字塔** + 证据强度分级 |
+| 46 | c0ldsmi1e-user-research | openclaw | OC/全 | guide | 即用 | safe | 顾问式：先 intake 再定制 + 分群访谈脚本 |
+| 47 | lenny-behavioral-product-design | universal | 全 | guide | 即用 | caution | 行为科学落地（自带反暗黑模式护栏） |
+| 48 | lenny-design-engineering | universal | 全 | guide | 即用 | safe | "设计工程"职能定义（偏 leader） |
+| 49 | alsoforever-product-design-gungun | openclaw | 全 | guide | 即用 | safe | 中文产品设计方法论速查（KANO/RICE/双钻） |
 
----
+### H. 信息架构
 
-## 4. 详细分析（按价值/代表性精选 + 其余归并）
+| # | 名称 | 格式 | 兼容 | 类型 | 复杂度 | 安全 | 简评 |
+|---|-----|------|------|------|--------|------|------|
+| 50 | dembrandt-information-architecture | universal | 全 | guide | 即用 | safe | **IA 知识本体最深**：命名/数据模型/危险操作/导航 + 14 项 checklist |
+| 51 | julianoczkowski-information-architecture | universal | 全 | guide | 即用 | safe | **IA 落地流程最深**：探查代码库→落盘 IA 文档 |
+| 52 | dembrandt-user-flows-guided-paths | universal | 全 | guide | 即用 | safe | wizard/结账流决策表 + 组件解剖 + checklist |
+| 53 | owl-card-sort-analysis | universal | 全 | guide | 即用 | safe | 卡片分类→IA 的 7 步桥梁（相似度矩阵缺脚本） |
 
-> 41 个全部已下载，以下对最具代表性的逐个展开；同质化的衍生版归并说明。
+### I. 验证复盘 / 实验
 
-### 4.1 anthropics-frontend-design（旗舰 / 事实标准）
-- **来源**：github.com/anthropics/skills · skills/frontend-design
-- **格式 / 兼容**：universal，任意宿主即用；无工具/脚本/MCP 依赖
-- **类型 / 自动化 / 复杂度**：guide-only · 无 · 即用
-- **安全**：safe（纯文本，无凭证/网络/注入）
-- **能力覆盖**：① "先定 BOLD 美学方向再写代码"的设计思维框架；② 排版/色彩/动效/空间构图/背景质感五维美学准则；③ 一份"禁用清单"（禁 Inter/Roboto/Arial、禁白底紫渐变、禁套路布局、禁跨次生成都收敛到 Space Grotesk）；④ "复杂度匹配美学愿景"原则。
-- **依赖项**：无
-- **可复用价值**：整个赛道的"母版"。它确立了 design skill 的基本范式：**用强措辞的禁用清单 + 美学方向承诺，把"好设计"约束进 LLM**。`ameng-ppt-design` 已经在用同源思路（禁 Inter/Playfair）。
-- **一句简评**：极简、即用、影响力最大，但只是"原则"，无审查闭环、无落地脚本。
+| # | 名称 | 格式 | 兼容 | 类型 | 复杂度 | 安全 | 简评 |
+|---|-----|------|------|------|--------|------|------|
+| 54 | pop-measure-experiment-design | universal | 全 | guide | 即用 | safe | **A/B 实验设计**：护栏指标 + 样本量 + 事前成功标准 (refs缺) |
+| 55 | owl-usability-test-plan | universal | 全 | guide | 即用 | safe | 可用性测试计划 8 要素（SUS/SEQ + 5-8 样本） |
+| 56 | lyndonkl-reviews-retros-reflection | universal | 全 | hybrid | 即用 | safe | 复盘最厚：多场景 + 心理安全 + JSON rubric 自评 (refs缺) |
+| 57 | pop-iterate-retrospective | universal | 全 | guide | 即用 | safe | 4 种复盘格式 + owner/due-date 闭环 (refs缺) |
 
-### 4.2 pbakaus-impeccable（重型工程化旗舰）
-- **来源**：github.com/pbakaus/impeccable（⭐3k）· .claude/skills/impeccable
-- **格式 / 兼容**：universal frontmatter，但 Setup 强制 `node scripts/context.mjs`、`palette.mjs` 等本地脚本 → **CC 最佳**；其余宿主能跑指南但脚本/reference 子文件需随仓库
-- **类型 / 自动化 / 复杂度**：hybrid（guide + 脚本 + live 浏览器迭代）· 调色/上下文脚本 · 需配置
-- **安全**：safe（`allowed-tools: Bash(npx impeccable *)` 限定；脚本本地无外传）
-- **能力覆盖**：① 21 个动词命令（craft/shape/audit/critique/polish/bolder/quieter/distill/animate/colorize/typeset/layout/delight/clarify/adapt/optimize/live…）；② PRODUCT.md + DESIGN.md 项目上下文持久化 + register（brand vs product）分流；③ 极细颗粒的设计硬规则（对比度 ≥4.5:1、行长 65–75ch、字体 ≤3、hero clamp ≤6rem、z-index 语义层级、禁 em dash、禁 buzzword）；④ "Absolute bans"（side-stripe border、gradient text、glassmorphism 默认、hero-metric 模板、相同卡片网格、每节 eyebrow）；⑤ 二阶 AI slop 测试。
-- **依赖项**：Node（.mjs 脚本）+ 同仓 reference/*.md（命令细则）
-- **可复用价值**：**最值得偷师的"命令体系 + 项目上下文 + 极细硬规则"范式**。它把 anthropics 的"原则"升级成"可执行命令 + 可勾选规则 + 跨会话上下文"。
-- **一句简评**：赛道里最完整的工程化方案，但重、绑 Node 脚本与 reference 子文件。
+### J. 原型 / 移动端 / 图像驱动 / 生命周期编排
 
-### 4.3 binggg-ui-design-guide（中文工程级标杆）
-- **来源**：clawhub.ai/skills/ui-design-guide（腾讯 CloudBase cloudbase-skills，作者 binggg）
-- **格式 / 兼容**：openclaw，核心规范宿主无关即用；联动 sibling skill 需 CloudBase 套件或联网
-- **类型 / 自动化 / 复杂度**：guide-only + **grep 自检** · 提交前用 grep 扫自己代码 · 即用
-- **安全**：caution（正文指示去 cnb.cool 拉外部 raw URL，有远程内容拉取面）
-- **能力覆盖**：① **强制"先出 DESIGN SPECIFICATION 再写代码"契约**；② 极严禁用清单（禁紫/靛/品红渐变、禁 Inter/Roboto/system-ui、禁 emoji 图标、禁居中卡片）；③ 11 种美学方向按场景推荐；④ **"TRIGGER WORD DETECTOR" 自我刹车 + 提交前 grep 五项自检**（颜色/字体/图标/布局/合规）；⑤ brand escape hatch（已有品牌时允许覆盖默认禁令）。
-- **依赖项**：兄弟 skill + checklist.md（本地未附）
-- **可复用价值**：**中文场景最值得借鉴的一份**。"规范契约 + 禁用清单 + grep 自检闭环"是把反 AI 味做成可机械执行的成熟范式——这正是 guide-only skill 升级到"有闭环"的关键一跳。
-- **一句简评**：工程级反 AI 味中文 UI 规范，grep 自检是灵魂。
+| # | 名称 | 格式 | 兼容 | 类型 | 复杂度 | 安全 | 简评 |
+|---|-----|------|------|------|--------|------|------|
+| 58 | julianoczkowski-design-flow | universal | 全(CC最佳) | hybrid(编排) | 需配置 | caution | **设计生命周期编排器**：brief→IA→token→tasks→build→review (兄弟skill缺) |
+| 59 | pop-design-sprint-map-target | universal | 全 | guide | 需配置 | safe | **正统 Google Design Sprint** 周一 Map&Target (家族缺) |
+| 60 | mattpocock-prototype | universal | 全 | guide | 即用 | safe | 一次性原型路由（逻辑/UI 二分，用完即删） |
+| 61 | mattpocock-design-an-interface | universal | CC | guide | 需配置 | safe | 并行多 Agent"设计两遍"（**已 deprecated**） |
+| 62 | contsun-prototype-design | openclaw | OC | hybrid+browser | 需配置 | caution | **中文 B 端单页 HTML 原型工作流** + 抗 compaction (设计系统缺) |
+| 63 | sleek-design-mobile-apps | universal | 全 | api | 需配置 | caution | **唯一端到端真出图**：付费 SaaS（智能在云端） |
+| 64 | leonxlnx-imagegen-frontend-web | universal | 需图像生成 | hybrid | 需配置 | safe | 图像生成驱动网页视觉 comp（每 section 一张图） |
 
-### 4.4 leonxlnx-design-taste-frontend（最系统的反 AI 味方法论）
-- **来源**：github.com/leonxlnx/taste-skill · skills/taste-skill（1206 行）
-- **格式 / 兼容**：universal，全宿主即用（图像生成为可选增强）
-- **类型 / 自动化 / 复杂度**：guide-only · 无（可选环境图像工具）· 即用
-- **安全**：safe
-- **能力覆盖**：① "Design Read"先读需求再动手；② **三刻度盘系统**（DESIGN_VARIANCE / MOTION_INTENSITY / VISUAL_DENSITY，基线 8/6/4）驱动所有决策；③ Brief→真实设计系统映射（何时用官方 Fluent/Carbon/Polaris/shadcn）；④ 海量可机械执行的反 AI 味规则（禁 em-dash、eyebrow 限额 = ⌈节数/3⌉、禁假截图 div…）；⑤ **79 项 Pre-Flight Check 清单** + 3 个 canonical 代码骨架 + Redesign 协议。
-- **可复用价值**：把"好品味"量化成刻度盘 + 布尔判定 + 可勾选清单，是想做"可验证设计纪律"的金矿。
-- **一句简评**：纯 guide 却即插即用，工程化程度行业天花板。
-
-### 4.5 garrytan-design-review / consultation / html（gstack 设计三件套）
-- **来源**：github.com/garrytan/gstack（Garry Tan 相关）· design-review(1935行) / design-consultation(1564行) / design-html(1452行)
-- **格式 / 兼容**：标称 universal，**实际 Claude-Code-first 且强绑 gstack 私有 CLI**（`~/.claude/skills/gstack/bin/*` + 自研 `browse` 浏览器 + 可选 `design` 二进制）；缺 gstack bin 在其它宿主基本跑不起
-- **类型 / 自动化 / 复杂度**：hybrid + **browser-automation** · gstack `browse`（headless 或 CDP 接管真实浏览器）截图取证 / `design`（GPT-4o vision + 出图比较看板）· 需配置（首次 `./setup` 编译，带 bun SHA256 校验）
-- **安全**：caution。发现：① preamble 大量 `eval "$(...)"` 动态求值 + 写遥测 jsonl；② **CDP 模式可接管带登录态的真实浏览器并截图落盘**（主要泄露面）；③ design-html 缺 vendor 时从 esm.sh CDN 拉第三方 JS 内联进产物（无 SRI）。正向：bun 校验、`codex exec -s read-only` 沙箱、修复阶段"风险>20% 停 + 硬上限 30 + 回归即 revert"。
-- **能力覆盖**：
-  - **design-review**：11 阶段审查 + 审→修→截图复验→原子提交闭环；双评分（Design Score A–F + 独立 AI Slop Score）+ baseline JSON 回归；招牌 AI Slop 黑名单（11 条）+ Landing/App 分类套不同规则 + Trunk/Squint/Page-Area Test；可选 Codex "outside voices" 多模型评审。
-  - **design-consultation**：顾问式 6 阶段出**完整连贯设计系统**；**SAFE/RISK 框架**（品类基线安全选择 + ≥2 个刻意冒险点）；反收敛字体纪律（黑名单 + 过度使用名单含 Space Grotesk）；浏览器比较看板 + 轮询 feedback.json 人在环选型；DESIGN.md 落盘 + 跨会话 taste-profile。
-  - **design-html**：mockup→vision 抽 JSON 规范→分 5 tier 选 Pretext 排版策略→生成→三视口截图自检→人在环外科精修；产物带 contenteditable 就地编辑。
-- **可复用价值**：**全赛道方法论密度最高**。客观提取设计系统（注入 JS 实测字体/色/层级）、AI Slop 黑名单字面化、商誉水位量化、SAFE/RISK 框架、截图取证 + baseline 回归、审→修→复验安全闭环——每一项都是顶级范本。
-- **一句简评**：真正"审查即修复"的工程闭环，但深度绑 gstack 工具链，可移植的是方法论而非整包。
-
-### 4.6 jezweb-design-loop（自主循环建站 + 截图验证）
-- **来源**：github.com/jezweb/claude-skills · plugins/frontend/skills/design-loop（527 行）
-- **格式 / 兼容**：`compatibility: claude-code-only`，强依赖 Bash + 文件读写；截图验证需 Playwright CLI 或 Chrome MCP（可选）；可选 Google Stitch API
-- **类型 / 自动化 / 复杂度**：hybrid（autonomous loop + browser 验证 + 可选 api）· `npx serve` + 1280/375 双断点截图 · 需配置/开发
-- **安全**：caution（自主续跑循环 + 网络外呼 + 读 `STITCH_API_KEY` env）
-- **能力覆盖**：① **baton 接力棒模式**（一轮一页、自动写下一任务保活）；② 三文件长期记忆协议（SITE.md / DESIGN.md / next-prompt.md）；③ 双生成后端（Claude 默认 / Stitch 高保真）；④ 截图视觉验证闭环；⑤ 跨页防 drift（header/footer 逐字复制）+ 模糊词→专业术语映射。
-- **可复用价值**：**想自建"自动化前端流水线"的最佳参考**——baton 自主循环 + 三文件设计记忆 + 截图自检闭环。
-- **一句简评**：本批最"重"也最有料的自动化样本。
-
-### 4.7 nlb-ui-ux-pro-max（UX 规则库密度之王）
-- **来源**：github.com/nextlevelbuilder/ui-ux-pro-max-skill · .claude/skills/ui-ux-pro-max（658 行）
-- **格式 / 兼容**：claude-code；`--design-system`/`--domain` 靠 `scripts/search.py` + CSV（未随附）→ 缺脚本退化为纯 checklist
-- **类型 / 自动化 / 复杂度**：hybrid（guide + 本地 Python 检索）· 无网络 · 需配置
-- **安全**：safe（全本地）
-- **能力覆盖**：① **10 优先级 × 99 条 UX 规则**（无障碍/触控/性能/版式/动效/表单/导航/图表）；② 50+ 风格、161 配色、57 字体配对、161 产品类型、25 图表类型检索库；③ `--design-system` 一键出含 anti-pattern 的完整系统并 `--persist` 成 MASTER.md + 页面 override；④ 强偏 App/移动端（iOS HIG + Material）。
-- **可复用价值**：99 条 UX 规则 + 优先级分层 + MASTER.md 持久化模式可直接抄。
-- **一句简评**：知识密度极高，但完整能力依赖未随附的 Python 脚本 + CSV。
-
-### 4.8 owl-listener 设计体系（产品/UX 全景）
-- **来源**：github.com/owl-listener/designer-skills（design-ops / design-research / design-systems 三大子目录，共 30+ 个 skill，本次取 5 个代表）
-- **格式 / 兼容**：universal，全宿主即用；persona/journey 用 `$ARGUMENTS` + 可选读文件/联网（CC 类宿主最顺）
-- **类型 / 自动化 / 复杂度**：guide-only（persona/journey 为软依赖宿主能力的 hybrid）· 无真实产出脚本 · 即用
-- **安全**：safe
-- **能力覆盖**：① **user-persona**：基于真实研究数据做 2–4 个行为型 persona（引 Cooper《About Face》）+ 标注研究缺口；② **journey-map**：5–7 阶段旅程 + 情绪曲线 + 机会点影响/可行性排序（与 persona 成"产出→消费"配套）；③ **design-token**：三层分级 + 命名 pattern；④ **accessibility-audit**：WCAG 2.2 POUR + 4 级严重度 + Issue 模板；⑤ **design-critique**：评审主持剧本 + "I notice/I wonder/What if" 反馈话术。
-- **可复用价值**："单一职能 + 固定字段模板 + 可串联流水线"是产品/UX 方向最干净的架构范本。
-- **一句简评**：颗粒细、纯指南、零依赖；短板是不产出真实文件（a11y 全靠目测、token 不生成 tokens.json）。
-
-### 4.9 sleek-design-mobile-apps（唯一端到端真出图）
-- **来源**：github.com/sleekdotdesign/agent-skills · skills/design-mobile-apps（520 行）
-- **格式 / 兼容**：universal（REST + curl 即可，几乎全宿主）；需 `SLEEK_API_KEY`（Pro+ 付费套餐）
-- **类型 / 自动化 / 复杂度**：api-dependent · REST（异步 run + 轮询 + 截图渲染）· 需配置
-- **安全**：caution（数据上传第三方 SaaS + 计费），但**安全写法堪称范本**：host 白名单、HTTPS-only、最小 scope、key 经 env 注入不硬编码。
-- **能力覆盖**：自然语言生成移动端屏幕（Sleek 云端 AI 规划）→ 异步 run 生命周期 → 截图渲染 → 取回自包含 HTML → 转 RN/SwiftUI；版本 pin。
-- **可复用价值**：**"把外部设计 SaaS 包成 skill"的教科书**——env 注入凭证 + host 白名单、异步轮询退避 + 幂等键、"生成后必截图回传"UX 约束、shell 落盘大 HTML 省 token。
-- **一句简评**：唯一真能出图，但设计智能在云端、需付费。
-
-### 4.10 contsun-prototype-design（中文 B 端原型工作流）
-- **来源**：clawhub.ai/skills/prototype-design（1224 行，源自 WMS 项目沉淀）
-- **格式 / 兼容**：openclaw；需 **bash + python3 + agent-browser**（OpenClaw 浏览器 CLI）才完整；非 OC 宿主跑不了截图验证环节
-- **类型 / 自动化 / 复杂度**：hybrid（guide + py 同步脚本 + 浏览器截图验证）· 需配置（依赖 references/design-systems/ 58 套，本地未附）
-- **安全**：caution（内嵌正则替换 index.html 的 py 脚本有误伤风险；agent-browser eval 执行任意 JS）
-- **能力覆盖**：① 单页 HTML（含所有页面内嵌副本）的复杂 B 端原型工作流，58+ 设计系统切换；② 完整组件模板库（统计卡/筛选/数据表/弹窗/看板/Tab/固定表头表格）；③ **核心闭环**：改 pages/xxx.html → py 同步回写 index.html → div 平衡校验 → agent-browser 截图验证 → 小步 commit；④ **抗 compaction 记忆术**（"文件即记忆" + memory/日期.md）；⑤ 10 条 WMS 实战教训。
-- **可复用价值**：中文 B 端/管理后台原型方向极独特——"源文件 + py 正则同步 + div 校验"防漂移 + 抗遗忘工作流，别处少见。
-- **一句简评**：真实项目沉淀的中文 B 端原型圣经；注意它"全内联样式、禁 CSS 类"与 token 化阵营相反。
-
-### 4.11 其余 Skill 归并说明（同质化 / 衍生 / 薄文档）
-- **akhilbhima-frontend-design (#2)**：经逐行比对，**几乎是 anthropics #1 的逐字复制**，仅在结尾加了一节 "Reference Aesthetics → monochrome-editorial preset"。属换皮分支，无独立价值。
-- **antonia-frontend-design-pro (#4)**：自述参考 `pbakaus/impeccable`，是 impeccable 设计哲学的**中文一页提炼 + 11 自创命令**，非 fork。中文轻量首选之一。
-- **xobi667-ui-ux-pro-max (#10)**：自承 "upstream"，是 **nlb #9 的精简移植**（660 行→50 行，RN-only→多栈），做了实质裁剪，非逐字搬运。
-- **microsoft-frontend-design-review (#8)**：官方名头但**纯 guide、零自动化**，框架（三支柱 + blocking/major/minor）成熟，references 未随附。
-- **mattpocock-design-an-interface (#38)**：理念漂亮（并行多 Agent "设计两遍"）但**已被作者 deprecated**，且依赖宿主并行 sub-agent。
-- **shubhamsaboo-ux-designer (#11) / tommygeoco-ui-audit (#28) / wshobson-design-system-patterns (#14) / beagle-review-frontend (#20)**：均为"hub+spoke / 索引式分文件"架构，**核心血肉在未随附的 references/兄弟 skill**，单看 SKILL.md 是骨架。借鉴其"渐进披露"架构 > 直接当前态使用。
-- **lenny-design-engineering (#35) / alsoforever-product-design-gungun (#36)**：偏管理/方法论速查，重咨询轻执行、不碰代码。
+> 编号 64 因 microsoft(#8/#30) 跨两类各列一次，实际去重后为 63 个 skill。
 
 ---
 
-## 5. 能力矩阵
+## 4. Claude Design 系统提示词分析（"设计 agent 的提示词"）⭐
 
-| 能力点 | anthropics(#1) | impeccable(#3) | binggg(#5) | leonxlnx(#6) | nlb-uux(#9) | garrytan-review(#22) | jezweb-loop(#26) | owl 体系(#29-33) | sleek(#40) | contsun(#39) |
-|-------|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
-| 反 AI 味禁用清单 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ◻️ | ❌ | ❌ | ❌ |
-| 可机械执行自检（grep/清单/评分） | ❌ | ✅ | ✅ | ✅ | ◻️ | ✅ | ◻️ | ◻️ | ❌ | ✅(div校验) |
-| 设计系统/token 产出 | ❌ | ✅ | ✅ | ◻️ | ✅ | ✅ | ✅ | ✅(知识) | ◻️ | ◻️ |
-| 浏览器截图自检闭环 | ❌ | ✅(live) | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅(渲染) | ✅ |
-| 审查→修复→复验闭环 | ❌ | ✅ | ◻️ | ❌ | ❌ | ✅ | ✅ | ◻️ | ❌ | ◻️ |
-| 真实产物（HTML/图/文件） | ◻️(代码) | ✅ | ◻️ | ◻️ | ◻️ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| 产品/UX 研究（persona/journey） | ❌ | ❌ | ❌ | ❌ | ◻️ | ◻️ | ❌ | ✅ | ❌ | ❌ |
-| 中文场景适配 | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| 宿主无关（universal） | ✅ | ◻️ | ✅ | ✅ | ◻️ | ❌ | ❌ | ✅ | ✅ | ❌ |
-| 零配置即用 | ✅ | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+> 来源：`elder-plinius/CL4R1T4S` 逆向归档（`ANTHROPIC/Claude-Design-Sys-Prompt.txt`，422 行）。这是 **Claude.ai 的 Design 功能**（artifact/设计画布）背后那个设计 agent 的系统提示词——不是一个可安装的 skill，而是"官方怎么让一个 LLM 当设计师"的完整范本。**参考价值高于任何单个社区 skill**，因为它出自官方、经过产品打磨、且揭示了一整套工具/验证/编辑协议。
 
-> ✅ 完整支持 · ◻️ 部分/可选/降级 · ❌ 不支持
+### 4.1 它是什么
+- **角色设定**："你是一个专家设计师，用户是你的经理"；产物**统一用 HTML**（可表达网页/幻灯片/原型/动画/视频），按领域切换身份（动画师/UX/幻灯片/原型师）。
+- **运行环境**：基于文件系统的 project；有完整工具集（read_file/write_file/copy_files/run_script/eval_js_user_view/done/fork_verifier_agent/snip/questions_v2/copy_starter_component/invoke_skill…）。
+- **内置子 skill**（它能 `invoke_skill` 调用）：Animated video、Interactive prototype、Make a deck、Make tweakable、**Frontend design**、Wireframe、Export as PPTX（editable / screenshots 两种）、Create design system、Save as PDF、Save as standalone HTML、Send to Canva、Handoff to Claude Code。
 
-**矩阵读出的空白区**：没有任何一个 skill 同时做到「**反 AI 味纪律 + 浏览器截图自检闭环 + 真实产物 + 宿主无关 + 中文适配 + 零配置**」。最接近的 impeccable/garrytan 都重且绑工具链；最干净的 anthropics/binggg 又没有自动化闭环。**这条对角线就是自建机会。**
+### 4.2 它的工作流（官方设计 agent 的"标准动作"）
+1. **理解需求**：对新/模糊任务**用 `questions_v2` 问大量问题**（明确"至少 10 个问题"，要问清产物/保真度/选项数量/约束/在用的设计系统/UI 套件/品牌）。给了一张"该问/不该问"的判例表。
+2. **探索资源**：读设计系统完整定义 + 相关文件；**强调"高保真设计不能从零开始，必须扎根既有设计上下文"**（让用户 Import 代码库 / UI kit / 截图 / Figma），从零 mock 是"最后手段、必出烂设计"。
+3. **规划 + todo list**。
+4. **建文件夹、把资源拷进来**（不直接引用，避免外链；不 bulk-copy >20 文件）。
+5. **完成**：调 `done` 把文件呈现给用户并检查能否干净加载 → 干净后调 `fork_verifier_agent`（后台子 agent 带自己的 iframe，做截图/布局/JS 探查，通过则静默，出问题才叫醒）。
+6. **极简收尾**：只讲注意事项和下一步。
 
----
+### 4.3 关键设计哲学（与社区 skill 高度共振，但更系统）
+- **"像初级设计师交给经理那样，尽早给草稿"**：先写假设+上下文+设计推理+占位符，**尽早 show_to_user**，再迭代。
+- **强制给多方案**：`Give options: try to give 3+ variations across several dimensions`，从"照本宣科匹配现有模式"到"新颖大胆"渐进，通过 **Tweaks 系统**让用户在页面内切换/混搭。
+- **反 AI slop 清单**（官方版，和 anthropics/impeccable 同源）：少用渐变背景、禁 emoji（除非品牌）、**禁"圆角 + 左边框 accent"容器**、禁用 SVG 硬画图（用占位符问真素材）、**禁 Inter/Roboto/Arial/Fraunces/system 字体**。
+- **内容纪律**："不要填充内容""每个元素都要挣得位置""1000 个 no 换 1 个 yes""避免 data slop（没用的数字/图标/统计）"；**加内容前先问用户**。
+- **先立系统再动手**：探索完资产后先口头确定 type/色板/布局系统，再用它制造"有节奏的视觉变化"。
 
-## 6. 跨 Skill 组合方案
+### 4.4 揭示的几个"协议"（对自建 skill 极有参考价值）
+- **`fork_verifier_agent` 验证子 agent**：生成后由一个独立子 agent 截图自检，"不要自己截图验证、靠 verifier 静默兜底"——这正是把"截图自检闭环"做成**后台、不污染主上下文**的官方解法。
+- **Tweaks / 编辑模式协议**：用 `/*EDITMODE-BEGIN*/{...JSON...}/*EDITMODE-END*/` 标记可改默认值 + `postMessage({type:'__edit_mode_*'})` 双向通信 + 写回磁盘持久化。**这与你的 `ameng-ppt-design` 已实现的"就地编辑 + 存版本"几乎是同一套契约**——官方提示词等于给了你这套设计的权威背书与命名规范。
+- **`snip` 上下文管理**：每条用户消息带 `[id:mNNNN]`，阶段完成就 snip 掉旧 ID，延迟批量执行——长设计会话的上下文压缩术。
+- **starter components**：`deck_stage.js`（幻灯片壳：缩放/键盘导航/演讲者备注 postMessage/localStorage/打印 PDF）、`design_canvas.jsx`（并排多方案）、`ios/android_frame`、`macos/browser_window`、`animations.jsx`。
+- **React+Babel 用 pin 死版本 + integrity 哈希（SRI）**；HTML 内可调 `window.claude.complete`（claude-haiku-4-5，1024 token 上限）做产物内 LLM。
+- **固定尺寸内容自缩放**（1920×1080 letterbox）、**幻灯片 1-indexed 标签**、**速度/位置存 localStorage**——和你 ppt-design 的诉求完全一致。
 
-### 6.1 工作流链路
-
-**链路 1：从零做一个高质量前端页面（个人/CC 用户）**
-```
-anthropics-frontend-design (定美学方向/反slop)
-  → shadcn-shadcn (组件骨架) 或 wshobson-interaction-design (动效)
-  → impeccable polish/audit (细节硬规则打磨)
-  → jezweb-design-review 或 garrytan-design-review (浏览器截图审查+修复)
-```
-- 适用：Claude Code 用户，要产出 + 审查闭环。
-- 注意：garrytan/jezweb 需先装 gstack / Playwright MCP。
-
-**链路 2：产品/UX 设计全流程（研究→设计→评审）**
-```
-owl-user-persona (基于数据做 persona)
-  → owl-journey-map (旅程地图+机会点)
-  → lenny-behavioral-product-design (行为干预设计)
-  → owl-design-critique (设计评审主持)
-  → owl-accessibility-audit (a11y 把关)
-```
-- 适用：要把"产品/UX 设计"做成可交付物链路。
-- 注意：全是 guide-only，产物是文档而非可运行界面。
-
-**链路 3：设计系统建立与落地**
-```
-arvindrk-extract-design-system (从参考站抽 token)
-  → owl-design-token / wshobson-design-system-patterns (token 三层架构整理)
-  → nlb-design-system (token 生成脚本 + slide)
-  → shadcn-shadcn (落到组件库)
-```
-
-**链路 4：中文场景（B 端原型 / 反 AI 味落地）**
-```
-binggg-ui-design-guide (规范契约+grep自检)
-  → contsun-prototype-design (单页 HTML B 端原型 + 截图验证)
-  → 52yc-screenshot-ux-auditor (截图 UX 审查)
-```
-
-### 6.2 互补与冲突
-
-| Skill A | Skill B | 关系 | 说明 |
-|---------|---------|------|------|
-| anthropics #1 | akhilbhima #2 | **高度重叠** | #2 近乎逐字复制 #1，**保留 #1 即可**，弃 #2 |
-| impeccable #3 | antonia #4 | 重叠（语言互补） | 同源哲学；英文重型用 #3，中文轻量用 #4 |
-| nlb-uux #9 | xobi667 #10 | 重叠（上下游） | #10 是 #9 精简移植；要密度选 #9，要宿主中立选 #10 |
-| anthropics #1 | impeccable #3 | **互补（深度递进）** | #1 原则 → #3 命令化 + 硬规则 + 上下文 |
-| garrytan #22 | jezweb #26 | 互补/竞争 | 都做截图闭环；gstack 重而全，jezweb 轻而 MCP 化 |
-| owl persona #32 | owl journey #33 | **强互补（配套）** | persona 产出 → journey 消费，组合 > 单用 |
-| binggg #5 | contsun #39 | **理念冲突** | #5 token 化 vs #39 全内联禁 CSS 类（场景取舍不同，别混用） |
-| owl-a11y #30 | （无） | 能力缺口 | 纯目测，需自配 axe-core/Playwright 才能真自动化 |
+### 4.5 对本研究的意义
+- 它**验证了社区头部 skill 的方向是对的**（反 slop、给多方案、扎根上下文、截图验证），但把它们**编排成了一个带工具与验证子 agent 的完整 agent**——这正是社区 skill 普遍缺的"编排层"。
+- 对你自建 skill：**4.2 的工作流 + 4.4 的四个协议（verifier 子 agent / Tweaks 编辑协议 / snip / starter 组件）是可直接借鉴的官方蓝本**，且其中"Tweaks 编辑协议 + 幻灯片缩放/备注"你已在 ppt-design 落地，可平移到通用前端设计 skill。
 
 ---
 
-## 7. 推荐：该装哪些 / 怎么组合 / 避开哪些
+## 5. 8 维设计生命周期覆盖矩阵 ⭐（第二轮核心）
 
-> 针对你的实际情况（Claude Code 为主、做大量 web 前端、维护对外分享的插件仓库）。
+按你给的 8 个维度盘点 63 个 skill 的覆盖。✅✅=有强代表/可执行 · ✅=有覆盖 · ◻️=部分/间接 · 🈳=明显薄弱。
 
-### 7.1 个人日常该装哪些（CC 用户，前端生产）
-1. **anthropics-frontend-design**（必装，事实标准；你的 ameng-ppt-design 已同源）—— `npx skills add anthropics/skills@frontend-design`
-2. **pbakaus-impeccable**（强烈推荐；命令体系 + 硬规则是目前最完整的工程化方案）—— 装时注意它要 Node 脚本 + reference 子文件，建议整仓拿。
-3. **shadcn-shadcn**（若用 React/shadcn 栈，官方 skill 直接装）
-4. **jezweb-design-review**（要"截图审查闭环"且不想被 gstack 重度绑定时的轻量选择，配 Playwright MCP）
+| 维度 | 覆盖度 | 代表 Skill | Claude Design 提示词是否覆盖 |
+|------|:--:|------|:--:|
+| **① 问题定义** | ✅ | assimovt-problem-validation(可裁决评分)、pop-define-problem-statement、pop/assimovt/owl-JTBD、julianoczkowski-design-brief、pop-design-sprint(Map&Target) | ◻️（"问大量问题"环节隐含，但无独立框架） |
+| **② 用户研究** | ✅✅ | owl-user-persona+journey-map、assimovt-user-interview+research-synthesis、c0ldsmi1e-user-research、lenny-behavioral、alsoforever(中文) | 🈳（不做研究，假定用户给上下文） |
+| **③ 信息架构** | ✅ | dembrandt-IA(本体最深)、julianoczkowski-IA(落地最深)、dembrandt-user-flows、owl-card-sort | ◻️（强调"扎根既有结构"，无 IA 产出物） |
+| **④ 界面生成** | ✅✅ 过剩 | anthropics、impeccable、leonxlnx、shadcn、sleek(真出图)、contsun、jezweb-loop、garrytan-html、imagegen | ✅✅（HTML 即产物，核心能力） |
+| **⑤ 视觉风格** | ✅✅ 过剩 | anthropics、impeccable、binggg、leonxlnx、wholiver、garrytan-consultation、antonia、lyndonkl-cognitive | ✅✅（反 slop + 多方案 + 系统先行） |
+| **⑥ 设计系统** | ✅✅ | nlb-design-system、owl-design-token、wshobson-patterns、arvindrk-extract、owl-governance(治理)、shadcn | ✅（内置 Create design system 子 skill） |
+| **⑦ 设计评审** | ✅✅ 过剩 | garrytan-review(闭环)、jezweb-review、microsoft、owl-critique、owl-a11y、dembrandt-nielsen、tommygeoco、vercel | ✅（fork_verifier_agent 截图自检子 agent） |
+| **⑧ 验证复盘** | ✅ | pop-measure-experiment(A/B)、owl-usability-test-plan、lyndonkl-reviews-retros、pop-iterate-retrospective、assimovt-problem-validation | 🈳（一次性产物，无验证/复盘闭环） |
 
-### 7.2 产品/UX 方向该装哪些
-- **owl-listener/designer-skills** 整套（persona + journey-map + design-critique + design-token + accessibility-audit）—— 干净、universal、零依赖，是产品/UX 方向性价比最高的一套。
-- **lenny-behavioral-product-design**（行为设计 + 伦理护栏，最可执行的一则）。
-
-### 7.3 怎么组合（安装顺序与配置）
-- 先装 `anthropics-frontend-design`（即用基线）→ 再装 `impeccable`（深度命令）→ 需要审查闭环时再加 `jezweb-design-review` + Playwright MCP。
-- 中文场景单独走 `binggg-ui-design-guide`（grep 自检）+ `contsun-prototype-design`（B 端原型）。
-- 配置要点：impeccable 需 `node scripts/context.mjs` 初始化 PRODUCT.md；sleek 需 `SLEEK_API_KEY`（付费）；arvindrk 需 `npx playwright install chromium`。
-
-### 7.4 避开哪些（原因）
-- **akhilbhima-frontend-design**：anthropics 的逐字换皮版，无增量价值。
-- **mattpocock-design-an-interface**：作者已 deprecated。
-- **garrytan 三件套**（除非你深度用 gstack）：方法论顶级但强绑 gstack 私有 CLI + CDP 接管真实浏览器（带登录态截图泄露面），对"装上即用"不友好——**借方法论，别整装**。
-- **tommygeoco-ui-audit / shubhamsaboo-ux-designer**：核心 references 未随包，单装是空壳，要用得回原仓库取全。
-- **sleek-design-mobile-apps**：除非愿意付费且接受数据上云。
-- **数十个 ClawHub 上的 `frontend-design-2/3`、`ui-ux-pro-max-2/3` 衍生版**：高度同质，无须收。
+### 5.1 读出的盲区与失衡
+1. **严重失衡**：④⑤⑥⑦（生成/视觉/系统/评审）数十个、高度同质、过剩；①②③⑧（问题/研究/IA/验证）要靠产品经理类 skill 撑，且**几乎全是 guide-only + 模板外置缺失**，没有一个"可运行产出真实文件"的。
+2. **没有一个 skill 覆盖全 8 维**。最接近"串起来"的是 `julianoczkowski/design-flow`（覆盖 ①问题定义(借 grill+brief)→③IA→⑤⑥token→④build→⑦review），但**缺 ②用户研究 和 ⑧验证复盘**，且强依赖同仓兄弟 skill。
+3. **⑧验证复盘是离落地最远的一环**：现有的（pop/owl/lyndonkl）都只产"计划/复盘文档"，没有一个真去跑可用性测试或读 A/B 数据——和 owl-a11y"纯目测"同病。
+4. **②用户研究 与 ④界面生成 之间断裂**：研究产物（persona/journey/synthesis）是 md，界面生成 skill 不读它们；中间靠 ①design-brief/③IA 勉强搭桥。
+5. **Claude Design 提示词只强④⑤⑥⑦**（生成侧），刻意不碰②⑧（它假定用户带上下文、产物是一次性的）——说明"研究/验证"本就不是"设计画布 agent"的职责，而是**产品/研究流程的职责**，二者天然该是两个 skill。
 
 ---
 
-## 8. 设计方案：往 ameng-skill 仓库加什么 design skill
+## 6. 详细分析（精选展开，其余见各分类表 + 第二轮补充）
 
-### 8.1 现有 Skill 的不足（即第 5 节那条空白对角线）
-1. **"产出 + 自检闭环"几乎都绑死工具链**：impeccable 绑 Node 脚本、garrytan 绑 gstack CDP、jezweb 绑 MCP、sleek 绑付费 API。没有一个"自带轻量浏览器截图自检、宿主依赖最小"的方案。
-2. **中文场景精品稀缺**：只有 binggg（偏规范）和 contsun（偏 B 端原型）两根独苗，且各有偏科。
-3. **反 AI 味"原则"多，可机械执行的"自检"少**：anthropics/leonxlnx 给原则，只有 binggg(grep) / garrytan(评分) 真做了可执行自检。
-4. **产品/UX 研究停在 guide-only**：persona/journey 不产出可视化真实文件。
-5. **你已有的资产被浪费**：`ameng-ppt-design` 已经实现了「OKLCH token 系统 + 6 主题 + 逐页 PNG 自检 + validate 纪律校验 + 反 AI 味（禁 Inter/Playfair）」——这套"截图自检 + 反 slop 校验"的引擎完全可以复用到通用前端设计上。
+> 63 个全部已下载。第一轮 41 个的详细卡片见下；第二轮 22 个的要点已在第 5 节矩阵 + 第 3 节各表给出，关键差异在 6.12 归并。
 
-### 8.2 推荐自建 / 拆分方案（与你已有 skill 形成矩阵）
+### 6.1 anthropics-frontend-design（旗舰/事实标准）
+- 来源 github.com/anthropics/skills · universal · guide-only · 即用 · safe
+- 能力：① 先定 BOLD 美学方向再写代码；② 排版/色彩/动效/空间/背景五维准则；③ 禁用清单（禁 Inter/Roboto/Arial、禁白底紫渐变、禁套路布局、禁跨次生成都收敛 Space Grotesk）。
+- 可复用价值：整个赛道的母版，确立了"用禁用清单 + 美学方向承诺约束 LLM"的范式（你的 ppt-design 已同源）。
 
-你的仓库现状：`ameng-ppt-design`（演示/HTML）+ `ameng-skill-scout`（调研）。建议新增 **1 个主力 + 2 个可选**，复用 ppt-design 已验证的"截图自检 + validate"引擎：
+### 6.2 pbakaus-impeccable（重型工程化旗舰）
+- universal frontmatter 但绑 Node 脚本 → CC 最佳 · hybrid · 需配置 · safe
+- 能力：21 动词命令（craft/audit/polish/bolder/quieter/colorize/typeset/animate/live…）+ PRODUCT/DESIGN.md 上下文持久化 + brand/product register 分流 + 极细硬规则（对比度 ≥4.5:1、行长 65–75ch、字体 ≤3、hero ≤6rem、z-index 语义层级、禁 em-dash/buzzword）+ Absolute bans + 二阶 AI slop 测试。
+- 可复用价值：最值得偷师的"命令体系 + 项目上下文 + 极细硬规则 + live 浏览器迭代"。
 
-1. **`ameng-frontend-craft`（主力，强烈推荐）** —— 通用前端/UI 设计与生成 skill。定位"anthropics 的反 slop 原则 + impeccable 的命令体系 + binggg 的 grep 自检 + ppt-design 的逐页 PNG 自检"四合一，但**宿主依赖最小化**（截图自检走已可用的 Playwright MCP，无 gstack 那种私有 CLI），**中英双语**。
-2. **`ameng-design-review`（可选拆分）** —— 若不想把"生成"和"审查"塞进一个 skill，可拆出独立审查 skill：浏览器截图取证 + 反 AI slop 评分 + 审→修→复验闭环（借 garrytan 方法论、去掉 gstack 绑定）。
-3. **`ameng-ux-kit`（可选，产品/UX 方向）** —— 把 owl 的 persona/journey + lenny 行为设计提炼成中文友好、且**产出可视化 HTML**（而非纯 md）的一套——正好用 ppt-design 的渲染能力出图。
+### 6.3 binggg-ui-design-guide（中文工程级标杆）
+- 腾讯 CloudBase · openclaw · guide + grep 自检 · 即用 · caution（拉 cnb.cool 外部 raw）
+- 能力：强制"先出 DESIGN SPECIFICATION 再写代码"契约 + 极严禁用清单 + 11 美学方向按场景推荐 + **TRIGGER WORD DETECTOR 自我刹车 + 提交前 grep 五项自检** + brand escape hatch。
+- 可复用价值：中文场景最值得借鉴；"规范契约 + 禁用清单 + grep 自检闭环"是把反 slop 做成可机械执行的关键一跳。
 
-### 8.3 设计草案
+### 6.4 garrytan gstack 三件套（review / consultation / html）
+- github.com/garrytan/gstack · 标称 universal 实为 CC-first 强绑 gstack 私有 CLI + 自研 browse 浏览器 · hybrid+browser · 需配置 · caution
+- review：11 阶段审→修→截图复验→原子提交闭环 + 双评分(Design Score + AI Slop Score) + baseline 回归 + AI Slop 黑名单 + Landing/App 分类。consultation：顾问式出完整设计系统 + **SAFE/RISK 框架** + 反收敛字体纪律 + 浏览器比较看板人在环选型 + DESIGN.md。html：mockup→vision 抽 JSON→分 5 tier Pretext 排版→三视口截图自检→人在环外科精修。
+- 可复用价值：全赛道方法论密度最高；客观提取设计系统、AI Slop 黑名单、商誉量化、SAFE/RISK、截图取证+baseline 回归、审→修→复验闭环都是顶级范本。**借方法论，别整装**（强绑 gstack + CDP 接管真实浏览器有泄露面）。
 
-#### 方案 A（首选）：`ameng-frontend-craft`
-- **定位**：有设计主见、反 AI 味、自带截图自检闭环的通用前端/UI 生成器；中英双语；宿主依赖最小。
-- **包含能力**：
-  - **反 slop 宪法**（融合 anthropics + impeccable + binggg 三家禁用清单：禁 Inter/Roboto、禁白底紫渐变、禁居中卡片网格、禁每节 eyebrow、禁 em-dash…）
-  - **OKLCH token 系统 + 多主题**（直接移植 ppt-design 的 token 引擎）
-  - **命令体系**（借 impeccable：`craft / audit / polish / bolder / quieter / colorize / typeset`，精简到 6–8 个高频命令）
-  - **grep 式提交前自检**（借 binggg：扫自己产物里的禁用色/字体/emoji/居中卡片）
-  - **逐页 PNG 截图自检闭环**（移植 ppt-design 的 Playwright 截图自检 + validate 纪律校验，发现问题→修→复验）
-- **依赖**：Playwright MCP（截图，已在你环境可用）；无私有 CLI、无付费 API、无 Node 强制脚本
-- **目标 Agent**：universal 优先（纯 SKILL.md + references/），CC 上启用截图自检增强
-- **复杂度**：即用（截图自检为可选增强，缺 Playwright 时降级为 grep 自检）
-- **与现有 skill 关系**：与 `ameng-ppt-design` 共享 token/自检引擎、各管"网页"与"演示"两个产物形态；触发词错开（ppt/slides vs 网页/组件/页面）。
+### 6.5 julianoczkowski/design-flow（设计生命周期编排器）⭐
+- universal · hybrid(编排) · 需配置 · caution（会读取并执行多个兄弟 skill + Phase7 调 Playwright MCP）
+- 能力：明确 6 阶段顺序（grill-me→design-brief→information-architecture→design-tokens→brief-to-tasks→frontend-design）+ Phase7 design-review 按需触发；**阶段门控**（前 announce 产物、后 summarize 等用户确认 "Ready to move?"）；阶段间状态传递；`.design/<feature-slug>/` 持久化 + 断点续跑；内置跳过模式。
+- 可复用价值：**想自建"生命周期编排"方向 skill 的最佳范本**——阶段序列 + 门控协议 + 状态传递 + 断点续跑 + 把评审刻意排除在自动流程外，这 6 点直接可抄。短板：缺②用户研究/⑧验证；离开同仓兄弟 skill 无法独立跑。
 
-#### 方案 B（轻量起步）：只做 `ameng-design-review`
-- **定位**：不生成、只审查——给任意 URL/本地页做"反 AI slop 评分 + 7 维设计审查 + 截图取证 + 修复建议"。
-- **包含能力**：jezweb 的 7 维 good/bad 表 + garrytan 的 AI Slop 黑名单与双评分 + baseline JSON 回归；Playwright MCP 截图。
-- **依赖 / 复杂度**：Playwright MCP；即用。
-- **优势**：比方案 A 范围小、易做、易分享，且填补"宿主无关的截图审查"这个明确空白（现有的都绑 gstack/jezweb 工具链）。
+### 6.6 assimovt 三件套（problem-validation / jtbd-analysis / user-interview + research-synthesis）⭐
+- universal · guide · 即用 · safe · 自包含（仅 user-interview 缺 1 个 ref 模板）
+- **problem-validation**：F×I×W×WTP 四维 1-5 乘积评分 + 阈值(250+ Build/<100 Kill) + 证据强度分级 + 反面算例 + Go/Investigate/Kill 硬裁决——本研究里**最"可裁决"的 skill**。**jtbd-analysis**：Forces of Progress 四力 + trigger event + 只访 90 天内切换者。**research-synthesis**：Atomic Research 四层金字塔(Nuggets→Patterns→Insights→Recommendations) + 证据可追溯链 + "禁止基于 Weak 证据给建议"。
+- 可复用价值：把"软判断"做成"量化 + 纪律(CRITICAL/ALWAYS/NEVER) + 自包含可裁决"的最佳范本——这是 ①问题定义/⑧验证 方向最该抄的写法。
 
-> **建议落地顺序**：先做 **方案 B（design-review）** 作为低风险高价值的第一步（范围清晰、复用 ppt-design 截图能力、填明确空白），验证后再扩成 **方案 A（frontend-craft）** 的完整生成+自检闭环。`ameng-ux-kit` 视后续需求再定。
+### 6.7 dembrandt（information-architecture / user-flows / nielsen-heuristics）
+- universal · guide · 即用 · safe · 自包含 + 富检索元数据(pathPatterns/promptSignals/retrieval)
+- IA：命名哲学 + 心智模型跟随数据模型 + 危险操作 confirm（判定表+解剖+文案级示例）+ 大型应用导航(≤3层) + 14 项 checklist——**IA 知识本体最深**。user-flows：wizard/结账决策表 + 组件解剖。nielsen：10 条做成"原则→实践→Review question→checklist"四段式审查卡。
+- 可复用价值：把抽象原则落到"具体 UI 决策 + 可勾选清单 + 文案示例"；其 retrieval 元数据是"让 skill 被自动精准召回"的范本。
+
+### 6.8 owl-listener 设计体系（design-research/systems/ops 三十余个）
+- universal · guide(persona/journey 软依赖宿主能力) · 即用 · safe
+- 本次收 8 个：user-persona、journey-map、jobs-to-be-done、card-sort-analysis、usability-test-plan、design-token、accessibility-audit、design-critique、design-system-governance。
+- 定位：横跨②③⑥⑦⑧的"设计组织全景"，颗粒细、单文件、零依赖；短板是不产出真实文件（a11y 目测、token 不生成 json、card-sort 相似度矩阵无脚本）。最有价值：persona+journey 配套、governance(三模型+semver+弃用)、usability-test-plan(SUS/SEQ+样本量)。
+
+### 6.9 product-on-purpose/pm-skills（PM 生命周期家族，含 Google Design Sprint）
+- universal · guide · 即用~需配置(refs/兄弟 skill 多外置缺失) · safe
+- 本次收 5 个：define-problem-statement、define-jtbd-canvas、iterate-retrospective、measure-experiment-design、tool-design-sprint-map-and-target。
+- 特色：每个带 `phase`(define/measure/iterate) + `frameworks` + `prerequisites/inputs/outputs/timebox_minutes/roles` 元数据——**编排家族的元数据范本**；design-sprint 是正统 Google/GV Sprint（精确到分钟时间表 + 角色 + When NOT to Use）。短板：单文件无法独立跑，依赖整个家族 + references。
+
+### 6.10 sleek-design-mobile-apps（唯一端到端真出图）
+- universal(REST+curl) · api · 需配置(需 SLEEK_API_KEY 付费) · caution
+- 安全写法堪称范本：host 白名单 + HTTPS-only + 最小 scope + key 经 env 注入；异步 run+轮询退避+幂等键；"生成后必截图回传"。设计智能在 Sleek 云端。
+
+### 6.11 contsun-prototype-design（中文 B 端原型工作流）
+- clawhub · openclaw · 需 bash+python3+agent-browser · hybrid+browser · 需配置 · caution
+- 单页 HTML(含所有页面内嵌) B 端原型 + 58 设计系统切换 + 改 pages→py 同步回 index.html→div 平衡校验→agent-browser 截图验证→小步 commit + **抗 compaction 记忆术**("文件即记忆")。注意它"全内联样式禁 CSS 类"与 token 化阵营相反。
+
+### 6.12 归并说明（同质化/衍生/薄文档/弃用）
+- **akhilbhima(#2)** = anthropics 逐字换皮（仅多 1 节 preset），无增量。
+- **antonia(#4)** = impeccable 中文一页提炼 + 11 命令；**xobi667(#10)** = nlb-ui-ux-pro-max 精简移植(自承 upstream)。
+- **microsoft(#8)** 官方名头但纯 guide 零自动化。**mattpocock-design-an-interface(#61)** 已 deprecated。
+- **lyndonkl-cognitive-design / shubhamsaboo / tommygeoco / pop 系 / lyndonkl-reviews / beagle-review**：核心血肉在未随附的 references/兄弟 skill，单装是骨架——借"渐进披露/检索元数据/编排元数据"架构 > 直接当前态用。
+- **oldwinter/skills** 经查是 refoundai/lenny-skills 的**再托管**（含 problem-definition/usability-testing 等），故未重复收，统一以 refoundai 原仓为准。
+
+---
+
+## 7. 能力矩阵（功能维度）
+
+| 能力点 | anthropics | impeccable | binggg | leonxlnx | garrytan-rv | design-flow | assimovt-pv | owl 体系 | Claude Design 提示词 |
+|-------|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| 反 AI 味禁用清单 | ✅ | ✅ | ✅ | ✅ | ✅ | ◻️ | ❌ | ❌ | ✅ |
+| 可机械执行自检(grep/评分/rubric) | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ◻️ | ◻️ |
+| 浏览器截图自检闭环 | ❌ | ✅(live) | ❌ | ❌ | ✅ | ✅(P7) | ❌ | ❌ | ✅(verifier子agent) |
+| 审查→修复→复验闭环 | ❌ | ✅ | ◻️ | ❌ | ✅ | ◻️ | ❌ | ◻️ | ✅ |
+| 真实产物(HTML/图/文件) | ◻️ | ✅ | ◻️ | ◻️ | ✅ | ✅ | ❌ | ❌ | ✅✅ |
+| 生命周期编排(多阶段串联) | ❌ | ◻️ | ❌ | ❌ | ❌ | ✅✅ | ❌ | ❌ | ✅✅ |
+| 问题定义/可裁决 | ❌ | ❌ | ❌ | ❌ | ◻️ | ◻️ | ✅✅ | ◻️ | ◻️ |
+| 产品/UX 研究(persona/journey/JTBD) | ❌ | ❌ | ❌ | ❌ | ◻️ | ◻️ | ✅ | ✅✅ | ❌ |
+| 验证复盘(A/B/可用性/retro) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
+| 中文场景适配 | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ◻️ |
+| 宿主无关(universal) | ✅ | ◻️ | ✅ | ✅ | ❌ | ◻️ | ✅ | ✅ | —(官方内嵌) |
+| 零配置即用 | ✅ | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | —|
+
+**矩阵读出的空白对角线**：没有任何一个社区 skill 同时做到「**反 AI 味 + 截图自检闭环 + 真实产物 + 生命周期编排 + 宿主无关 + 中文 + 零配置**」。Claude Design 提示词在生成/编排/验证侧做到了，但①它不开源、②不覆盖②⑧、③绑 Claude.ai 专有工具。这条对角线 = 自建机会。
+
+---
+
+## 8. 推荐：该装哪些 / 怎么组合 / 避开哪些
+
+> 针对你的实际情况（CC 为主、做大量 web 前端、维护对外分享插件仓库）。
+
+### 8.1 按 8 维各取一个"首选" 
+
+| 维度 | 首选 | 备选/中文 |
+|------|------|------|
+| ①问题定义 | **assimovt-problem-validation**(可裁决) | pop-define-jtbd-canvas |
+| ②用户研究 | **owl-user-persona + journey-map** | assimovt-user-interview+synthesis · c0ldsmi1e |
+| ③信息架构 | **dembrandt-information-architecture** | julianoczkowski-IA(要落盘文档时) |
+| ④界面生成 | **anthropics-frontend-design** + shadcn | impeccable(深度) · contsun(中文B端) |
+| ⑤视觉风格 | **anthropics / impeccable** | binggg(中文) · leonxlnx(刻度盘) |
+| ⑥设计系统 | **owl-design-token + governance** | wshobson-patterns · arvindrk(逆向抽) |
+| ⑦设计评审 | **jezweb-design-review**(轻) / garrytan(重) | dembrandt-nielsen · owl-critique |
+| ⑧验证复盘 | **pop-measure-experiment-design** | owl-usability-test-plan · lyndonkl-retros |
+| 🔗编排 | **julianoczkowski-design-flow** | — |
+
+### 8.2 怎么组合
+- **个人前端生产**：anthropics(基线) → impeccable(命令+硬规则) → jezweb-design-review + Playwright MCP(截图审查)。
+- **产品/UX 全流程**：assimovt-problem-validation → owl-user-persona → owl-journey-map → dembrandt-IA → (设计) → owl-usability-test-plan → pop-iterate-retrospective。
+- **中文场景**：binggg(规范+grep) + contsun(B端原型) + alsoforever(方法论速查)。
+- 配置：impeccable 需 `node scripts/context.mjs`；arvindrk 需 `npx playwright install chromium`；sleek 需付费 key；pop/owl 系注意补齐 references。
+
+### 8.3 避开哪些
+- **akhilbhima**(换皮)、**mattpocock-design-an-interface**(已弃用)、数十个 `frontend-design-2/3`、`ui-ux-pro-max-2/3` 衍生(同质)。
+- **garrytan 三件套**：除非深用 gstack——方法论顶级但强绑私有 CLI + CDP 接管真实浏览器(登录态截图泄露面)。借方法论别整装。
+- **依赖 refs 才完整的**(tommygeoco / shubhamsaboo / pop 系 / lyndonkl / cognitive-design)：单装是空壳，要用回原仓取全。
+- **sleek**：除非愿付费 + 接受数据上云。
+
+---
+
+## 9. 设计方案：往 ameng-skill 仓库加什么 design skill
+
+### 9.1 现有不足（即第 5/7 节的盲区）
+1. **生命周期两端薄**：①问题定义/③信息架构/⑧验证复盘 全是 guide-only + 模板外置，没有"可运行产真实文件"的。
+2. **"产出 + 自检闭环"都绑工具链**：impeccable 绑 Node、garrytan 绑 gstack CDP、jezweb 绑 MCP、sleek 绑付费 API、design-flow 绑同仓兄弟 skill。**没有一个轻量、宿主依赖最小、中文友好的**。
+3. **②研究 与 ④生成 断裂**：研究产物喂不进生成 skill。
+4. **你已有资产被浪费**：`ameng-ppt-design` 已实现 OKLCH token + 6 主题 + 逐页 PNG 自检 + validate + Tweaks 就地编辑——而 **Claude Design 系统提示词第 4.4 节恰好给了这套"verifier 子 agent / EDITMODE 协议 / starter 组件"的官方蓝本**，可平移到通用前端设计。
+5. **编排层缺位**：只有 design-flow 一个编排器且绑同仓。中文/宿主无关的"设计生命周期编排"是空白。
+
+### 9.2 推荐自建 / 拆分（与已有 skill 形成矩阵）
+
+你的仓库现状：`ameng-ppt-design`(演示) + `ameng-skill-scout`(调研)。建议按"**先点后线**"加：
+
+1. **`ameng-design-review`（首选第一步，低风险高价值）** —— 宿主无关的设计审查 skill：浏览器截图取证 + 反 AI slop 评分 + 7 维审查 + 审→修→复验闭环。融 jezweb 的 7 维表 + garrytan 的 AI Slop 黑名单/双评分/baseline 回归 + Claude Design 的 **verifier 子 agent 模式**，去掉 gstack 绑定，复用 ppt-design 的 Playwright 截图能力。**填"宿主无关截图审查"这个明确空白。**
+2. **`ameng-frontend-craft`（主力第二步）** —— 有设计主见、反 slop、自带截图自检的通用前端生成器。融 anthropics 原则 + impeccable 命令体系(精简 6–8 个) + binggg 的 grep 自检 + ppt-design 的 token/PNG 自检 + Claude Design 的 **Tweaks/EDITMODE 编辑协议**。中英双语、宿主依赖最小(截图走 Playwright MCP，缺则降级 grep)。
+3. **`ameng-design-flow`（可选第三步，编排）** —— 宿主无关、中文友好的设计生命周期编排器：按 ①问题定义→②用户研究→③IA→④⑤⑥生成→⑦评审→⑧验证 串联，借 design-flow 的"阶段门控 + `.design/<slug>/` 断点续跑 + 跳过模式"，并**补上 design-flow 缺的②⑧两端**（接 assimovt-problem-validation 式裁决 + owl-usability-test 式验证）。把 craft / review / ppt-design 作为它调用的子环节。
+
+### 9.3 设计草案
+
+#### 方案 A（建议先做）：`ameng-design-review`
+- **定位**：给任意 URL/本地页做"反 AI slop 评分 + 多维设计审查 + 截图取证 + 修复建议(可选改)"，宿主无关。
+- **能力**：jezweb 7 维 good/bad 表 + garrytan AI Slop 黑名单与双评分(Design Score + Slop Score) + baseline JSON 回归 + dembrandt-nielsen 10 条 + owl-a11y WCAG；**verifier 子 agent 模式**做后台截图自检不污染主上下文。
+- **依赖/复杂度**：Playwright MCP（已可用）；即用。
+- **目标 Agent**：universal 优先，CC 启用截图增强。
+
+#### 方案 B（主力）：`ameng-frontend-craft`
+- **定位**：反 slop + 命令化 + 自带截图自检的通用前端/UI 生成器，中英双语，宿主依赖最小。
+- **能力**：反 slop 宪法(融 anthropics+impeccable+binggg 三家禁用清单) + OKLCH token 系统/多主题(移植 ppt-design) + 6–8 个动词命令(craft/audit/polish/bolder/quieter/colorize/typeset) + **grep 提交前自检**(binggg) + **逐页 PNG 截图自检闭环**(ppt-design + Claude Design verifier 模式) + **Tweaks/EDITMODE 就地编辑协议**(Claude Design 官方契约，ppt-design 已落地)。
+- **依赖/复杂度**：Playwright MCP(可选增强，缺则降级 grep 自检)；无私有 CLI/付费 API/强制 Node 脚本；即用。
+- **与现有关系**：与 ppt-design 共享 token/自检/编辑引擎，各管"网页"与"演示"；触发词错开(网页/组件/页面 vs ppt/slides)。
+
+#### 方案 C（可选）：`ameng-design-flow`
+- **定位**：宿主无关、中文友好的设计生命周期编排器，补全 8 维(尤其②⑧)。
+- **能力**：阶段序列(问题定义→研究→IA→生成→评审→验证) + 阶段门控(announce/confirm) + `.design/<slug>/` 持久化断点续跑 + 跳过模式；各阶段调用现成方法(借 assimovt/owl/dembrandt 的可执行框架) + 调 craft/review/ppt-design 作子环节。
+- **依赖/复杂度**：依赖 A/B 两个 skill；需配置。
+
+> **落地顺序**：A(design-review，范围清晰、复用 ppt-design 截图、填明确空白) → B(frontend-craft，完整生成+自检) → C(design-flow，编排封顶)。三者 + ppt-design 共用一套"token + 截图自检 + EDITMODE 编辑"引擎，形成 ameng 设计 skill 矩阵。
 
 ---
 
 ## 附录
 
-### A. 搜索关键词完整列表
-- **英文**：design · ui design · ux design · frontend · design system · wireframe · prototype · ui components · visual design · design review · tailwind · shadcn · landing page
-- **中文**：界面设计 · 原型 · 图文排版
-- **平台**：`npx skills find` · `npx clawhub@latest search` · `gh search code --filename SKILL.md` · `gh search repos`
+### A. 搜索关键词
+- 英文：design · ui/ux design · frontend · design system · wireframe · prototype · ui components · visual design · design review · tailwind · shadcn · landing page · information architecture · card sorting · jobs to be done · design brief · usability testing · ab testing · design retrospective · user interview · user research
+- 中文：界面设计 · 原型 · 图文排版 · 信息架构 · 可用性测试
+- 平台：`npx skills find` · `npx clawhub@latest search/inspect` · `gh search code/repos` · `gh api .../git/trees`
 
-### B. 未找到 / 无结果的来源
-- ClawHub 搜"界面设计"无结果（中文长词召回弱，需用"ui/ux/frontend"英文词）。
+### B. 未找到 / 无结果
+- ClawHub 搜"界面设计/信息架构/可用性测试/design retrospective"中文长词基本无召回（需用英文词）。
 - skills.sh 搜"图文排版"无结果。
-- SkillsMP / ClaudeSkills.com 等本次未单独抓取（GitHub + 两个 CLI 已覆盖头部，去重后增量有限）。
+- pop / owl / lyndonkl / tommygeoco / shubhamsaboo / cognitive-design 等的 references/兄弟 skill 未随附（已逐个标注 "refs缺"）。
 
-### C. SPA 站点直链（供自行翻完整列表）
-- skills.sh：https://skills.sh/?q=design · https://skills.sh/?q=ui+design · https://skills.sh/?q=frontend
-- ClawHub：https://clawhub.ai/skills?q=design · https://clawhub.ai/skills?q=ui · https://clawhub.ai/skills?q=ux
-- 头部代表直链：
-  - https://skills.sh/anthropics/skills/frontend-design （48.7w 安装）
-  - https://skills.sh/vercel-labs/agent-skills/web-design-guidelines
-  - https://github.com/pbakaus/impeccable （⭐3k）
-  - https://github.com/garrytan/gstack
-  - https://github.com/owl-listener/designer-skills
+### C. SPA 站点直链（自行翻完整列表）
+- skills.sh：https://skills.sh/?q=design · ?q=ui+design · ?q=information+architecture · ?q=design+brief
+- ClawHub：https://clawhub.ai/skills?q=design · ?q=ux · ?q=user+research
+- 头部代表：anthropics frontend-design(https://skills.sh/anthropics/skills/frontend-design) · pbakaus/impeccable(⭐3k) · garrytan/gstack · owl-listener/designer-skills · product-on-purpose/pm-skills · julianoczkowski/designer-skills
 
-### D. 下载产物
-- 本研究文件夹下 41 个 `[来源]-作者-skill名/` 目录，各含原始 `SKILL.md` + `_source.yaml`。
-- 下载脚本：`_download.sh`（可复跑/扩充）。
-- ⚠️ 部分 skill 的 references/scripts/兄弟 skill 未随附（评估"真实能力"时已在第 4 节标注）。
+### D. 重点参考资料
+- **Claude Design 系统提示词**：`_reference-claude-design-system-prompt/Claude-Design-Sys-Prompt.txt`（来源 github.com/elder-plinius/CL4R1T4S，逆向归档，422 行）。**这是本研究参考价值最高的单份资料**——见第 4 节。
+
+### E. 下载产物
+- 本研究文件夹下 63 个 `[来源]-作者-skill名/` 目录(各含 SKILL.md + _source.yaml) + 1 个 `_reference-claude-design-system-prompt/`。
+- 下载脚本：`_download.sh`(第一轮 41) + `_download2.sh`(第二轮 22)，可复跑/扩充。
 </content>
-</invoke>
