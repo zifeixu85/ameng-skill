@@ -19,7 +19,7 @@ _（更多 Skill 持续增加中……）_
 
 ```text
 /plugin marketplace add zifeixu85/ameng-skill
-/plugin install ameng-skill
+/plugin install ameng-skill@ameng-skill
 ```
 
 ### 方式二：手动复制单个 Skill
