@@ -125,3 +125,94 @@
    animates unless an element declares data-fx. Sits behind content; never
    intercepts pointer events. Put content above it with a higher z-index. */
 .slide-fx { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+
+/* ---- 11. Graphic primitives (anti "wall of text"): turn lists into pictures --
+   Reusable, token-driven, no hex. Pair with an inline <svg> for diagrams
+   (double-diamond / orchestration). See references/diagrams.md for snippets.
+   Discipline: a fixed 1280×720 stage never shrinks text — keep one graphic per
+   slide and verify with scripts/render.sh. ------------------------------------ */
+
+/* round avatar with an accent ring (人像更圆润；circle, not a square frame) */
+.avatar-ring { border-radius: 50%; padding: 6px; background: var(--accent);
+  box-shadow: var(--shadow-2); display: inline-block; line-height: 0; }
+.avatar-ring img { border-radius: 50%; object-fit: cover; display: block;
+  border: 4px solid var(--surface-1); }
+
+/* QR card — crop the QR to its matrix first; show on a clean light card, no chrome */
+.qr { background: var(--surface-1); border: 1px solid var(--line); border-radius: var(--r-2);
+  padding: 0.7rem; box-shadow: var(--shadow-2); display: inline-block; line-height: 0; }
+.qr img { display: block; border-radius: var(--r-1); }
+
+/* horizontal stepper / process line: numbered nodes joined by a rule.
+   Mark the key node(s) with .ev--on (gets accent fill). Great for 4–6 steps. */
+.evo { display: flex; align-items: flex-start; gap: 0; }
+.evo .ev { flex: 1; position: relative; padding-top: var(--s-6); }
+.evo .ev::before { content: ""; position: absolute; top: calc(var(--s-6) - .85rem);
+  left: 0; right: 0; height: 3px; background: var(--line-strong); }
+.evo .ev:first-child::before { left: 50%; }
+.evo .ev:last-child::before { right: 50%; }
+.evo .ev__dot { position: absolute; top: calc(var(--s-6) - 1.45rem); left: calc(50% - 1.15rem);
+  width: 2.3rem; height: 2.3rem; border-radius: 50%; background: var(--surface-1);
+  border: 3px solid var(--line-strong); display: grid; place-items: center;
+  font-family: var(--font-mono); font-weight: var(--w-semi); color: var(--ink-2); z-index: 2; }
+.evo .ev--on .ev__dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.evo .ev__v { font-family: var(--font-display); font-weight: var(--w-bold); font-size: 1.6rem;
+  margin-top: var(--s-3); text-align: center; }
+.evo .ev--on .ev__v { color: var(--accent); }
+.evo .ev__d { font-size: 0.95rem; color: var(--ink-3); text-align: center; margin-top: var(--s-2);
+  line-height: 1.4; padding: 0 var(--s-3); }
+
+/* expanding-scope bars: widening rows that SHOW a boundary growing (set width%) */
+.scope { display: flex; flex-direction: column; gap: var(--s-3); }
+.scope .sc { display: flex; align-items: center; gap: var(--s-4); height: 3.1rem;
+  border-radius: var(--r-2); background: var(--surface-2); border: 1px solid var(--line);
+  padding: 0 var(--s-5); }
+.scope .sc__t { font-weight: var(--w-bold); font-size: 1.15rem; white-space: nowrap; }
+.scope .sc__d { font-size: 0.95rem; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scope .sc--on { background: var(--accent); border-color: var(--accent); }
+.scope .sc--on .sc__t { color: var(--accent-ink); }
+.scope .sc--on .sc__d { color: var(--accent-ink); opacity: .88; }
+
+/* two-zone split (A vs B) — one seam, the落点 side gets the accent fill */
+.zones { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--line-strong);
+  border-radius: var(--r-2); overflow: hidden; }
+.zones .z { padding: var(--s-5); }
+.zones .z--l { background: var(--surface-2); }
+.zones .z--r { background: var(--accent); color: var(--accent-ink); }
+.zones .z__ic { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em;
+  text-transform: uppercase; opacity: .7; margin-bottom: var(--s-2); }
+.zones .z__h { font-size: 1.35rem; font-weight: var(--w-bold); margin-bottom: var(--s-3); }
+.zones .z__list { display: flex; flex-direction: column; gap: var(--s-2); font-size: 1.05rem; }
+
+/* big contrast table (A ↔ B rows) — readable from the back row, unlike tiny tags */
+.contrast { display: flex; flex-direction: column; border-top: 2px solid var(--line-strong); }
+.contrast .cr { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+  gap: var(--s-5); padding: var(--s-4) 0; border-bottom: 1px solid var(--line); }
+.contrast .cr__l { text-align: right; color: var(--ink-3); font-size: 1.25rem; }
+.contrast .cr__r { text-align: left; font-weight: var(--w-bold); font-size: 1.35rem; color: var(--ink-1); }
+.contrast .cr__m { font-family: var(--font-mono); color: var(--accent); font-size: 1.1rem; }
+
+/* numbered stage badge for a card corner (shows order in a grid of cards) */
+.nbadge { position: absolute; top: var(--s-4); right: var(--s-5); width: 1.9rem; height: 1.9rem;
+  border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono);
+  font-weight: var(--w-semi); font-size: 0.9rem; background: var(--surface-1);
+  border: 2px solid var(--line-strong); color: var(--ink-2); }
+.card--accent .nbadge { background: oklch(100% 0 0 / .2); border-color: transparent; color: var(--accent-ink); }
+
+/* inline example chip under a card label: <span class="ex"><b>例</b> Foo</span> */
+.ex { display: inline-flex; align-items: center; gap: .4em; font-family: var(--font-mono);
+  font-size: 0.82rem; color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: var(--r-pill); padding: .22em .7em; }
+.ex b { color: var(--accent); font-weight: var(--w-semi); }
+
+/* product card with a faux browser bar (for "tool/product" rows, no fake screenshot) */
+.prod { display: flex; flex-direction: column; background: var(--surface-1); border: 1px solid var(--line);
+  border-radius: var(--r-2); overflow: hidden; box-shadow: var(--shadow-1); }
+.prod__bar { height: 1.9rem; background: var(--surface-2); border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: .32rem; padding: 0 .8rem; }
+.prod__bar i { width: .62rem; height: .62rem; border-radius: 50%; background: var(--line-strong); }
+.prod__bar span { margin-left: .4rem; font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-3); }
+.prod__body { padding: var(--s-4) var(--s-5) var(--s-5); }
+.prod__name { font-family: var(--font-display); font-weight: var(--w-bold); font-size: 1.5rem; }
+.prod__pos { color: var(--accent); font-weight: var(--w-semi); font-size: 1.02rem; margin: .2rem 0 .4rem; }
+.prod__d { font-size: 0.98rem; color: var(--ink-2); line-height: 1.45; }

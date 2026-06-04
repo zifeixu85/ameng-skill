@@ -4,7 +4,7 @@
 >
 > **作者 / Author: A梦 (ameng)** · 自由分享与使用，请保留署名 · Free to use & share — please keep attribution.
 
-把大纲/讲稿/想法做成静态 HTML 幻灯片：OKLCH token 系统 + 6 主题 + 版式库 + 16:9/9:16/Swiss +
+把大纲/讲稿/想法做成静态 HTML 幻灯片：OKLCH token 系统 + 6 主题 + 版式库 + 16:9/Swiss +
 自托管 distinctive 字体 + 键盘放映。强制 anti-slop（禁蓝、单 accent 60-30-10、禁 Inter/Playfair、**只画真实数据**）。
 
 ## 比普通 HTML deck 多的两件事（右上角工具栏）
@@ -18,13 +18,13 @@
 
 > 工具栏是右上角一排**低调常驻的文字按钮**（hover 变清晰、不挡内容）；**全屏放映时连同快捷键提示一起隐藏**（纯内容）。
 > 编辑与版本存本浏览器 localStorage，离线、不上传。导出逐页整页截图（modern-screenshot，OKLCH 保真）再拼装，背景/高亮带/grain/chrome 一个都不丢。
-> 键盘：`1–9` 跳页 · `0`/`O` 总览 · `F` 全屏 · `S` 备注 · `T` 明暗。
+> 键盘：`1–9` 跳页 · `0`/`O` 缩略图总览（每页实拍预览）· `F` 全屏 · `S` 备注 · `T` 明暗。
 
 ## 快速开始
 
 ```bash
 ./scripts/fetch-fonts.sh                       # 可选：一次性装字体，之后全离线
-./scripts/new-ppt.sh my-talk 16x9              # 9x16 / swiss 亦可 → slides/my-talk/index.html
+./scripts/new-ppt.sh my-talk 16x9              # swiss 亦可 → slides/my-talk/index.html
 open slides/my-talk/index.html                 # 放映 / 右上角编辑 / 右上角导出
 node scripts/validate.mjs slides/my-talk/index.html   # 纪律自检
 ./scripts/render.sh slides/my-talk/index.html pdf      # 像素级 PDF（本地 Chrome）
@@ -38,7 +38,7 @@ node scripts/validate.mjs slides/my-talk/index.html   # 纪律自检
 
 ## 主题 & 比例
 
-- 比例：`16x9`（演讲）· `9x16`（小红书/竖屏）· `swiss`（数据驱动）
+- 比例：`16x9`（演讲）· `swiss`（数据驱动）
 - **5 套差异化主题** —— 同一页内容、不同风格。**不是换皮**：排版、构图、密度、装饰、气质都不同。点开 `templates/theme-preview.html` 可**实时切换对比 + 明暗**：
 
 | `industrial-paper` 工业纸感（旗舰） | `neo-brutalist` 新粗野 | `editorial` 杂志 |
@@ -70,7 +70,7 @@ ameng-ppt-design/
 ├── SKILL.md / README.md
 ├── assets/   base.css · components.css · toolbar.css · runtime.js · editor.js · export.js
 │             · fonts.css + fonts/ · vendor/ (modern-screenshot+jspdf+pptxgenjs+jszip) · themes/*.css · fx/
-├── templates/  ppt-16x9 · ppt-9x16 · ppt-swiss · layouts-gallery
+├── templates/  ppt-16x9 · ppt-swiss · layouts-gallery
 ├── scripts/    new-ppt.sh · fetch-fonts.sh · fetch-export-libs.sh · render.sh · validate.mjs
 └── references/ 8 篇按需加载的设计/版式/纪律文档
 ```

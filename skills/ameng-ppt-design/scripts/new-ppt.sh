@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # new-ppt.sh — scaffold a new presentation from a template.
-# Usage: ./scripts/new-ppt.sh <name> [16x9|9x16|swiss]
+# Usage: ./scripts/new-ppt.sh <name> [16x9|swiss]
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-NAME="${1:?usage: new-ppt.sh <name> [16x9|9x16|swiss]}"
+NAME="${1:?usage: new-ppt.sh <name> [16x9|swiss]}"
 RATIO="${2:-16x9}"
 SRC="$ROOT/templates/ppt-$RATIO.html"
 
-[ -f "$SRC" ] || { echo "no template for ratio '$RATIO' (use 16x9, 9x16, or swiss)"; exit 1; }
+[ -f "$SRC" ] || { echo "no template for ratio '$RATIO' (use 16x9 or swiss)"; exit 1; }
 
 DEST_DIR="$ROOT/slides/$NAME"
 mkdir -p "$DEST_DIR/images"

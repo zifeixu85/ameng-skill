@@ -52,10 +52,10 @@ Color / Typography / Composition / Motion / Principles / Responsive / Accessibil
 ## 3. 脚手架
 
 ```bash
-./scripts/new-deck.sh <name> [16x9|9x16|swiss]   # 默认 16x9；swiss=瑞士数据风
+./scripts/new-deck.sh <name> [16x9|swiss]   # 默认 16x9；swiss=瑞士数据风
 ```
 生成 `decks/<name>/index.html`（资源路径已修正为 `../../assets/`）+ `decks/<name>/images/`。
-三种模板：`16x9`（旗舰工业纸感）/ `9x16`（竖屏 小红书）/ `swiss`（瑞士数据风）。
+两种模板：`16x9`（旗舰工业纸感）/ `swiss`（瑞士数据风）。
 
 ## 4. 选主题 + 给每段设色域
 
@@ -86,7 +86,6 @@ Color / Typography / Composition / Motion / Principles / Responsive / Accessibil
 ```bash
 node scripts/validate.mjs decks/my-talk/index.html         # 纪律校验：封禁字体/硬编码hex/禁蓝/缺alt/缺备注
 ./scripts/render.sh decks/my-talk/index.html               # 逐页 PNG（自检，自动数页）
-./scripts/render.sh decks/xhs/index.html png 720x1280      # 9:16 竖屏 PNG
 ```
 `validate.mjs` 退出码：PASS / PASS-WITH-WARNINGS 为 0，FAIL（命中封禁字体）为 1。先过 validate，再看 PNG。
 需本机有 Chrome/Chromium（否则浏览器 Cmd/Ctrl+P 打印 PDF）。逐页看 PNG，**对照
@@ -104,7 +103,7 @@ AI 味（标题装饰线 / 清一色卡片 / 紫渐变 / 禁用字体 / 蓝色 /
 ## 8. 交付 / 导出
 
 - **HTML 即交付物**：`open index.html` 或 `python3 -m http.server` 放映 / 投屏 / 发链接。全离线、自托管字体、零网络。
-- **一键 PDF**：`./scripts/render.sh decks/my-talk/index.html pdf`（9:16 加 `720x1280`）→ 输出 `decks/my-talk/my-talk.pdf`。逐页 @2x PNG 合成、页面尺寸精确匹配比例、纯离线（仅本地 Chrome，无额外依赖）。
+- **一键 PDF**：`./scripts/render.sh decks/my-talk/index.html pdf` → 输出 `decks/my-talk/my-talk.pdf`。逐页 @2x PNG 合成、页面尺寸精确匹配比例、纯离线（仅本地 Chrome，无额外依赖）。
 - **逐页 PNG**：`./scripts/render.sh <deck> png`。
 - 需要**可编辑 PPTX**：把 HTML 交给下游 **ameng-ppt-design**（含 CJK 字体嵌入 + 原生图表）。本 skill 负责设计 / HTML / PDF / PNG，不内置 PPTX 导出，也不做平台分发。
 

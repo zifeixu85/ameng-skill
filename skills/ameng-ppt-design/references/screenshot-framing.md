@@ -54,7 +54,7 @@
   <div class="frame__placeholder">images/01-dashboard.png · 1600px 宽</div>
 </div>
 ```
-竖屏（9:16）把占位比例改成 `style="aspect-ratio:4/5"` 更顺。占位文字写清**期望的文件名和尺寸**，方便后补。
+占位文字写清**期望的文件名和尺寸**，方便后补。
 
 ## 图片资产规范
 

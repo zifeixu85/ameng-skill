@@ -60,7 +60,7 @@ editorial → muted rose、obsidian → teal），其余约束不变。
 > Industrial editorial poster feel: large warm-paper field, subtle film grain,
 > one bold ember shape or contour motif as the focal point, lots of negative space
 > reserved on the left for a headline overlay. Calm, confident, opinionated — not busy, not corporate-cheerful.
-> 16:9 (or 9:16 for vertical), high resolution, ≥1600px long edge.
+> 16:9, high resolution, ≥1600px long edge.
 > [品牌锚]
 
 用途：封面或分节页背景。给标题留出叠字的负空间（配合 `.bg-fade` 不抢文字）。
@@ -70,7 +70,7 @@ editorial → muted rose、obsidian → teal），其余约束不变。
 ## 使用要点
 
 - **先选对模板，再填方括号**：把 deck 里那一页的真实主题/数据填进 `[…]`，越具体越像。
-- **比例与尺寸**：长边 ≥ 1600px；16:9 deck 出 16:9 图，9:16 出竖图。
+- **比例与尺寸**：长边 ≥ 1600px；16:9 deck 出 16:9 图。
 - **真实优先**：模板 2/3 涉及数据时，把真实数值/标签写进 prompt，**绝不让模型编造**（违反 anti-slop 红线）。
 - **生成后入页**：按 [screenshot-framing.md](screenshot-framing.md) 套 `.frame`，命名 `images/NN-语义.ext`，同名覆盖迭代。
 - **对不齐就重来**：一次出多张时风格各异，挑一条 prompt 批量重生成，比逐张修更省事。

@@ -18,7 +18,7 @@
 ## 怎么选
 - 想**稳妥有质感**的默认 → `industrial-paper`
 - 想**抓眼球、有态度** → `neo-brutalist`
-- 想**安静、高级、可读性强的叙事** → `editorial`（也最适合 9:16 竖屏图文）
+- 想**安静、高级、可读性强的叙事** → `editorial`
 - 想**夜场 / 产品发布 / 电影感** → `dark-luxe`
 - 想**中式 / 国风 / 文化雅致** → `ink-wash`（宋体 + 朱砂 + 留白；数据驱动/大 KPI 用 `industrial-paper` 或 `swiss` 数据版式）
 

@@ -107,6 +107,16 @@
 /* ---- export capture helpers --------------------------------------------- */
 /* disable entry animation so the activated slide is settled before snapshot */
 .deck.ppt-exporting .slide [data-anim] { animation: none !important; opacity: 1 !important; transform: none !important; }
+/* Catch-all: finalize ANY entrance — including bespoke keyframes like .is-active .bar{animation:grow}
+   that don't go through [data-anim]. Collapsing duration/delay to 0 (with the keyframes' own
+   animation-fill-mode:both/forwards) snaps each element to its END frame instantly, so the per-slide
+   snapshot can never catch a chart/bar/ring mid-animation. Decorative infinite loops freeze on a frame. */
+.deck.ppt-exporting .slide *,
+.deck.ppt-exporting .slide *::before,
+.deck.ppt-exporting .slide *::after {
+  animation-delay: 0s !important; animation-duration: 0s !important;
+  transition-delay: 0s !important; transition-duration: 0s !important;
+}
 .ppt-export-cover { position: fixed; inset: 0; z-index: 1300; display: grid; place-items: center; color: var(--ink-3); font: var(--w-med, 500) 13px/1 var(--font-body); }
 /* background-only pass: keep stage/slide bg + grain, hide all content + chrome
    (progress bar is cut as its own image, so hide it here too) */

@@ -29,6 +29,22 @@
   }
   function pad(n) { return ("0" + n).slice(-2); }
   function raf2() { return new Promise(function (res) { requestAnimationFrame(function () { requestAnimationFrame(res); }); }); }
+  // settle = 2 frames (let .ppt-exporting finalize entrance animations to their end frame) + a short
+  // paint/decode grace, so a snapshot never catches a chart/bar mid-animation or an undecoded image.
+  function settle() { return raf2().then(function () { return new Promise(function (res) { setTimeout(res, 70); }); }); }
+  // Authoritative finalize: force EVERY running entrance animation to its end frame, synchronously.
+  // modern-screenshot inlines getComputedStyle(node) (incl. transform) onto the clone, so a finished
+  // animation == settled bar/ring in the exported image — independent of CSS timing or cached assets.
+  // Infinite decorative loops (breathe/dash) can't .finish(), so pause them on a frame instead.
+  function finalizeAnims() {
+    if (!document.getAnimations) return;
+    document.getAnimations().forEach(function (a) {
+      try {
+        var ct = a.effect && a.effect.getComputedTiming ? a.effect.getComputedTiming() : null;
+        if (ct && ct.iterations === Infinity) a.pause(); else a.finish();
+      } catch (e) {}
+    });
+  }
   function ensureLib(file, glob) {
     if (window[glob]) return Promise.resolve(window[glob]);
     return new Promise(function (res, rej) { var s = document.createElement("script"); s.src = VENDOR + file; s.onload = function () { window[glob] ? res(window[glob]) : rej(0); }; s.onerror = function () { rej(0); }; document.head.appendChild(s); });
@@ -55,14 +71,14 @@
     deck.classList.add("ppt-exporting");
     var urls = [];
     var chain = slides.reduce(function (p, _, i) {
-      return p.then(function () { show(i); return raf2(); }).then(function () { return snapStage(ms); }).then(function (u) { urls.push(u); });
+      return p.then(function () { show(i); return settle(); }).then(function () { finalizeAnims(); return raf2(); }).then(function () { return snapStage(ms); }).then(function (u) { urls.push(u); });
     }, Promise.resolve());
     return chain.then(function () { show(saved); deck.classList.remove("ppt-exporting"); hideCover(cover); return urls; })
       .catch(function (e) { show(saved); deck.classList.remove("ppt-exporting"); hideCover(cover); throw e; });
   }
   function captureOne(ms) {
     var cover = showCover(); deck.classList.add("ppt-exporting");
-    return raf2().then(function () { return snapStage(ms); })
+    return settle().then(function () { finalizeAnims(); return raf2(); }).then(function () { return snapStage(ms); })
       .then(function (u) { deck.classList.remove("ppt-exporting"); hideCover(cover); return u; })
       .catch(function (e) { deck.classList.remove("ppt-exporting"); hideCover(cover); throw e; });
   }
@@ -121,7 +137,7 @@
       var snapTransparent = function () { return ms.domToPng(stage, { width: stageW, height: stageH, scale: 2, style: { transform: "none" } }); };
       var chain = slides.reduce(function (pr, _, i) {
         var els, indiv, bgUrl, decoUrl, indivImgs = [];
-        return pr.then(function () { show(i); return raf2(); }).then(function () {
+        return pr.then(function () { show(i); return settle(); }).then(function () { finalizeAnims(); return raf2(); }).then(function () {
           els = leaves(stage);
           // MUST be cut individually: top progress bar + each text-overlay color block (.hl)
           indiv = Array.prototype.slice.call(stage.querySelectorAll(".deck__progress, .hl, .hl--full")).filter(function (el) {
@@ -199,6 +215,12 @@
     var links = Array.prototype.slice.call(document.querySelectorAll('link[rel="stylesheet"]'));
     var runtimeSrc = (document.querySelector('script[src*="runtime.js"]') || {}).src;
     var b64 = function (buf) { var s = "", b = new Uint8Array(buf), i; for (i = 0; i < b.length; i++) s += String.fromCharCode(b[i]); return btoa(s); };
+    // fetch any asset → data: URI (blob→dataURL keeps the right mime), so <img> images travel inside the file
+    var toDataURI = function (url) {
+      return fetch(url).then(function (r) { return r.blob(); }).then(function (bl) {
+        return new Promise(function (res) { var fr = new FileReader(); fr.onload = function () { res(fr.result); }; fr.onerror = function () { res(null); }; fr.readAsDataURL(bl); });
+      }).catch(function () { return null; });
+    };
     var embedFonts = function (css, baseUrl) {
       var urls = []; css.replace(/url\(\s*['"]?([^'")]+\.woff2?)['"]?\s*\)/g, function (_, u) { urls.push(u); return _; });
       return Promise.all(urls.map(function (u) {
@@ -213,10 +235,17 @@
           Array.prototype.forEach.call(clone.querySelectorAll('link[rel="stylesheet"],script,.ppt-dock,.ppt-history,.ppt-toast,.ppt-overview,.ppt-notes-overlay,.ppt-help,.slide__num,.ppt-export-cover'), function (n) { n.remove(); });
           Array.prototype.forEach.call(clone.querySelectorAll("[contenteditable]"), function (n) { n.removeAttribute("contenteditable"); n.removeAttribute("data-ppt-edit"); });
           var d = clone.querySelector(".deck"); if (d) d.classList.remove("is-editing", "ppt-exporting");
-          var head = clone.querySelector("head"); if (head) head.insertAdjacentHTML("beforeend", styles);
-          var body = clone.querySelector("body"); if (body && rt) body.insertAdjacentHTML("beforeend", "<scr" + "ipt>\n" + rt + "\n</scr" + "ipt>");
-          download(new Blob(["<!doctype html>\n" + clone.outerHTML], { type: "text/html;charset=utf-8" }), deckName() + ".html");
-          toast("已导出完整 HTML（样式/字体内联，可独立打开）");
+          // inline every <img> as a data: URI (resolve relative src against the live page), else images break when opened elsewhere
+          var imgs = Array.prototype.slice.call(clone.querySelectorAll("img"));
+          return Promise.all(imgs.map(function (im) {
+            var src = im.getAttribute("src"); if (!src || /^data:/.test(src)) return null;
+            return toDataURI(new URL(src, document.baseURI).href).then(function (d2) { if (d2) { im.setAttribute("src", d2); im.removeAttribute("srcset"); } });
+          })).then(function () {
+            var head = clone.querySelector("head"); if (head) head.insertAdjacentHTML("beforeend", styles);
+            var body = clone.querySelector("body"); if (body && rt) body.insertAdjacentHTML("beforeend", "<scr" + "ipt>\n" + rt + "\n</scr" + "ipt>");
+            download(new Blob(["<!doctype html>\n" + clone.outerHTML], { type: "text/html;charset=utf-8" }), deckName() + ".html");
+            toast("已导出完整 HTML（样式/字体/图片全部内联，可独立打开）");
+          });
         });
       }).catch(function () { toast("HTML 打包失败（file:// 限制）。请用本地服务器打开后再导出"); });
   }

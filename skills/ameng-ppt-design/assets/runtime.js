@@ -86,23 +86,52 @@
   document.body.appendChild(overview);
   function buildOverview() {
     overview.innerHTML = "";
+    var theme = deck.getAttribute("data-theme");
+    var grain = deck.hasAttribute("data-grain");
     slides.forEach(function (s, i) {
-      var t = document.createElement("div");
-      t.className = "ppt-overview__thumb" + (i === idx ? " is-current" : "");
-      var title = (s.querySelector(".display, .h1, .h2, .h3, .eyebrow") || {}).textContent || ("Slide " + (i + 1));
-      t.innerHTML = "<b>" + (i + 1) + "</b>";
-      var lab = document.createElement("div");
-      lab.style.cssText = "position:absolute;inset:auto 8px 8px 8px;color:var(--ink-2);font-size:.8rem;line-height:1.25;font-family:var(--font-body)";
-      lab.textContent = title.trim().slice(0, 60);
-      t.appendChild(lab);
-      t.addEventListener("click", function () { show(i); overview.classList.remove("is-open"); });
-      overview.appendChild(t);
+      var cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "ppt-ov__cell" + (i === idx ? " is-current" : "");
+      // real preview: clone the slide into a mini deck/stage scaffold (so global selectors match),
+      // forced visible + animations finalized (ppt-exporting), then scaled to fit (scaleThumbs).
+      var frame = document.createElement("div"); frame.className = "ppt-ov__frame";
+      var mdeck = document.createElement("div");
+      mdeck.className = "deck deck--chrome ppt-exporting";
+      if (grain) mdeck.setAttribute("data-grain", "");
+      if (theme) mdeck.setAttribute("data-theme", theme);
+      var mstage = document.createElement("div"); mstage.className = "deck__stage";
+      var clone = s.cloneNode(true);
+      clone.classList.add("is-active");
+      Array.prototype.forEach.call(clone.querySelectorAll(".notes"), function (n) { n.remove(); });
+      Array.prototype.forEach.call(clone.querySelectorAll("[id]"), function (n) { n.removeAttribute("id"); });
+      Array.prototype.forEach.call(clone.querySelectorAll("[contenteditable]"), function (n) { n.removeAttribute("contenteditable"); n.removeAttribute("data-ppt-edit"); });
+      mstage.appendChild(clone); mdeck.appendChild(mstage); frame.appendChild(mdeck);
+      var cap = document.createElement("span"); cap.className = "ppt-ov__cap";
+      var title = ((s.querySelector(".display, .h1, .h2, .h3, .eyebrow") || {}).textContent || ("Slide " + (i + 1))).trim();
+      cap.innerHTML = "<b>" + String(i + 1).padStart(2, "0") + "</b><span></span>";
+      cap.querySelector("span").textContent = title;
+      cell.appendChild(frame); cell.appendChild(cap);
+      cell.addEventListener("click", function () { show(i); overview.classList.remove("is-open"); });
+      overview.appendChild(cell);
+    });
+    scaleThumbs();
+  }
+  function scaleThumbs() {
+    Array.prototype.forEach.call(overview.querySelectorAll(".ppt-ov__frame"), function (fr) {
+      var st = fr.querySelector(".deck__stage"); if (!st) return;
+      var bw = st.offsetWidth || 1280, bh = st.offsetHeight || 720;
+      fr.style.aspectRatio = bw + " / " + bh;
+      var w = fr.clientWidth; if (!w) return;
+      st.style.transform = "scale(" + (w / bw) + ")";
     });
   }
   function toggleOverview() {
-    if (!overview.classList.contains("is-open")) buildOverview();
-    overview.classList.toggle("is-open");
+    if (overview.classList.contains("is-open")) { overview.classList.remove("is-open"); return; }
+    overview.classList.add("is-open");
+    buildOverview();
+    requestAnimationFrame(scaleThumbs);   // measure once the grid has laid out
   }
+  window.addEventListener("resize", function () { if (overview.classList.contains("is-open")) scaleThumbs(); });
 
   // --- keyboard help affordance (hover / click / ? / H) ---------------------
   // Screen-only: skipped entirely when exporting (render.sh appends ?export),

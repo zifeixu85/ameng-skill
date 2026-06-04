@@ -19,10 +19,15 @@
 
   var DECK_ID = "ameng-ppt:" + (deck.getAttribute("data-ppt-id")
     || (location.pathname.replace(/\/index\.html?$/i, "") || document.title || "deck"));
-  // v2 keys: discard any stale per-page history written by an earlier build
-  var K_DOC = DECK_ID + ":doc2", K_VERS = DECK_ID + ":pageVersions2", K_BASE = DECK_ID + ":base2", MAX_VERS = 40;
+  // v3 keys: structural deck update; keep old browser history stored but do not
+  // let stale whole-slide HTML override the new source layout on reload.
+  var K_DOC = DECK_ID + ":doc3", K_VERS = DECK_ID + ":pageVersions3", K_BASE = DECK_ID + ":base3", K_SIG = DECK_ID + ":sigv4", MAX_VERS = 40;
   function lsGet(k, fb) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; } catch (e) { return fb; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  // PER-SLIDE content signature: tells apart "I upgraded this page in the source file" from
+  // "the user edited this page in the browser", so an upgrade only overrides the pages it changed,
+  // and the user's browser edits on every other page are preserved across reloads.
+  function sigOne(html) { var h = 5381, i = html.length; while (i) h = (h * 33 ^ html.charCodeAt(--i)) >>> 0; return h.toString(36) + ":" + html.length; }
 
   var EDIT_SEL = [".eyebrow", ".display", ".zh-mega", ".h1", ".h2", ".h3", ".lead", ".body",
     ".quote", ".quote__by", ".tag", ".num", ".data-hero__num", ".data-hero__label", ".data-hero__src",
@@ -56,9 +61,21 @@
   function refreshActive() { if (window.PptDeck && typeof window.PptDeck.show === "function") window.PptDeck.show(currentIdx()); }
 
   (function init() {
-    if (!lsGet(K_BASE, null)) lsSet(K_BASE, captureNoNotes());        // default version 1 (content only)
+    var fileContent = captureNoNotes();                 // per-slide file content (no notes), BEFORE any restore
+    var fileSig = fileContent.map(sigOne);
+    var savedSig = lsGet(K_SIG, null); if (!Array.isArray(savedSig)) savedSig = null;  // per-slide baseline sigs
     var doc = lsGet(K_DOC, null);
-    if (doc && doc.length === slides.length) slides.forEach(function (s, i) { if (typeof doc[i] === "string") s.innerHTML = doc[i]; });
+    var upgraded = false;
+    if (doc && doc.length === slides.length) {
+      slides.forEach(function (s, i) {
+        var unchanged = savedSig && savedSig[i] === fileSig[i];   // did the SOURCE file change this page?
+        if (typeof doc[i] === "string" && unchanged) { s.innerHTML = doc[i]; }  // file page unchanged -> keep the user's browser edit
+        else if (!unchanged) { upgraded = true; }                 // file page changed (upgrade) -> file wins for this page
+      });
+      if (upgraded) lsSet(K_DOC, capture());                      // resync snapshot to what's shown now (upgrades + preserved edits)
+    }
+    if (!lsGet(K_BASE, null)) lsSet(K_BASE, fileContent);         // default version 1 (content only)
+    lsSet(K_SIG, fileSig);                                        // remember the per-slide source we are editing against
   })();
 
   // --- edit mode (slide text only; notes are edited via the S overlay) -------

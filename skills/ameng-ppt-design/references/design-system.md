@@ -81,10 +81,11 @@ CJK 巨标题用 `.zh-mega`（`clamp(3.2rem,1.4rem+6vw,7.5rem)`，瑞士式极�
 
 ## 4. 舞台几何 & 动效
 
-- `--slide-w` / `--slide-h`：固定舞台。16:9 = `1280×720`；`.deck--9x16` 改写为 `720×1280`。
+- `--slide-w` / `--slide-h`：固定舞台。16:9 = `1280×720`。
 - `--pad`：slide 内边距 `clamp(2.5rem,1rem+4vw,5.5rem)`；`--content-max 1100px`（阅读宽上限）。
 - 缩放：`.deck__stage` 用 `transform: scale(var(--fit))`，`runtime.js` 按窗口算 `--fit`，像素稳定。
 - 动效：`--dur 480ms` / `--ease cubic-bezier(0.16,1,0.3,1)`。`prefers-reduced-motion` 已内置关闭。
+- **缩略图总览（`O` / `0`）= 标准做法**：每页是该 slide 的**等比实拍预览**，不是文字列表。`runtime.js` 把每页 `cloneNode` 进一个迷你 `.deck.deck--chrome.ppt-exporting > .deck__stage` 骨架（带同样 `data-grain`/`data-theme`），这样全局选择器照常命中、`ppt-exporting` 把入场动效定格到结束帧（柱状图/图形都满帧）；再用 JS `scaleThumbs()` 按格子宽算 `scale = 格子宽 / --slide-w`（origin 左上），自适应列宽、窗口缩放重算。每张下方 `编号 + 标题` caption，当前页 accent 高亮。新建/改版式无需额外处理，自动获得此预览。
 
 ## 5. 签名原语（工业纸感 DNA）
 

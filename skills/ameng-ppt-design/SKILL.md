@@ -5,12 +5,12 @@ description: >
   并内置「右上角悬浮工具栏」——✎ 编辑（点任意文字就地改，点「完成」自动存一个可恢复的版本，
   历史里带 diff 对比）+ ⤓ 导出（逐页截图拼装成 PDF / PPTX，保全部样式；PNG；完整自包含 HTML）。
   工业纸感 + 杂志/瑞士双风 + 叙事弧 + 反 AI 味纪律：OKLCH token 系统 + 5 主题 + 版式库 +
-  16:9/9:16/Swiss + 自托管 distinctive 字体（禁 Inter/Playfair）+ 键盘放映 + 逐页 PNG 自检 +
+  16:9/Swiss + 自托管 distinctive 字体（禁 Inter/Playfair）+ 键盘放映 + 逐页 PNG 自检 +
   validate 纪律校验。产物是用户真看得见的 HTML，可放映、可就地编辑、可一键导出多种格式。
-  当用户要「做 PPT / 幻灯片 / slides / deck / 演示 / 路演 / 分享稿 / 小红书图文 / pitch deck /
+  当用户要「做 PPT / 幻灯片 / slides / deck / 演示 / 路演 / 分享稿 / pitch deck /
   技术分享」时触发。
   关键词：ppt / 幻灯片 / slides / deck / presentation / 演示文稿 / 演讲稿 / 路演 / pitch deck /
-  keynote / 分享稿 / 小红书图文 / 竖屏 / 瑞士风 / 杂志风 / HTML 演示 / 就地编辑 / 导出 PDF PPTX。
+  keynote / 分享稿 / 瑞士风 / 杂志风 / HTML 演示 / 就地编辑 / 导出 PDF PPTX。
 version: "1.0.0"
 metadata:
   author: A梦 (ameng)
@@ -28,17 +28,17 @@ metadata:
 比普通 HTML deck 多两件事，都在**右上角悬浮工具栏**（默认只是一个低调的 `⋯` handle，hover 才展开；
 随主题明暗自动变色；不占内容位）：
 
-- **✎ 编辑** —— 点任意文字就地修改；点「**完成**」退出并**自动存一个版本**（localStorage，刷新仍在）；「**历史**」里带 **diff 对比**，可一键恢复。
+- **✎ 编辑** —— 点任意文字就地修改；点「**完成**」退出并**自动存一个版本**（localStorage，刷新仍在）；「**历史**」里带 **diff 对比**，可一键恢复。**升级源 HTML 后是逐页智能合并**：你在源文件里改过的页以文件为准，**没改过的页保留你在浏览器里的编辑**——不会因为一次升级把你手动改的内容整份冲掉。
 - **⤓ 导出** —— **逐页截图→拼装**：**PDF**（jsPDF）/ **PPTX**（每页整图）保全部样式 · **PNG**（当前页 / 全部 zip）· **HTML**（样式字体内联，完整自包含）。
 
 ## 给你什么
 
 - **OKLCH token 设计系统**：`base.css`（tokens + slide 原语 + 行内高亮带 `.hl` + film grain + 分段 accent 色域）+ `components.css`（编辑式 chrome / terminal / 截图框 / 编号卡 / Swiss Data Hero / 离线背景）
 - **5 套差异化主题**（`assets/themes/*.css`，**不是换皮**——排版/构图/密度/装饰/气质都不同，见 [references/themes.md](references/themes.md)）：**`industrial-paper`（旗舰：暖纸 + grain + 软色带，中密度）** · `neo-brutalist`（粗野：黑框 + 硬投影 + 实心色块，零圆角）· `editorial`（杂志：衬线 + 疏朗 + 首字下沉 + 细下划线）· `dark-luxe`（暗调：渐变底 + 毛玻璃 + 暖金辉光）· `ink-wash`（中式水墨：宋体 + 朱砂红 + 留白 + 印章式标签 + 一角墨晕）
-- **三种比例/模板**：`ppt-16x9.html`（旗舰）· `ppt-9x16.html`（竖屏 小红书/短视频）· `ppt-swiss.html`（瑞士数据风）· `layouts-gallery.html`（版式目录）
+- **两种比例/模板**：`ppt-16x9.html`（旗舰）· `ppt-swiss.html`（瑞士数据风）· `layouts-gallery.html`（版式目录）
 - **右上角工具栏**：`assets/editor.js`（就地编辑 + 本地保存 + 版本历史）+ `assets/export.js`（PDF/PPTX/PNG/HTML 导出）+ `assets/toolbar.css`
 - **自托管 distinctive 字体**：Bricolage Grotesque（display）/ Host Grotesk（body）/ JetBrains Mono（mono）+ 思源黑/宋（CJK）。`scripts/fetch-fonts.sh` 一次性下载 → 之后全离线。**禁 Inter/Roboto/Playfair/Cormorant/IBM Plex**。
-- **键盘放映运行时**（`runtime.js`）：← → / Space / F 全屏 / S 讲者备注 / O 总览 / T 浅色⇄深色 / ? 帮助 / `#/N` 深链
+- **键盘放映运行时**（`runtime.js`）：← → / Space / F 全屏 / S 讲者备注 / O 缩略图总览（每页等比实拍预览，非文字列表）/ T 浅色⇄深色 / ? 帮助 / `#/N` 深链
 - **纪律工具**：`scripts/render.sh`（逐页 PNG / 像素级 PDF）· `scripts/validate.mjs`（封禁字体/硬编码 hex/禁蓝/缺 alt/缺备注 校验）
 
 ## 动手前必做：① 声明方向 ② 三问澄清
@@ -48,8 +48,8 @@ metadata:
 然后确认三件事（或基于已有内容给有主见的默认再确认）：
 
 1. **内容 & 观众 & 页数** —— 讲什么、给谁、几页？（15min≈10 页 / 30min≈20 页 / 45min≈25-30 页）
-2. **主题** —— **先开 `templates/theme-preview.html` 直观对比再定**。默认 `industrial-paper`；要态度→`neo-brutalist`；叙事/品牌→`editorial`（也最配 9:16）；夜场/产品发布→`dark-luxe`；中式/雅致/文化→`ink-wash`。
-3. **比例** —— 16:9（演讲）/ 9:16（手机·小红书）/ swiss（数据驱动）。
+2. **主题** —— **先开 `templates/theme-preview.html` 直观对比再定**。默认 `industrial-paper`；要态度→`neo-brutalist`；叙事/品牌→`editorial`；夜场/产品发布→`dark-luxe`；中式/雅致/文化→`ink-wash`。
+3. **比例** —— 16:9（演讲）/ swiss（数据驱动）。
 
 ## 工作流
 
@@ -63,7 +63,7 @@ metadata:
 
 ### Step 2 · 脚手架
 ```bash
-./scripts/new-ppt.sh my-talk 16x9     # 或 9x16 / swiss → 生成 slides/my-talk/index.html
+./scripts/new-ppt.sh my-talk 16x9     # 或 swiss → 生成 slides/my-talk/index.html
 open slides/my-talk/index.html
 ```
 
@@ -84,12 +84,14 @@ open slides/my-talk/index.html
 ### Step 5 · 自检（必做闸门）
 ```bash
 node scripts/validate.mjs slides/my-talk/index.html     # 封禁字体/硬编码hex/禁蓝/alt/备注
-./scripts/render.sh slides/my-talk/index.html 10        # 逐页 PNG（9:16 加 720x1280）
+./scripts/render.sh slides/my-talk/index.html 10        # 逐页 PNG
 ```
 逐页看 PNG，对照 [references/anti-slop-checklist.md](references/anti-slop-checklist.md)：溢出？对比度？AI 味？**有问题就改。**
+固定 1280×720 不会自动缩字：内容必须落在 **y ∈ [85, 636]**（顶栏+页脚要避让），密集网格易同时往上压标题、往下压页脚。**纯文字页先问"它是不是一张图"** —— 流程→stepper、对比→two-zone、放大的边界→scope bars、关系→inline SVG。图形原语与双钻/编排 SVG 见 [references/diagrams.md](references/diagrams.md)。
 
 ### Step 6 · 编辑 & 导出 & 交付
 见下节「右上角工具栏」。HTML 可键盘放映 / 投屏 / 发链接。
+**交付到项目文件夹**：deck 在 `slides/<name>/` 内靠 `../../assets` 相对路径才能跑；要把它移到项目/仓库里长期保存或发给别人，用 `./scripts/eject.sh <name> <目标目录>` —— 复制出一个**自包含**文件夹（自带 `assets/` + `images/`，并把 `../../assets/` 重写成 `assets/`），任意位置可开、可打包。
 
 ## 右上角工具栏（编辑 & 导出）
 
@@ -102,6 +104,10 @@ node scripts/validate.mjs slides/my-talk/index.html     # 封禁字体/硬编码
 - 「**历史**」：只列**当前页**的版本，**最早一条永远是「默认版本（初始）」= 版本 1**，往上是每次改动；每条**显示与上一版的文字差异（旧 → 新）**，可**恢复**（恢复内容时保留你当前的备注）或删除。「历史」按钮**仅当本页有 ≥2 个版本（即真改过）时**才显示数字角标。
 - 编辑模式下方向键/空格/快捷键归文字光标所有，不会误翻页或触发放映快捷键。**编辑中切换页面**：若本页有未保存改动，会弹窗让你选「**保存并切换 / 丢弃修改 / 取消**」，不会偷偷带着未保存内容乱翻。
 - 「**全屏**」：进入放映（点按手势，避开浏览器对 F 键全屏的限制；F 键依然可用）。**全屏=纯内容**：dock、快捷键提示、toast 全部隐藏。
+- **逐页变更检测（防"刷新没更新" + 不丢手动编辑）**：编辑器加载时给**每一页**算一个内容签名（`sigOne`），和上次的基线逐页比对：
+  - **某页在源文件里改了**（签名变了）→ 这页**以文件为准**（你让我升级的就是这些页）；
+  - **某页源文件没改** → 这页**保留你在浏览器里点「编辑」改过的内容**。
+  这样：在编辑器外直接改 HTML 再刷新，改过的页立刻更新；同时你手动编辑过、而本次升级没碰的页，**编辑不会被冲掉**。被覆盖的旧编辑仍留在该页「历史」里，可随时恢复。
 
 > 编辑只动文字，不动结构/样式。要换版式仍是改 HTML。版本只存在本地，离线、不上传。
 
@@ -112,7 +118,7 @@ node scripts/validate.mjs slides/my-talk/index.html     # 封禁字体/硬编码
 - **PPTX · 图片版**：每页一张满版整图（PptxGenJS）——放映/演示用最稳、最保真。
 - **PPTX · 可编辑（分层版）**：每页拆成多个对象 —— ①**背景图**（页底色/分段色/grain）②**装饰图**（终端/截图框/图表等，**文字抽走**、透明底）③**顶部进度条**和**每个文字高亮色块各自单独成图**（便于在 PPT 里单独移动/替换）④**可编辑文字框**。所以**文字一律不切图、可在 PPT 里改**，装饰尽量还原（字体会被 PowerPoint 替换、个别位置可能略偏）。要 100% 保真用「图片版」，要改字用这版。
 - **PNG**：当前页单张，或全部打包成 **zip**（JSZip）。
-- **HTML（完整）**：把当前（含编辑）的演示导出成**自包含** `.html`——所有 CSS 内联、字体 base64 嵌入、运行时内联，单文件独立打开即带全样式、可键盘放映。
+- **HTML（完整）**：把当前（含编辑）的演示导出成**自包含** `.html`——所有 CSS 内联、字体 base64 嵌入、**`<img>` 图片 base64 内联**、运行时内联，单文件独立打开即带全样式与图片、可键盘放映。
 
 导出库**仓库已内置** `assets/vendor/`（committed，开箱离线可用，全 MIT）。要刷新/重装：
 ```bash
@@ -128,7 +134,7 @@ node scripts/validate.mjs slides/my-talk/index.html     # 封禁字体/硬编码
 - **只画真实数据**：无可溯源数据 → 文字版式，不编数字、不造假图表。
 - 不加标题装饰线；阴影/圆角克制；统一圆角+统一描边+差异化填充。
 - 大字号 scale 对比制造层级；**说清楚 > 好看**；不默认模板。
-- 已内置 `prefers-reduced-motion` 降级与键盘可达性。
+- 已内置 `prefers-reduced-motion` 降级与键盘可达性；动效（含 deck 自定义 keyframe）在**导出时自动定格到结束帧**——图表/柱状图不会被截到动画中途（见 [references/diagrams.md](references/diagrams.md) 的「Motion that survives export」+ `.fx-grow-y/.fx-pop/.fx-breathe/.fx-dash` 入场原语）。
 
 ## 渐进式加载（按需读 references/）
 
@@ -137,6 +143,7 @@ node scripts/validate.mjs slides/my-talk/index.html     # 封禁字体/硬编码
 - [design-system.md](references/design-system.md) — token + 组件完整清单 + 新建主题
 - [themes.md](references/themes.md) — 5 主题何时用
 - [layouts.md](references/layouts.md) — 版式与 helper class
+- [diagrams.md](references/diagrams.md) — 把"纯文字"变图：stepper / scope / two-zone / contrast / 产品卡 / 头像·QR / 双钻·编排 SVG + 安全区纪律
 - [authoring-guide.md](references/authoring-guide.md) — 叙事弧 + 完整流程 + 实例
 - [screenshot-framing.md](references/screenshot-framing.md) — 截图美化
 - [image-prompts.md](references/image-prompts.md) — 配图/重做截图 prompt
@@ -157,15 +164,15 @@ ameng-ppt-design/
 │   ├── vendor/             (modern-screenshot + jspdf + pptxgenjs + jszip；MIT)
 │   ├── fx-runtime.js + fx/ (opt-in Canvas 背景，默认关)
 │   └── themes/*.css        (5 主题)
-├── templates/              (ppt-16x9 / ppt-9x16 / ppt-swiss / layouts-gallery)
-├── scripts/                (new-ppt.sh / fetch-fonts.sh / fetch-export-libs.sh / render.sh / validate.mjs)
+├── templates/              (ppt-16x9 / ppt-swiss / layouts-gallery)
+├── scripts/                (new-ppt.sh / eject.sh / fetch-fonts.sh / fetch-export-libs.sh / render.sh / validate.mjs)
 ├── references/             (8 篇，按需加载)
 └── slides/<name>/          (你生成的演示，含 images/；已 gitignore)
 ```
 
 ## 键盘速查
 ```
-← → Space PgUp PgDn Home End  翻页   1–9 跳到第 N 页   0 / O 幻灯片总览
+← → Space PgUp PgDn Home End  翻页   1–9 跳到第 N 页   0 / O 幻灯片缩略图总览（每页实拍预览）
 F 全屏放映（自动隐藏所有操作 UI）  S 讲者备注  T 浅色/深色
 ? / H 快捷键帮助   #/N 深链(render.sh 用它逐页导出)
 ```

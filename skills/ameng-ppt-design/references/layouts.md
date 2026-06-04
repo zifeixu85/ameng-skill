@@ -1,7 +1,7 @@
 # layouts.md — 版式词汇表
 
 > 四份模板已演示**每一种**版式：`deck-16x9.html`（旗舰，全套）· `layouts-gallery.html`
-> （每页一种版式，左下角标版式名，当目录查最方便）· `deck-swiss.html`（瑞士）· `deck-9x16.html`（竖屏）。
+> （每页一种版式，左下角标版式名，当目录查最方便）· `deck-swiss.html`（瑞士）。
 > **做法永远是：从最接近的 `.slide` 块复制，替换内容——不要从零手写。**
 > 每个 slide 是 `<section class="slide">`（居中页加 `center`），讲者备注放 `<div class="notes">`。
 
@@ -56,18 +56,6 @@ runtime 自动填 `.chrome-top__page`（页码）和 `.chrome-top__sec`（取当
 - **整块强调**：`.hl--full`（整块红底白字）是全场唯一信号色。
 - **硬黑网格线**：`.rule` 改 `background:var(--line-strong)` 加粗作分隔；对比页用一条共享黑边把两栏锁进同一矩形。
 - **满铺装饰背景**：`.bg-dots.bg-fade` 绝对定位 `inset:0;z-index:0`，内容相对定位压在其上。
-
-## 9:16 竖屏变体（`.deck--9x16` → 720×1280）
-
-原则：**每屏只一个点，数字/标题更大，留白更狠**。
-
-| 名称 | 关键 class | 提示 |
-|---|---|---|
-| 竖屏封面 | `.slide.center` + 加大 `.zh-mega` | 标题占上 1/2，就是小红书首图；`.hl` 圈钩子词 |
-| 列表项 | 大 `.stat__num`(序号 01) + `.h1` + `.body` | 每屏一个点：大编号 + 大标题 + 一段话 |
-| 竖屏数据卡 | 满宽 `.card` + `.data-hero__num`/`.unit` | 诚实标注「个人体验 / 非临床」，不夸大 |
-| 竖屏截图 | `.frame.frame--browser`（占位用 `aspect-ratio:4/5`） | 4:5 框竖屏更顺 |
-| 收藏式收尾 | `.slide.center` + `.zh-mega` + `.lead` | 用「收藏 / 评论」CTA 贴合小红书互动 |
 
 ## 辅助 class
 

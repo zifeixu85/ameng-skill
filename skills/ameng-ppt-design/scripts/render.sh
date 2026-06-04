@@ -5,7 +5,6 @@
 #   ./scripts/render.sh <deck.html> [png|pdf] [WxH] [out-dir]
 #   ./scripts/render.sh slides/my-talk/index.html             # PNG, auto-count slides, 1280x720
 #   ./scripts/render.sh slides/my-talk/index.html pdf         # → slides/my-talk/my-talk.pdf
-#   ./scripts/render.sh slides/xhs/index.html pdf 720x1280    # vertical 9:16 PDF
 #   ./scripts/render.sh slides/my-talk/index.html 10          # legacy: explicit count → PNG
 #
 # Slide count is auto-detected from the HTML; PDF is assembled from @2x PNGs so it
