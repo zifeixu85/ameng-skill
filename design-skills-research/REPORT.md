@@ -343,43 +343,64 @@ design 是 skill 生态里**最拥挤的赛道之一**：仅 ClawHub 一个平�
 
 ---
 
-## 9. 设计方案：往 ameng-skill 仓库加什么 design skill
+## 9. 设计方案：为独立开发者定制的 ameng 设计 skill（已与用户对齐）
 
-### 9.1 现有不足（即第 5/7 节的盲区）
-1. **生命周期两端薄**：①问题定义/③信息架构/⑧验证复盘 全是 guide-only + 模板外置，没有"可运行产真实文件"的。
-2. **"产出 + 自检闭环"都绑工具链**：impeccable 绑 Node、garrytan 绑 gstack CDP、jezweb 绑 MCP、sleek 绑付费 API、design-flow 绑同仓兄弟 skill。**没有一个轻量、宿主依赖最小、中文友好的**。
-3. **②研究 与 ④生成 断裂**：研究产物喂不进生成 skill。
-4. **你已有资产被浪费**：`ameng-ppt-design` 已实现 OKLCH token + 6 主题 + 逐页 PNG 自检 + validate + Tweaks 就地编辑——而 **Claude Design 系统提示词第 4.4 节恰好给了这套"verifier 子 agent / EDITMODE 协议 / starter 组件"的官方蓝本**，可平移到通用前端设计。
-5. **编排层缺位**：只有 design-flow 一个编排器且绑同仓。中文/宿主无关的"设计生命周期编排"是空白。
+> **用户画像与边界**：独立产品开发者、前设计师。**主动砍掉**大厂全流程的前段（①问题定义 / ②用户研究 / 调研——自己做）。要的是"**从开始画设计就介入、产物能落地成代码、可迁移到小程序/APP**"的一套，偏 **SaaS** 产品。技术栈 **Next.js + shadcn + 常用开源组件/图标库**。
 
-### 9.2 推荐自建 / 拆分（与已有 skill 形成矩阵）
+### 9.1 三条贯穿全程的硬原则（写进每个 skill 内核）
+1. **意图驱动**：先锁定"为什么人解决什么问题 + 受众 + 平台目标"，上下文越多建议越准 → 共享的强制 intent intake。
+2. **产物可代码实现 + 平台可迁移**：基于网页做，但必须输出结构化"**可建造规范**"（design tokens + 组件映射 + 布局意图 + 真实内容），让 web / 小程序 / APP 都能引用，不锁死网页。
+3. **两种呈现**：**画布式**（多屏一览，俯瞰筛选——低保真默认）/ **可点击流程式**（走查交互）。
 
-你的仓库现状：`ameng-ppt-design`(演示) + `ameng-skill-scout`(调研)。建议按"**先点后线**"加：
+### 9.2 已确认架构：2 个 skill（生成合一 + 评审独立），可成长到 3
 
-1. **`ameng-design-review`（首选第一步，低风险高价值）** —— 宿主无关的设计审查 skill：浏览器截图取证 + 反 AI slop 评分 + 7 维审查 + 审→修→复验闭环。融 jezweb 的 7 维表 + garrytan 的 AI Slop 黑名单/双评分/baseline 回归 + Claude Design 的 **verifier 子 agent 模式**，去掉 gstack 绑定，复用 ppt-design 的 Playwright 截图能力。**填"宿主无关截图审查"这个明确空白。**
-2. **`ameng-frontend-craft`（主力第二步）** —— 有设计主见、反 slop、自带截图自检的通用前端生成器。融 anthropics 原则 + impeccable 命令体系(精简 6–8 个) + binggg 的 grep 自检 + ppt-design 的 token/PNG 自检 + Claude Design 的 **Tweaks/EDITMODE 编辑协议**。中英双语、宿主依赖最小(截图走 Playwright MCP，缺则降级 grep)。
-3. **`ameng-design-flow`（可选第三步，编排）** —— 宿主无关、中文友好的设计生命周期编排器：按 ①问题定义→②用户研究→③IA→④⑤⑥生成→⑦评审→⑧验证 串联，借 design-flow 的"阶段门控 + `.design/<slug>/` 断点续跑 + 跳过模式"，并**补上 design-flow 缺的②⑧两端**（接 assimovt-problem-validation 式裁决 + owl-usability-test 式验证）。把 craft / review / ppt-design 作为它调用的子环节。
+> 决策依据用户原话：「**用不同 Skill 来做，是因为同一个 AI 会犯同样的毛病**」——这条只对**评审**是刚需（换一双眼睛 / 换 prompt 镜头，降低相关性错误，对应 Claude Design 的 `fork_verifier_agent`）。生成侧①~⑤共享同一内核，拆碎反增独立开发者的触发/维护负担。
 
-### 9.3 设计草案
+1. **`ameng-design-studio`（生成侧主力，1 个 skill + 意图入口 + 5 模式）**
+   - `wireframe`（**低保真/草图，默认入口**；灰盒线框、低 token；**默认画布式多屏一览**，供判断/筛选/改进；可选可点击流程）
+   - `ia`（**SaaS 导航结构 + 信息架构**：从产品定义 → nav 模型 + 信息层级 + sitemap + 用户流，输出建议与结构）
+   - `system`（**Design System**：OKLCH token + 子页面风格规范，复用 ppt-design 引擎；约束后续所有页面）
+   - `landing`（**Landing Page**：文案先行定义 → 组件库感知地搭建）
+   - `ui`（**高保真界面生成**：Next.js + shadcn + 图标/开源组件库感知，偏 SaaS；画布式 or 可点击流程两种呈现）
+   - 共享：intent intake / 可建造规范输出 / 反 slop / 截图自检 / Tweaks 就地编辑；**渐进披露**（SKILL.md 薄路由，每模式细则在 reference，低保真就真低成本）。
 
-#### 方案 A（建议先做）：`ameng-design-review`
-- **定位**：给任意 URL/本地页做"反 AI slop 评分 + 多维设计审查 + 截图取证 + 修复建议(可选改)"，宿主无关。
-- **能力**：jezweb 7 维 good/bad 表 + garrytan AI Slop 黑名单与双评分(Design Score + Slop Score) + baseline JSON 回归 + dembrandt-nielsen 10 条 + owl-a11y WCAG；**verifier 子 agent 模式**做后台截图自检不污染主上下文。
-- **依赖/复杂度**：Playwright MCP（已可用）；即用。
-- **目标 Agent**：universal 优先，CC 启用截图增强。
+2. **`ameng-design-review`（评审侧，刻意独立 = 换镜头）** — 见 9.3，**首个落地**。
 
-#### 方案 B（主力）：`ameng-frontend-craft`
-- **定位**：反 slop + 命令化 + 自带截图自检的通用前端/UI 生成器，中英双语，宿主依赖最小。
-- **能力**：反 slop 宪法(融 anthropics+impeccable+binggg 三家禁用清单) + OKLCH token 系统/多主题(移植 ppt-design) + 6–8 个动词命令(craft/audit/polish/bolder/quieter/colorize/typeset) + **grep 提交前自检**(binggg) + **逐页 PNG 截图自检闭环**(ppt-design + Claude Design verifier 模式) + **Tweaks/EDITMODE 就地编辑协议**(Claude Design 官方契约，ppt-design 已落地)。
-- **依赖/复杂度**：Playwright MCP(可选增强，缺则降级 grep 自检)；无私有 CLI/付费 API/强制 Node 脚本；即用。
-- **与现有关系**：与 ppt-design 共享 token/自检/编辑引擎，各管"网页"与"演示"；触发词错开(网页/组件/页面 vs ppt/slides)。
+3. （以后可选）**`ameng-design-flow`** — intake→wireframe→ia→system→landing/ui→review 的薄编排器，阶段门控 + `.design/<slug>/` 断点续跑。前两个跑顺再加。
 
-#### 方案 C（可选）：`ameng-design-flow`
-- **定位**：宿主无关、中文友好的设计生命周期编排器，补全 8 维(尤其②⑧)。
-- **能力**：阶段序列(问题定义→研究→IA→生成→评审→验证) + 阶段门控(announce/confirm) + `.design/<slug>/` 持久化断点续跑 + 跳过模式；各阶段调用现成方法(借 assimovt/owl/dembrandt 的可执行框架) + 调 craft/review/ppt-design 作子环节。
-- **依赖/复杂度**：依赖 A/B 两个 skill；需配置。
+### 9.3 首个落地：`ameng-design-review`（已选定先做）
 
-> **落地顺序**：A(design-review，范围清晰、复用 ppt-design 截图、填明确空白) → B(frontend-craft，完整生成+自检) → C(design-flow，编排封顶)。三者 + ppt-design 共用一套"token + 截图自检 + EDITMODE 编辑"引擎，形成 ameng 设计 skill 矩阵。
+- **定位**：对任意目标（**URL / 本地 HTML / 运行中的 dev server / 截图 / studio 产物**）做**多镜头**设计评审，**换一双眼睛**重新审视，给可执行反馈，可选回写最小修复。宿主无关，复用 ppt-design 的截图与 anti-slop 引擎。
+- **意图先行**：评审前先确认/读取"**为什么人解决什么问题 + 受众 + 平台 + 当前阶段**"——上下文越多，建议越对齐目标（用户核心原则）。无上下文时先问一轮。
+- **多镜头（lens，刻意分镜以免同一视角盲区）**：
+  1. **意图对齐**——UI 是否真服务于"那个人那个问题"
+  2. **文案 / copy**——价值主张、按钮 verb+object、信息密度、反 buzzword
+  3. **视觉层级 + 信息架构**——可扫读性、SaaS 导航清晰度、层级对比
+  4. **对比度 + 无障碍**——WCAG 对比度（机械计算）、焦点态、键盘可达
+  5. **可用性**——Nielsen 10 条 + 交互态（loading/empty/error）+ 触控尺寸
+  6. **反 AI 味**——复用 ppt-design 的 anti-slop 黑名单（禁 Inter/紫渐变/居中卡片网格/eyebrow…）
+  7. **响应式**——320/768/1024/1440 断点溢出/塌陷
+- **方法**：每条 finding **必须截图取证 + 定位 + 严重度（Blocking/Major/Minor）**；**双评分**（Design Score A–F + 独立 AI Slop Score，借 garrytan）；写 `baseline.json` 支持回归对比；可 `fork` 独立 verifier 子 agent 不污染主上下文（借 Claude Design）。
+- **产物**：结构化审查报告（Markdown + 截图）+ 可选最小修复（外科式、原子提交）。findings 引用设计意图而非锁死网页 → 对小程序/APP 同样有指导意义。
+- **复用 ppt-design**：`scripts/render.sh` + `assets/vendor/modern-screenshot`（本地 HTML 截图）、`references/anti-slop-checklist.md`、`scripts/validate.mjs`（机械校验范式：对比度/字体黑名单/grep slop）。
+- **依赖/复杂度**：Playwright MCP（已可用，CC 截图增强）；缺则降级为静态代码 + 机械 audit；即用。**universal 优先**。
+
+#### 计划文件结构
+```
+skills/ameng-design-review/
+├── SKILL.md              # 路由 + 意图入口 + 7 镜头索引 + 评分 + 输出契约
+├── README.md
+├── references/
+│   ├── lenses/{copy,hierarchy-ia,contrast-a11y,usability,anti-slop,responsive,intent-fit}.md
+│   ├── scoring.md        # Design Score + AI Slop Score 评分卡 + 严重度分级
+│   ├── intent-intake.md  # 意图捕获问题（who/what problem/audience/platform/stage）
+│   └── report-template.md# 审查报告格式 + baseline.json schema
+├── scripts/
+│   ├── shoot.sh          # 截图（Playwright/headless，复用 ppt-design）
+│   └── audit.mjs         # 机械自检（对比度/字体黑名单/grep slop 模式）
+```
+
+> **后续落地顺序**：① `ameng-design-review`（本次，范围清晰、复用 ppt-design、填"宿主无关截图审查"空白）→ ② `ameng-design-studio`（5 模式，低保真画布入口起）→ ③ `ameng-design-flow`（可选编排）。三者 + ppt-design 共用一套"token + 截图自检 + EDITMODE 编辑"引擎，形成 ameng 设计 skill 矩阵。
 
 ---
 

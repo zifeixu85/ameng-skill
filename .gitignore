@@ -16,3 +16,7 @@ node_modules/
 .env.*
 *.key
 *.pem
+
+# Research output (not part of the published skills)
+design-skills-research/
+*-skills-research/
