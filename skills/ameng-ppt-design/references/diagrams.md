@@ -10,6 +10,10 @@
 
 | If the content is… | Use | Class / shape |
 |---|---|---|
+| ranked values (2–5) | horizontal bars | `.bars` + `.bar` (fill `--v:%`, add `.fx-grow-x`) |
+| a single percentage / ratio | donut ring | `.donut` (set `--v:0–100`, add `.fx-pop`) |
+| a trend over time | line chart | `.linechart` inline `<svg>` (points from real data) |
+| one hero number | big KPI | `.data-hero` (`.data-hero__num.fx-pop`) |
 | an ordered process (3–6 steps) | horizontal stepper | `.evo` + `.ev` (mark key node `.ev--on`) |
 | a boundary / scope that grows | expanding bars | `.scope` + `.sc` (set inline `width:%`) |
 | A-vs-B with a clear winner | two-zone split | `.zones` (落点 side = `.z--r` accent) |
@@ -19,6 +23,26 @@
 | an example under a label | example chip | `.ex` → `<span class="ex"><b>例</b> Foo</span>` |
 | stage order in a card grid | corner badge | `.nbadge` (1/2/3/4) |
 | a person / contact | round avatar + QR | `.avatar-ring`, `.qr` (crop QR to its matrix first) |
+
+### Donut ring (single percentage) — pure CSS, real data only
+```html
+<div class="donut-row">
+  <div class="donut fx-pop" style="--v:73"><span class="donut__val">73<span class="unit">%</span></span></div>
+  <div><p class="h3">完成率</p><p class="body muted">来源：…（真实出处）</p></div>
+</div>
+```
+`--v` = 0–100. Ring color = `--accent`, track = `--surface-2`. `.fx-pop` scales it in.
+
+### Line chart (trend) — inline `<svg>`, points authored from real numbers
+```html
+<svg class="linechart" viewBox="0 0 320 150" preserveAspectRatio="none" role="img" aria-label="…趋势">
+  <line class="lc-grid" x1="8" y1="130" x2="312" y2="130"/>
+  <polygon class="lc-area" points="12,30 112,70 212,102 308,124 308,130 12,130"/>  <!-- area: line pts + 2 baseline pts -->
+  <polyline class="lc-line" points="12,30 112,70 212,102 308,124"/>                 <!-- the trend line -->
+  <circle class="lc-dot" cx="308" cy="124" r="4.5"/>                                 <!-- last point -->
+</svg>
+```
+Map each real value to `y` (smaller `y` = higher). No real series → don't draw it.
 
 ## Stepper (process line)
 
@@ -94,7 +118,8 @@ so a naive chart exports **blank or half-drawn**. (`render.sh` dodges this via a
 time budget; the browser export has none.) Two rules make motion export-safe:
 
 1. **Use the built-in entrance primitives**, not hand-rolled keyframes:
-   `.fx-grow-y` (bars · put on the bar, height via `--v`), `.fx-pop` (rings/nodes),
+   `.fx-grow-x` (horizontal bars · on `.bar__fill`, width via `--v`),
+   `.fx-grow-y` (vertical bars), `.fx-pop` (big numbers / rings / nodes),
    `.fx-breathe` (idle pulse), `.fx-dash` (SVG flow line). They fire only on `.slide.is-active`.
 2. **If you must hand-roll a keyframe, author it with `both` fill** and base the element's
    resting style on the END frame (e.g. bar height = full, keyframe animates *from* `scaleY(.06)`).

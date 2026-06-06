@@ -32,7 +32,7 @@ runtime 自动填 `.chrome-top__page`（页码）和 `.chrome-top__sec`（取当
 
 | 名称 | 用途 | 关键 class | 提示 |
 |---|---|---|---|
-| **cover 封面** | 开场定调 | `.slide.center` + `.grid-2` + `.zh-mega`/`.eyebrow`/`.lead` + `.terminal` | 默认左文右终端（偏置主 cell + 对话副 cell）；标题里 `.hl` 圈对比词。**CJK 主标题 ≤ 8–10 字最佳**；更长就拆成「主标题 + 副标题」或改用 big-statement；标题需换行时在**语义停顿处手动 `<br>`**，别让它自动断在词中间 |
+| **cover 封面** | 开场定调 | `.slide.center` + `.grid-2` + `.zh-mega`/`.eyebrow`/`.lead`（+副 cell） | 偏置主 cell + 对话副 cell；标题里 `.hl` 圈对比词。**副 cell 按主题选**：技术主题→`.terminal`；**非技术主题→大数字 `.data-hero` / 金句 `.quote` / 配图 `.frame` / 要点**（⚠ 别给非技术 deck 甩英文终端）。**CJK 主标题 ≤ 8–10 字最佳**；更长就拆「主标题+副标题」或改 big-statement；换行在**语义停顿处手动 `<br>`** |
 | **big-statement 大论点** | 单一核心论点 | `.slide.center` + `.h1.measure` + `.hl` | 一句话、大字号；关键词用 `.hl` 高亮带，标题陈述结论 |
 | **numbered-cards 编号卡** | 分点 / 步骤 / 维度 | `.grid-3.anim-stagger` + `.card.card--num`（`.num`/`.eyebrow`/`.h3`/`.card__tags`） | 差异化填充、统一描边——**不是** icon-card-shadow 网格 |
 | **data-hero 数据主角** | 一个关键数字 | `.data-hero`（`.data-hero__num`+`.unit` / `__label` / `__src`） | Swiss KPI，数字占屏宽 ~20%；**必须真实数据 + 出处**，否则换版式 |

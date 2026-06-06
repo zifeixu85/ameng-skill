@@ -56,16 +56,26 @@
       <div class="notes">极致字号对比：zh-mega 与 .body 拉到 ~5 倍尺度差，层级靠尺度强制，不靠颜色。左对齐、大留白。</div>
     </section>
 
-    <!-- 3 · DATA HERO：数字当视觉主体（瑞士 KPI） ------------------------------ -->
-    <section class="slide center" data-section="数据 · DATA">
-      <span class="eyebrow" data-anim="fade">RENDER BUDGET · MEDIAN FRAME</span>
-      <div class="data-hero" data-anim="rise" style="margin-top:var(--s-4)">
-        <div class="data-hero__num">8.3<span class="unit">ms</span></div>
-        <div class="data-hero__label">迁移到 token 化网格后，单帧渲染中位数从 14ms 降到
-          <span class="hl">8.3ms</span>，掉帧投诉清零。</div>
-        <div class="data-hero__src">来源：内部 RUM 抽样 7d · n=12,480 sessions（示例数据，发布前替换）</div>
+    <!-- 3 · DATA HERO + 折线趋势（数字 + 图表，瑞士 KPI） ---------------------- -->
+    <section class="slide" data-section="数据 · DATA">
+      <span class="eyebrow" data-anim="fade">RENDER BUDGET · 7-DAY TREND</span>
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">单帧渲染中位数，一周降了 <span class="hl">41%</span></h3>
+      <div class="grid-2 fill" style="--gap:var(--s-8);align-items:center">
+        <div class="data-hero" data-anim="rise">
+          <div class="data-hero__num fx-pop" style="font-size:clamp(3.2rem,8vw,7rem)">8.3<span class="unit">ms</span></div>
+          <div class="data-hero__label">从 14ms 降到 <span class="hl">8.3ms</span>，掉帧投诉清零。</div>
+          <div class="data-hero__src">来源：内部 RUM 抽样 7d · n=12,480（示例数据，发布前替换）</div>
+        </div>
+        <!-- 折线图：points 由真实数据生成（这里是 7 天 14→8.3ms 的下降）。无真实数据就别画。 -->
+        <svg class="linechart" data-anim="fade" viewBox="0 0 320 150" preserveAspectRatio="none"
+             role="img" aria-label="7 天单帧渲染中位数从 14ms 降到 8.3ms 的下降趋势折线图">
+          <line class="lc-grid" x1="8" y1="130" x2="312" y2="130"></line>
+          <polygon class="lc-area" points="12,30 62,46 112,70 162,82 212,102 262,114 308,124 308,130 12,130"></polygon>
+          <polyline class="lc-line" points="12,30 62,46 112,70 162,82 212,102 262,114 308,124"></polyline>
+          <circle class="lc-dot" cx="308" cy="124" r="4.5"></circle>
+        </svg>
       </div>
-      <div class="notes">Data Hero：一个真实大数字占屏宽 ~20%，当视觉主语。配真实出处，无真实数据就不要用这一版式。</div>
+      <div class="notes">数字 + 折线：左边大数字当结论，右边 .linechart 给趋势。折线 points 必须来自真实数据，颜色走 token，无数据就退回纯数字版式。</div>
     </section>
 
     <!-- 4 · 12 栏网格感（grid-3 + bento），hairline 分隔 ----------------------- -->
@@ -131,7 +141,8 @@
       <div class="notes">对比页：用一条共享黑边把两栏锁进同一矩形（瑞士网格感）。唯一的红落在右栏 AFTER 的 tag 与分隔线上，引导结论。</div>
     </section>
 
-    <!-- 7 · TERMINAL（落地证据：已上线） ------------------------------------- -->
+    <!-- 7 · TERMINAL（落地证据：已上线） ·· ⚠ terminal=技术主题专属（英文 CLI）。
+         非技术 deck 把这页换成「指标卡 / 时间线 / 客户证言 / 配图」，别甩英文终端。 -->
     <section class="slide center" data-section="落地 · SHIP">
       <span class="eyebrow" data-anim="fade">SHIPPED, NOT A SPEC</span>
       <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-5)">规则只有进了构建才算数</h3>

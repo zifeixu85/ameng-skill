@@ -34,6 +34,13 @@
       <div class="stack" style="--gap:var(--s-6)">
         <span class="eyebrow" data-anim="fade">DEPLOYMENT &amp; DEBUGGING IN PRACTICE</span>
         <h1 class="zh-mega" data-anim="rise">从 <span class="hl">Demo</span> → 到 <span class="hl">正式产品</span></h1>
+        <!-- ⚠ terminal = 技术/代码主题专属签名（英文 CLI，非技术受众看不懂）。
+             只有当 deck 主题是「代码 / 开发 / DevOps / 技术产品」时才保留。
+             非技术主题（美食/教育/营销/品牌…）务必换成下列之一：
+               · 大数字  <div class="data-hero"><div class="data-hero__num fx-pop">…</div>…</div>
+               · 金句    <blockquote class="quote">…</blockquote>
+               · 要点    <ul class="stack">…</ul>  · 配图  <div class="frame frame--browser">…</div>
+             —— 别让非技术 deck 的封面甩一个英文终端。 -->
         <div class="grid-2" style="--gap:var(--s-8);align-items:end;margin-top:var(--s-2)">
           <p class="lead" data-anim="fade">部署与调试实战</p>
           <div class="terminal" data-anim="rise">
@@ -75,7 +82,7 @@
     <!-- 4 · Swiss Data Hero（KPI 占屏宽 ~20%） ----------------------------- -->
     <section class="slide center" data-section="调试 · DEBUG" data-accent="cinnabar">
       <div class="data-hero" data-anim="rise">
-        <div class="data-hero__num">42<span class="unit">%</span></div>
+        <div class="data-hero__num fx-pop">42<span class="unit">%</span></div>
         <div class="data-hero__label">创业失败归因于「<span class="hl">没有市场需求</span>」，远高于任何技术原因。</div>
         <div class="data-hero__src">来源：CB Insights, Top Reasons Startups Fail（示例，需替换为真实出处）</div>
       </div>
@@ -102,9 +109,9 @@
       <span class="eyebrow" data-anim="fade">渠道意愿（示例 · 需替换为真实数据）</span>
       <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">哪个钩子转化最高</h3>
       <div class="bars anim-stagger" style="max-width:48rem">
-        <div class="bar"><span class="body">立即购买</span><div class="bar__track"><div class="bar__fill" style="--v:78%"></div></div><span class="bar__val">78%</span></div>
-        <div class="bar"><span class="body">免费试用</span><div class="bar__track"><div class="bar__fill" style="--v:54%;background:var(--accent-2)"></div></div><span class="bar__val">54%</span></div>
-        <div class="bar"><span class="body">加入候补</span><div class="bar__track"><div class="bar__fill" style="--v:31%;background:var(--ink-3)"></div></div><span class="bar__val">31%</span></div>
+        <div class="bar"><span class="body">立即购买</span><div class="bar__track"><div class="bar__fill fx-grow-x" style="--v:78%"></div></div><span class="bar__val">78%</span></div>
+        <div class="bar"><span class="body">免费试用</span><div class="bar__track"><div class="bar__fill fx-grow-x" style="--v:54%;background:var(--accent-2)"></div></div><span class="bar__val">54%</span></div>
+        <div class="bar"><span class="body">加入候补</span><div class="bar__track"><div class="bar__fill fx-grow-x" style="--v:31%;background:var(--ink-3)"></div></div><span class="bar__val">31%</span></div>
       </div>
       <div class="notes">纯 CSS 条形图，--v 是真实百分比。强调=accent，副系列=accent-2。绝不编数字。</div>
     </section>
@@ -141,6 +148,7 @@
         <div class="stack" style="--gap:var(--s-5)">
           <h2 class="h1" data-anim="rise">现在就<br>做出你的 <span class="hl">第一版</span>。</h2>
         </div>
+        <!-- ⚠ 非技术主题把这个 terminal 换成 CTA 卡片 / 金句 / 二维码（见封面注释）。 -->
         <div class="terminal" data-anim="rise"><div class="cmd">your-cli ship --prod</div><div class="comment"># 一行命令，把想法发出去</div></div>
       </div>
       <div class="notes">收尾：一个具体的行动召唤，不写「Get Started」。</div>

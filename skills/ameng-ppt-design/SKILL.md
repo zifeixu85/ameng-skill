@@ -21,6 +21,14 @@ metadata:
 
 > 作者 / Author: **A梦 (ameng)** · 自由分享与使用，请保留署名 · Free to use & share — please keep attribution.
 
+> ## ⛔ 开工第一件事（不是写代码）
+> **收到「做 PPT」请求后，第一条回复必须是先确认四件事，而不是直接开做。**
+> 顺序：**①内容&观众 → ②页数(分档让用户选) → ③风格(给 3–4 个主题+让用户实际预览) → ④比例 → 再确认逐页大纲 → 才动手。**
+> 每一步都用 `AskUserQuestion` 给真实选项；**默认值也要说出来并等用户点头**。
+> **严禁**：静默套默认主题、静默决定页数、为塞内容而静默砍页/删内容。
+> 把确认到的答案写进 `slides/<name>/intake.md`（`node scripts/intake.mjs <name>` 生成+校验），**校验 exit 0 才进 Step 2**。
+> 详见下方《动手前必做：四道确认闸门》。
+
 把文本/大纲/想法做成**有设计主见、全离线、可放映**的静态 HTML 演示。
 一个 OKLCH token 系统（`assets/base.css` + `assets/components.css`）+ 一个主题 = 一套外观；
 一个版式块 = 一种页型。**始终从模板复制，不从零写。**
@@ -38,18 +46,35 @@ metadata:
 - **两种比例/模板**：`ppt-16x9.html`（旗舰）· `ppt-swiss.html`（瑞士数据风）· `layouts-gallery.html`（版式目录）
 - **右上角工具栏**：`assets/editor.js`（就地编辑 + 本地保存 + 版本历史）+ `assets/export.js`（PDF/PPTX/PNG/HTML 导出）+ `assets/toolbar.css`
 - **自托管 distinctive 字体**：Bricolage Grotesque（display）/ Host Grotesk（body）/ JetBrains Mono（mono）+ 思源黑/宋（CJK）。`scripts/fetch-fonts.sh` 一次性下载 → 之后全离线。**禁 Inter/Roboto/Playfair/Cormorant/IBM Plex**。
-- **键盘放映运行时**（`runtime.js`）：← → / Space / F 全屏 / S 讲者备注 / O 缩略图总览（每页等比实拍预览，非文字列表）/ T 浅色⇄深色 / ? 帮助 / `#/N` 深链
-- **纪律工具**：`scripts/render.sh`（逐页 PNG / 像素级 PDF）· `scripts/validate.mjs`（封禁字体/硬编码 hex/禁蓝/缺 alt/缺备注 校验）
+- **键盘放映运行时**（`runtime.js`）：← → / Space / F 全屏 / S 讲者备注 / O 缩略图总览（每页等比实拍预览，非文字列表）/ T 浅色⇄深色 / **G 安全区参考线+溢出哨兵** / ? 帮助 / `#/N` 深链
+- **纪律工具**：`scripts/render.sh`（逐页 PNG / 像素级 PDF）· `scripts/validate.mjs`（文本纪律：封禁字体/硬编码 hex/禁蓝/缺 alt/缺备注）· **`scripts/check-overflow.mjs`（几何闸门：headless 量每页每元素 vs 安全区，越界 exit 1）** · **`scripts/preview-themes.sh`（用你真实首页内容预览 5 套主题）**
 
-## 动手前必做：① 声明方向 ② 三问澄清
+## 动手前必做：四道确认闸门（intake gate · 不可跳过）
 
 **先读/填 [references/design-direction.md](references/design-direction.md)**：品牌人格、反参考、配色（单 accent 60-30-10、**禁蓝**默认）、封禁字体、构图、设计原则。每份演示都要有声明的方向。
 
-然后确认三件事（或基于已有内容给有主见的默认再确认）：
+然后**必须逐个与用户确认下面四件事再开工**。每一项都用 `AskUserQuestion` 给**真实选项**让用户选（可基于已有内容给有主见的推荐默认，但**默认也要明确说出来并等用户点头**）。**严禁**：静默套用默认主题、静默决定页数、为塞下内容而静默砍页/删内容。**没全部确认完，不要进 Step 2 脚手架。**
 
-1. **内容 & 观众 & 页数** —— 讲什么、给谁、几页？（15min≈10 页 / 30min≈20 页 / 45min≈25-30 页）
-2. **主题** —— **先开 `templates/theme-preview.html` 直观对比再定**。默认 `industrial-paper`；要态度→`neo-brutalist`；叙事/品牌→`editorial`；夜场/产品发布→`dark-luxe`；中式/雅致/文化→`ink-wash`。
-3. **比例** —— 16:9（演讲）/ swiss（数据驱动）。
+1. **内容 & 观众** —— 讲什么、给谁、什么场合？（一句话目标 + 受众）
+2. **页数体量（必问，给分档）** —— 用 `AskUserQuestion` 给四档让用户选，**别替用户决定**：
+   - **精简 ~10 页**（15min / 电梯版）· **标准 ~18–20 页**（30min）· **详尽 ~28–30 页**（45min）· **自定义 N 页**
+   - 档位可按「内容量 + 时长」推导出一个推荐值，但仍要用户确认。
+   - **内容塞不下所选页数时，不许偷砍** —— 摆出取舍让用户定：「A 合并这几节 / B 提到 X 页 / C 砍掉某节」。
+3. **风格主题（必让用户看着选，5 套全集）** —— **别只凭文字描述替用户定**：
+   - **预览页 = 5 套全集的入口**：先 `new-ppt.sh` 脚手架后跑 **`./scripts/preview-themes.sh <name>`**（用**用户真实首页内容**铺在 picker 里切 5 套主题），或直接开 `templates/theme-preview.html`。**用户实际看过再定。**
+   - **`AskUserQuestion` 每题最多 4 个选项**（系统再自动加「Other」），5 套列不全：给**按本次意图推荐的 4 套**，并在问题里**点名第 5 套是哪个、就在预览页里**，用户想要选「Other」写它名字。**绝不因为列不下就把某套藏掉。**
+   - 5 套速记（默认 `industrial-paper`）：要态度→`neo-brutalist`；叙事/品牌→`editorial`；夜场/产品发布→`dark-luxe`；中式/雅致/文化→`ink-wash`。
+4. **比例** —— 16:9（演讲）/ swiss（数据驱动）。
+
+**确认完四项 → 先给「逐页标题大纲」再让用户点头一次 → 才开始 Step 2。** 宁可多问一轮，不要自作主张往下冲。
+
+**可见自检（把"是否确认过"落到文件）：**
+```bash
+node scripts/intake.mjs my-talk     # 首次生成 slides/my-talk/intake.md 模板
+# 把四项确认 + 逐页大纲填进去，再跑一次校验：
+node scripts/intake.mjs my-talk     # 缺项 → exit 1 并列出；齐全 → RESULT: OK (exit 0)
+```
+**`intake.mjs` 不 OK，就别进 Step 2 脚手架。** 它把四道闸门变成一个可检查的 `intake.md`，而不是只靠记性。
 
 ## 工作流
 
@@ -61,15 +86,17 @@ metadata:
 ### Step 1 · 叙事弧 + 节奏
 用叙事弧排页：**Hook → Context → Core → Shift → Takeaway**；hero 页与普通页交替。详见 [references/authoring-guide.md](references/authoring-guide.md)。
 
-### Step 2 · 脚手架
+### Step 2 · 脚手架（先过 intake 闸门）
 ```bash
+node scripts/intake.mjs my-talk       # 必须先 RESULT: OK（四道闸门已和用户确认并填好）
 ./scripts/new-ppt.sh my-talk 16x9     # 或 swiss → 生成 slides/my-talk/index.html
 open slides/my-talk/index.html
 ```
 
 ### Step 3 · 选主题（先看，再定）+ 分段色域
-**别让用户只凭文字选主题** —— 打开 **`templates/theme-preview.html`**（`open` 或本地服务器），
-顶部一排按钮可**实时切换 5 套主题 + 明暗**，同一页代表性内容直接对比，看准了再定。
+**别让用户只凭文字选主题** —— 两种预览，优先用「内容感知」那种：
+- **`./scripts/preview-themes.sh <name>`（推荐）** —— 把**用户自己 deck 的真实首页**铺进 picker，切 5 套主题 + 明暗看的是自己的内容（`← →` / `1–5` / `D`）。
+- **`templates/theme-preview.html`** —— 通用 demo 内容版，没脚手架时也能看。
 （5 套主题的静态预览图见 `screenshots/`，README 里有画廊。）
 选定后在模板里硬编码 `#theme-link`；放映时 `T` 键在该主题浅/深之间切换。给每段设 `data-section` + `data-accent`，chrome 自动跟随切色域。见 [references/themes.md](references/themes.md)。
 
@@ -81,13 +108,19 @@ open slides/my-talk/index.html
 - **数据必须真实可溯源**；无真实数据 → 文字版式，绝不编数字/假图表。
 - 讲者备注写进 `<div class="notes">`（`S` 看）。
 
-### Step 5 · 自检（必做闸门）
+### Step 5 · 自检（必做闸门，按顺序跑）
 ```bash
-node scripts/validate.mjs slides/my-talk/index.html     # 封禁字体/硬编码hex/禁蓝/alt/备注
-./scripts/render.sh slides/my-talk/index.html 10        # 逐页 PNG
+node scripts/validate.mjs slides/my-talk/index.html        # ① 文本纪律：封禁字体/硬编码hex/禁蓝/alt/备注
+node scripts/check-overflow.mjs slides/my-talk/index.html   # ② 几何闸门：任何页越界 → exit 1，必须先修
+./scripts/render.sh slides/my-talk/index.html              # ③ 逐页 PNG，做最后的审美终检
 ```
-逐页看 PNG，对照 [references/anti-slop-checklist.md](references/anti-slop-checklist.md)：溢出？对比度？AI 味？**有问题就改。**
-固定 1280×720 不会自动缩字：内容必须落在 **y ∈ [85, 636]**（顶栏+页脚要避让），密集网格易同时往上压标题、往下压页脚。**纯文字页先问"它是不是一张图"** —— 流程→stepper、对比→two-zone、放大的边界→scope bars、关系→inline SVG。图形原语与双钻/编排 SVG 见 [references/diagrams.md](references/diagrams.md)。
+**溢出不再靠肉眼**——三道关：
+- **结构预防**：密集页把内容包进 **`.slide__safe`**（`min-height:0`，让 grid/flex 子项压缩而非顶出去）；会变长的单行大标题/大数字用 **`.fit-text`**（运行时自动缩到不超宽）。
+- **放映期哨兵**：浏览器里按 **`G`** 显示安全区参考线；任意页越界会自动画**红色虚线边界 + ⚠ 角标**（标出第几页、溢出多少 px、是哪个元素），并 `console.warn`。仅屏幕可见，导出/放映自动隐藏。
+- **几何闸门**：`check-overflow.mjs` 用 headless Chrome 量**每一页每个元素** vs 安全区（含 nowrap 文字的 ink 溢出），精确报像素、**有越界就 exit 1**。**必须先通过它，再去看 PNG。**
+
+安全区 = **y ∈ [85, 636]**（顶栏+页脚已避让）；固定 1280×720。最后逐页看 PNG，对照 [references/anti-slop-checklist.md](references/anti-slop-checklist.md)：对比度？AI 味？**有问题就改。**
+**纯文字页先问"它是不是一张图"** —— 流程→stepper、对比→two-zone、放大的边界→scope bars、关系→inline SVG。图形原语与双钻/编排 SVG 见 [references/diagrams.md](references/diagrams.md)。
 
 ### Step 6 · 编辑 & 导出 & 交付
 见下节「右上角工具栏」。HTML 可键盘放映 / 投屏 / 发链接。
@@ -131,10 +164,17 @@ node scripts/validate.mjs slides/my-talk/index.html     # 封禁字体/硬编码
 
 - **只用 OKLCH**；**禁 Inter/Roboto/Playfair/Cormorant/IBM Plex**；字体自托管离线。
 - **禁蓝**（默认）；**单 accent 60-30-10**；禁纯黑纯白。
-- **只画真实数据**：无可溯源数据 → 文字版式，不编数字、不造假图表。
+- **只画真实数据**：无可溯源数据 → 文字版式，不编数字、不造假图表。**有真实数据就上图表，别全用文字** —— 柱状图 `.bars`、大数字 `.data-hero`、**环形 `.donut`（单百分比）**、**折线 `.linechart`（趋势，内联 SVG）**、扩张条 `.scope`、步骤器 `.evo`、双栏对比 `.zones`（见 [references/diagrams.md](references/diagrams.md)）。
+- **⚠ terminal 代码框 = 技术/代码主题专属签名**（英文 CLI，非技术受众看不懂）。只有「代码 / 开发 / DevOps / 技术产品」主题才用；**非技术主题**（美食/教育/营销/品牌…）一律换成大数字 / 金句 / 要点 / 配图 / 指标卡。**别给非技术 deck 的封面甩英文终端**（模板里 terminal 处已加注释提示）。
 - 不加标题装饰线；阴影/圆角克制；统一圆角+统一描边+差异化填充。
 - 大字号 scale 对比制造层级；**说清楚 > 好看**；不默认模板。
-- 已内置 `prefers-reduced-motion` 降级与键盘可达性；动效（含 deck 自定义 keyframe）在**导出时自动定格到结束帧**——图表/柱状图不会被截到动画中途（见 [references/diagrams.md](references/diagrams.md) 的「Motion that survives export」+ `.fx-grow-y/.fx-pop/.fx-breathe/.fx-dash` 入场原语）。
+
+## 动画 / 动效（预期，别误以为"没动画"）
+
+- **入场动画默认就有**：每页元素带 `data-anim`（`fade/rise/wipe/blur`）+ `.anim-stagger` 依次入场，**翻到该页时播放一次**。淡入上浮较克制，是有意的（演示不是网页广告）。
+- **图表会"自己长出来"**：柱状图给 `.bar__fill` 加 **`.fx-grow-x`**（横向）/`.fx-grow-y`（纵向）；大数字/环形加 **`.fx-pop`**；SVG 流线 `.fx-dash`；idle 呼吸 `.fx-breathe`。**模板已示范**（16:9 柱状图 + swiss 折线/大数字）。新做图表记得挂上，别让它静止。
+- **氛围 canvas 背景是 opt-in、默认关**：要 hero 动起来，给该页加 `.slide-fx data-fx="dot-field|contour"`（见 layouts.md），别全局乱开。
+- **关键认知**：动画**只在「现场放映 / 浏览器看 HTML」时播**；**导出 PDF / PPTX / PNG 一律定格到结束帧**（刻意的，防止截到动画中途）。所以**交付的是 PDF/图片就看不到动效，要动效就发 HTML 或现场放映**。已内置 `prefers-reduced-motion` 降级与键盘可达性。
 
 ## 渐进式加载（按需读 references/）
 
@@ -154,18 +194,18 @@ node scripts/validate.mjs slides/my-talk/index.html     # 封禁字体/硬编码
 ameng-ppt-design/
 ├── SKILL.md / README.md
 ├── assets/
-│   ├── base.css            (OKLCH token + slide 原语 + .hl + grain + 分段 accent + 打印分页)
+│   ├── base.css            (OKLCH token + slide 原语 + .hl + grain + 分段 accent + .slide__safe/.fit-text + 打印分页)
 │   ├── components.css      (chrome / terminal / frame / card--num / data-hero / 背景)
 │   ├── toolbar.css         (悬浮 dock / 编辑态 / 版本抽屉+diff / toast / 截图辅助)
 │   ├── fonts.css + fonts/  (自托管 @font-face，无网络)
-│   ├── runtime.js          (键盘放映 + fit + 备注 + 总览 + 切明暗 + chrome + 色域)
+│   ├── runtime.js          (键盘放映 + fit + 备注 + 总览 + 切明暗 + chrome + 色域 + 溢出哨兵/审计 + fit-text)
 │   ├── editor.js           (悬浮 dock + 就地编辑 + 完成自动存版本 + 历史 diff + 全屏)
 │   ├── export.js           (逐页截图→拼装：PDF / PPTX / PNG / 完整 HTML)
 │   ├── vendor/             (modern-screenshot + jspdf + pptxgenjs + jszip；MIT)
 │   ├── fx-runtime.js + fx/ (opt-in Canvas 背景，默认关)
 │   └── themes/*.css        (5 主题)
 ├── templates/              (ppt-16x9 / ppt-swiss / layouts-gallery)
-├── scripts/                (new-ppt.sh / eject.sh / fetch-fonts.sh / fetch-export-libs.sh / render.sh / validate.mjs)
+├── scripts/                (intake.mjs / new-ppt.sh / preview-themes.sh / eject.sh / fetch-fonts.sh / fetch-export-libs.sh / render.sh / validate.mjs / check-overflow.mjs)
 ├── references/             (8 篇，按需加载)
 └── slides/<name>/          (你生成的演示，含 images/；已 gitignore)
 ```
@@ -173,7 +213,7 @@ ameng-ppt-design/
 ## 键盘速查
 ```
 ← → Space PgUp PgDn Home End  翻页   1–9 跳到第 N 页   0 / O 幻灯片缩略图总览（每页实拍预览）
-F 全屏放映（自动隐藏所有操作 UI）  S 讲者备注  T 浅色/深色
+F 全屏放映（自动隐藏所有操作 UI）  S 讲者备注  T 浅色/深色  G 安全区参考线+溢出检查
 ? / H 快捷键帮助   #/N 深链(render.sh 用它逐页导出)
 ```
 

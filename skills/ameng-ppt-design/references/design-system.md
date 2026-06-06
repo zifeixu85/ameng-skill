@@ -102,7 +102,9 @@ CJK 巨标题用 `.zh-mega`（`clamp(3.2rem,1.4rem+6vw,7.5rem)`，瑞士式极�
 | 终端 | `.terminal`（子元素 `.cmd` / `.ok` / `.comment`） | 深底等宽「已上线」证据块，含交通灯点；`.cmd` 前缀 `$ `（accent 色），`.ok` 后缀 ` ✓`。 |
 | 截图框 | `.frame` / `.frame--browser` / `.frame--shadow` / `.frame__placeholder`（`.frame img` / `.frame__shot`） | 统一框 + 统一阴影的截图美化；`--browser` 加假浏览器栏，无图时用 `.frame__placeholder`（**不画假 UI**）。 |
 | 编号卡 | `.card--num`（`.num` / `.eyebrow` / `.card__tags`） | mono 编号挂右上角、衬线标题、底部 mono 标签——差异化填充，非图标卡片网格。 |
-| Swiss Data Hero | `.data-hero`（`.data-hero__num` / `__label` / `__src`） | KPI 当视觉主语（数字 `clamp` 到 ~16rem，占屏宽 ~20%），配 label + **真实出处**。 |
+| Swiss Data Hero | `.data-hero`（`.data-hero__num` / `__label` / `__src`） | KPI 当视觉主语（数字 `clamp` 到 ~16rem，占屏宽 ~20%），配 label + **真实出处**。给 `.data-hero__num` 加 `.fx-pop`。 |
+| 环形图 Donut | `.donut`（`--v:0–100`）+ `.donut__val` / `.donut-row` | 单百分比，纯 CSS conic-gradient（中心 `--bg` 镂空成环）；token 配色；`.fx-pop` 入场。**真实数据**。 |
+| 折线图 Line | `.linechart` 内联 `<svg>`（`.lc-line`/`.lc-area`/`.lc-grid`/`.lc-dot`） | 趋势，points 由**真实数据**生成；色走 `--accent`。见 [diagrams.md](diagrams.md)。 |
 | 离线背景 | `.bg-dots` / `.bg-grid` / `.bg-paper` / `.bg-fade` | 纯 CSS 渐变/点阵背景（无网络）；`.bg-fade` 向下淡出，只铺在 hero 区。 |
 | fx canvas 层 | `.slide-fx`（配 `data-fx`） | 全幅画布层，默认关；见 [layouts.md](layouts.md) 的 `data-fx`。 |
 

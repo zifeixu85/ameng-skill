@@ -129,6 +129,16 @@ body {
   background: var(--bg);
   overflow: hidden;
 }
+/* Center the MAIN stage by pinning its center to the viewport center, then
+   scaling about that point. `place-items:center` alone start-anchors an
+   unscaled 1280px box once the viewport is narrower than it, so the scaled
+   deck drifts off-center (and clips) at odd window widths — translate(-50%,-50%)
+   fixes that deterministically at any size. Scoped with :not(.ppt-ov__frame …)
+   so the overview thumbnails (which JS scales inline) are left untouched. */
+:not(.ppt-ov__frame) > .deck > .deck__stage {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%) scale(var(--fit, 1));
+}
 /* ---- 4. Slide ------------------------------------------------------------ */
 .slide {
   position: absolute; inset: 0;
@@ -210,6 +220,25 @@ mark { background: var(--accent-soft); color: var(--ink-1); padding: 0 0.18em; b
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap, var(--s-6)); }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap, var(--s-5)); }
 .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap, var(--s-4)); }
+
+/* ---- 7b. Safe-zone container (structural overflow prevention) ------------- */
+/* The slide's padding already encodes the safe zone (y∈[85,636] with chrome).
+   Wrap dense content in .slide__safe to make children SHARE that height and
+   shrink (min-height:0 lets flex/grid children compress) instead of pushing
+   past the box and getting silently clipped by .deck__stage{overflow:hidden}.
+   Pair grids with `.grid--fit` so rows distribute within the safe box. */
+.slide__safe { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: var(--gap, var(--s-5)); }
+.slide__safe.center { justify-content: center; }
+.slide__safe > .fill { min-height: 0; }
+.grid--fit { min-height: 0; align-content: stretch; }
+.grid--fit > * { min-height: 0; min-width: 0; }
+
+/* ---- 7c. fit-text: shrink-to-fit a single hero line ----------------------- */
+/* For big non-wrapping hero numbers/titles whose length varies (a long stat, a
+   long title). runtime.js measures the active slide and reduces font-size until
+   the line fits its container width — so a longer-than-expected value scales
+   down rather than overflowing. Use on ONE-LINE heroes; not for body copy. */
+.fit-text { white-space: nowrap; max-width: 100%; }
 /* bento: deliberate non-uniform composition */
 .bento { display: grid; gap: var(--s-4); grid-template-columns: repeat(6, 1fr); grid-auto-rows: 1fr; }
 .bento > .col-2 { grid-column: span 2; } .bento > .col-3 { grid-column: span 3; }
@@ -341,10 +370,13 @@ mark { background: var(--accent-soft); color: var(--ink-1); padding: 0 0.18em; b
    capturing a chart mid-animation. Prefer these over hand-rolled @keyframes in each deck. */
 @keyframes ppt-pop    { from { opacity: 0; transform: scale(0.82); } to { opacity: 1; transform: scale(1); } }
 @keyframes ppt-grow-y { from { transform: scaleY(0.06); } to { transform: scaleY(1); } }       /* set transform-origin:bottom on the bar */
+@keyframes ppt-grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }          /* horizontal bars: origin left */
 @keyframes ppt-breathe{ 50% { transform: scale(1.035); opacity: 0.82; } }
 @keyframes ppt-dash   { to  { stroke-dashoffset: -28; } }                                       /* on an SVG path with stroke-dasharray */
+@keyframes ppt-ring   { from { stroke-dashoffset: var(--ring-circ, 295); } }                    /* donut ring: draw to its --v offset */
 .slide.is-active .fx-pop     { animation: ppt-pop var(--dur) var(--ease) both; }
 .slide.is-active .fx-grow-y  { transform-origin: bottom; animation: ppt-grow-y .72s var(--ease) both; }
+.slide.is-active .fx-grow-x  { transform-origin: left; animation: ppt-grow-x .72s var(--ease) both; }
 .slide.is-active .fx-breathe { animation: ppt-breathe 5s ease-in-out infinite; }
 .slide.is-active .fx-dash    { animation: ppt-dash 2.4s linear infinite; }
 

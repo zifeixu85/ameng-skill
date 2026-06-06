@@ -10,7 +10,7 @@
   --ink-1: oklch(22% 0.012 50); --ink-2: oklch(38% 0.012 50); --ink-3: oklch(55% 0.012 50);
   --accent:      oklch(50% 0.15 28);        /* restrained rust-red, used sparingly */
   --accent-ink:  oklch(98% 0.01 80);
-  --accent-2:    oklch(45% 0.06 250);
+  --accent-2:    oklch(48% 0.055 145);   /* 禁蓝:改沙绿做次色(原 hue 250 是蓝),安静不抢 rust accent */
   --accent-soft: oklch(92% 0.04 40);
   /* serif everywhere — the magazine register */
   --ppt-display: "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", Georgia, "Times New Roman", serif;

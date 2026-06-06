@@ -31,11 +31,14 @@
 /* headings: tight, heavy */
 .h1, .display, .zh-mega { font-weight: 800; letter-spacing: -0.035em; }
 
-/* highlight = solid block with hard drop-shadow (not a soft band) */
-.hl { color: var(--bg); background: var(--accent); padding: 0 0.14em;
+/* highlight = solid block with hard drop-shadow (not a soft band).
+   The accent block is orange in BOTH light/dark, so the text on it must be a
+   FIXED near-white — using var(--bg) flipped it to dark (unreadable) in dark
+   mode. White-on-accent is also the intended brutalist look. */
+.hl { color: oklch(98% 0 0); background: var(--accent); padding: 0 0.14em;
   box-shadow: 4px 4px 0 var(--ink-1); white-space: nowrap; }
 .hl::before { display: none; }
-.hl--full { color: var(--bg); background: var(--accent); box-shadow: 4px 4px 0 var(--ink-1); }
+.hl--full { color: oklch(98% 0 0); background: var(--accent); box-shadow: 4px 4px 0 var(--ink-1); }
 
 /* cards / tags / frames: thick ink border + hard shadow */
 .card { border: 3px solid var(--ink-1); box-shadow: 6px 6px 0 var(--ink-1); background: var(--bg); }

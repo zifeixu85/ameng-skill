@@ -24,6 +24,11 @@
 
   var idx = 0;
 
+  // export-like = render.sh PNG/PDF (?export), browser print, or the headless
+  // overflow audit (?audit) — all suppress on-screen authoring chrome.
+  var isAudit = /[?&]audit\b/.test(location.search);
+  var isExportLike = /[?&](export|print|audit)\b/.test(location.search);
+
   // --- fit the fixed stage to the viewport ----------------------------------
   function fit() {
     var sw = stage.offsetWidth || 1280, sh = stage.offsetHeight || 720;
@@ -32,6 +37,133 @@
   }
 
   function clamp(n) { return Math.max(0, Math.min(slides.length - 1, n)); }
+
+  // --- overflow guard --------------------------------------------------------
+  // Every slide is laid out (inactive ones are opacity/visibility-hidden, NOT
+  // display:none) so geometry is measurable for ALL slides at once. The "safe
+  // box" = the slide's content box: its padding already encodes the chrome-
+  // avoidance safe zone (deck--chrome adds extra top/bottom). Any descendant
+  // whose rect spills past that box is a real, otherwise-silently-clipped
+  // overflow (.deck__stage is overflow:hidden). Used by:
+  //   · the on-screen sentinel (draws a red boundary + badge on the active slide)
+  //   · the `?audit` headless gate (scripts/check-overflow.mjs reads the report)
+  var OVF_TOL = 1.5; // sub-pixel rounding tolerance, in stage px
+  function stageScale() {
+    var sw = stage.offsetWidth || 1280;            // unscaled layout width (1280)
+    var rect = stage.getBoundingClientRect();      // scaled on-screen width
+    return rect.width ? rect.width / sw : 1;
+  }
+  // Safe box in UNSCALED stage coordinates (origin = stage top-left).
+  function safeBox(slide) {
+    var cs = getComputedStyle(slide);
+    var W = stage.offsetWidth || 1280, H = stage.offsetHeight || 720;
+    return {
+      left: parseFloat(cs.paddingLeft) || 0,
+      top: parseFloat(cs.paddingTop) || 0,
+      right: W - (parseFloat(cs.paddingRight) || 0),
+      bottom: H - (parseFloat(cs.paddingBottom) || 0),
+    };
+  }
+  function shortSel(el) {
+    var t = el.tagName.toLowerCase();
+    var c = (el.getAttribute("class") || "").trim().split(/\s+/)[0];
+    return c ? t + "." + c : t;
+  }
+  // Measure worst overflow (in stage px) of any descendant past the safe box.
+  function measureOverflow(slide) {
+    var box = safeBox(slide);
+    var srect = stage.getBoundingClientRect();
+    var scale = stageScale();
+    var toStage = function (r) {
+      return {
+        left: (r.left - srect.left) / scale, top: (r.top - srect.top) / scale,
+        right: (r.right - srect.left) / scale, bottom: (r.bottom - srect.top) / scale,
+      };
+    };
+    var nodes = slide.querySelectorAll("*");
+    var worst = { top: 0, right: 0, bottom: 0, left: 0 }, worstEl = null, worstSum = 0;
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      if (el.classList.contains("notes")) continue;             // speaker notes overlay, off-stage
+      if (el.classList.contains("slide__num") || el.classList.contains("slide__foot")) continue;
+      var cs = getComputedStyle(el);
+      if (cs.display === "none") continue;
+      if (cs.position === "absolute" || cs.position === "fixed") continue; // decor/chrome out of flow
+      var r = toStage(el.getBoundingClientRect());
+      if ((r.right - r.left) < 0.5 && (r.bottom - r.top) < 0.5) continue;
+      // INK overflow: nowrap text / over-long content spills past its OWN box
+      // without enlarging its rect. When overflow is visible it's really on
+      // screen, so extend the measured edge by scroll-vs-client (end-direction).
+      if (cs.overflowX === "visible") { var ix = el.scrollWidth - el.clientWidth; if (ix > 1) r.right += ix; }
+      if (cs.overflowY === "visible") { var iy = el.scrollHeight - el.clientHeight; if (iy > 1) r.bottom += iy; }
+      var oT = box.top - r.top, oB = r.bottom - box.bottom;
+      var oL = box.left - r.left, oR = r.right - box.right;
+      var sum = Math.max(0, oT) + Math.max(0, oB) + Math.max(0, oL) + Math.max(0, oR);
+      if (sum > worstSum) {
+        worstSum = sum; worstEl = el;
+        worst = { top: Math.max(0, oT), right: Math.max(0, oR), bottom: Math.max(0, oB), left: Math.max(0, oL) };
+      }
+    }
+    var round = function (v) { return Math.round(v); };
+    return {
+      overflow: worstSum > OVF_TOL,
+      top: round(worst.top), right: round(worst.right), bottom: round(worst.bottom), left: round(worst.left),
+      el: worstEl ? shortSel(worstEl) : null,
+    };
+  }
+
+  // on-screen sentinel: red dashed safe-box + corner badge on the active slide
+  var ovf = document.createElement("div");
+  ovf.className = "ppt-ovf";
+  ovf.innerHTML = '<div class="ppt-ovf__box"></div><div class="ppt-ovf__badge"></div>';
+  stage.appendChild(ovf);
+  var ovfBox = ovf.querySelector(".ppt-ovf__box");
+  var ovfBadge = ovf.querySelector(".ppt-ovf__badge");
+  var guidesOn = false; // G key: always show the safe-box outline (authoring aid)
+  function drawSentinel() {
+    if (isExportLike) { ovf.classList.remove("is-on", "is-guide"); return; }
+    var slide = slides[idx];
+    var box = safeBox(slide);
+    ovfBox.style.left = box.left + "px";
+    ovfBox.style.top = box.top + "px";
+    ovfBox.style.right = ((stage.offsetWidth || 1280) - box.right) + "px";
+    ovfBox.style.bottom = ((stage.offsetHeight || 720) - box.bottom) + "px";
+    var m = measureOverflow(slide);
+    if (m.overflow) {
+      var dirs = [];
+      if (m.top) dirs.push("↑" + m.top); if (m.bottom) dirs.push("↓" + m.bottom);
+      if (m.left) dirs.push("←" + m.left); if (m.right) dirs.push("→" + m.right);
+      ovfBadge.textContent = "⚠ 第 " + (idx + 1) + " 页溢出 " + dirs.join(" ") + "px · " + (m.el || "");
+      ovf.classList.add("is-on");
+      if (typeof console !== "undefined" && console.warn)
+        console.warn("[ppt-overflow] slide " + (idx + 1) + " overflows safe zone by " +
+          JSON.stringify({ top: m.top, right: m.right, bottom: m.bottom, left: m.left }) +
+          " px — offender: " + (m.el || "?"));
+    } else {
+      ovf.classList.remove("is-on");
+    }
+    ovf.classList.toggle("is-guide", guidesOn);
+  }
+  function toggleGuides() { guidesOn = !guidesOn; drawSentinel(); }
+
+  // --- fit-text: shrink a non-wrapping hero line until it fits its container --
+  // Measures against the original font-size (cached) so it's idempotent across
+  // re-runs (resize, theme/dark toggle). Width-only by design: keep it simple,
+  // predictable, and safe — vertical overflow is caught by the sentinel/gate.
+  function fitText(slide) {
+    var els = slide.querySelectorAll(".fit-text");
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      var base = el.getAttribute("data-fit-base");
+      if (!base) { base = parseFloat(getComputedStyle(el).fontSize) || 16; el.setAttribute("data-fit-base", base); }
+      base = parseFloat(base);
+      el.style.fontSize = base + "px";
+      var avail = el.clientWidth;                 // .fit-text is max-width:100% of its box
+      if (!avail) continue;
+      var size = base, guard = 0;
+      while (guard++ < 48 && el.scrollWidth > el.clientWidth + 1) { size *= 0.95; el.style.fontSize = size + "px"; }
+    }
+  }
 
   function show(n) {
     idx = clamp(n);
@@ -48,6 +180,8 @@
     num.textContent = String(idx + 1).padStart(2, "0") + " / " + String(slides.length).padStart(2, "0");
     syncChrome();
     syncNotes();
+    fitText(slides[idx]);
+    drawSentinel();
     if (history.replaceState) history.replaceState(null, "", "#/" + (idx + 1));
   }
 
@@ -136,7 +270,7 @@
   // --- keyboard help affordance (hover / click / ? / H) ---------------------
   // Screen-only: skipped entirely when exporting (render.sh appends ?export),
   // so it never appears in PNG / PDF deliverables.
-  var isExport = /[?&](export|print)\b/.test(location.search);
+  var isExport = isExportLike;
   var toggleHelp = function () {};
   if (!isExport) {
     var help = document.createElement("div");
@@ -150,6 +284,7 @@
         '<div class="ppt-help__row"><span class="k"><kbd>F</kbd></span><b>全屏放映</b></div>' +
         '<div class="ppt-help__row"><span class="k"><kbd>S</kbd></span><b>讲者备注</b></div>' +
         '<div class="ppt-help__row"><span class="k"><kbd>T</kbd></span><b>浅色 / 深色</b></div>' +
+        '<div class="ppt-help__row"><span class="k"><kbd>G</kbd></span><b>安全区参考线 / 溢出检查</b></div>' +
         '<div class="ppt-help__row"><span class="k"><kbd>?</kbd></span><b>显示 / 隐藏帮助</b></div>' +
       '</div>';
     document.body.appendChild(help);
@@ -191,6 +326,7 @@
       case "s": case "S": toggleNotes(); break;
       case "o": case "O": toggleOverview(); break;
       case "t": case "T": toggleDark(); break;
+      case "g": case "G": toggleGuides(); break;
       case "?": case "h": case "H": toggleHelp(); break;
       case "Escape":
         notesEl.classList.remove("is-open"); overview.classList.remove("is-open");
@@ -212,7 +348,7 @@
     return m ? clamp(parseInt(m[1], 10) - 1) : 0;
   }
 
-  window.addEventListener("resize", fit);
+  window.addEventListener("resize", function () { fit(); fitText(slides[idx]); drawSentinel(); });
   window.addEventListener("hashchange", function () { show(fromHash()); });
 
   // expose for headless export tooling
@@ -220,4 +356,28 @@
 
   fit();
   show(fromHash());
+
+  // --- headless overflow audit (?audit) -------------------------------------
+  // scripts/check-overflow.mjs loads the deck with ?audit in headless Chrome,
+  // waits, then --dump-dom and parses #ppt-ovf-report. We finalize entrance
+  // animations (ppt-exporting) so transforms don't create false positives, then
+  // measure EVERY slide at once (all are laid out) and write a JSON report.
+  if (isAudit) {
+    deck.classList.add("ppt-exporting");
+    var runAudit = function () {
+      fit();
+      var report = slides.map(function (s, i) {
+        fitText(s);                  // apply shrink-to-fit before measuring
+        var m = measureOverflow(s);
+        return { n: i + 1, overflow: m.overflow, top: m.top, right: m.right, bottom: m.bottom, left: m.left, el: m.el };
+      });
+      var node = document.getElementById("ppt-ovf-report") || document.createElement("script");
+      node.type = "application/json"; node.id = "ppt-ovf-report";
+      node.textContent = JSON.stringify({ w: stage.offsetWidth || 1280, h: stage.offsetHeight || 720, slides: report });
+      document.body.appendChild(node);
+      document.documentElement.setAttribute("data-ppt-audit", "done");
+    };
+    // let fonts + layout settle across a few frames before measuring
+    requestAnimationFrame(function () { requestAnimationFrame(function () { setTimeout(runAudit, 250); }); });
+  }
 })();

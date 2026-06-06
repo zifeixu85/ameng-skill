@@ -99,6 +99,37 @@
 .data-hero__label { font-size: var(--fs-lead); color: var(--ink-2); max-width: 38ch; text-wrap: pretty; }
 .data-hero__src { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-3); }
 
+/* ---- Donut / ring (single-percentage chart) ----------------------------
+   Pure CSS, token-colored, no SVG. Set --v (0–100) on .donut. Pair the center
+   value + a label. For an entrance, put .fx-pop on .donut (scales in, export-safe).
+   Real data only — never invent the number. */
+.donut {
+  --v: 50; --size: 9.5rem; --thick: 1.15rem;
+  width: var(--size); height: var(--size); border-radius: 50%; position: relative;
+  display: grid; place-items: center; flex: 0 0 auto;
+  background: conic-gradient(var(--accent) calc(var(--v) * 1%), var(--surface-2) 0);
+}
+/* center hole = the slide background (--bg) so it reads as a true ring; on a
+   card put --donut-hole:var(--surface-1) to match the card fill. */
+.donut::before { content: ""; position: absolute; inset: var(--thick); border-radius: 50%; background: var(--donut-hole, var(--bg)); }
+.donut__val { position: relative; font-family: var(--font-display); font-weight: var(--w-bold);
+  font-size: 2rem; line-height: 1; color: var(--ink-1); font-variant-numeric: tabular-nums; }
+.donut__val .unit { font-size: 0.5em; color: var(--ink-3); margin-left: 0.05em; }
+.donut__cap { font-size: var(--fs-eyebrow); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.donut-row { display: flex; align-items: center; gap: var(--s-6); }
+.donut-row .donut + div { display: flex; flex-direction: column; gap: var(--s-2); }
+
+/* ---- Mini line chart (trend) — inline SVG, tokens only -----------------
+   The component just frames/strokes it; the polyline points are data-specific
+   (author them from real numbers). Stroke uses --accent; grid baseline --line.
+   For a draw-on entrance put .fx-dash on the <polyline> (stroke-dasharray set). */
+.linechart { width: 100%; height: auto; display: block; overflow: visible; }
+.linechart .lc-grid { stroke: var(--line); stroke-width: 1; }
+.linechart .lc-line { fill: none; stroke: var(--accent); stroke-width: 2.5;
+  stroke-linejoin: round; stroke-linecap: round; }
+.linechart .lc-area { fill: var(--accent-soft); opacity: 0.5; }
+.linechart .lc-dot  { fill: var(--accent); }
+
 /* ---- Offline CSS backgrounds (light, no WebP, no network) --------------- */
 .bg-dots  { background-image: radial-gradient(var(--line-strong) 1px, transparent 1.4px);
             background-size: 26px 26px; }
