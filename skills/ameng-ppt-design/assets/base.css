@@ -81,14 +81,20 @@
   --pal-cyan:    oklch(66% 0.13 215);
 }
 
-/* per-section accent re-binding (工业纸感 pattern): one zone = one accent */
-.slide[data-accent="ember"],   .deck[data-accent="ember"]   { --accent: var(--pal-ember); }
-.slide[data-accent="sand"],    .deck[data-accent="sand"]    { --accent: var(--pal-sand); }
-.slide[data-accent="cinnabar"],.deck[data-accent="cinnabar"]{ --accent: var(--pal-cinnabar); }
-.slide[data-accent="olive"],   .deck[data-accent="olive"]   { --accent: var(--pal-olive); }
-.slide[data-accent="mint"],    .deck[data-accent="mint"]    { --accent: var(--pal-mint); }
-.slide[data-accent="magenta"], .deck[data-accent="magenta"] { --accent: var(--pal-magenta); }
-.slide[data-accent="cyan"],    .deck[data-accent="cyan"]    { --accent: var(--pal-cyan); }
+/* per-section accent re-binding (工业纸感 pattern): one zone = one accent.
+   Each also re-binds --accent-ink to the color that ACTUALLY contrasts on that
+   accent (WCAG-checked): solid bands (.hl--full / .card--accent / mark) read on
+   the band, so the ink must follow the band's luminance, not a single theme
+   default. Most palette colors are mid-light → DARK ink wins; only cinnabar
+   (deep red) takes near-white. Without this, switching to a light accent (sand /
+   mint) left near-white ink on a light band = unreadable. */
+.slide[data-accent="ember"],   .deck[data-accent="ember"]   { --accent: var(--pal-ember);    --accent-ink: oklch(21% 0.03 45);  }
+.slide[data-accent="sand"],    .deck[data-accent="sand"]    { --accent: var(--pal-sand);     --accent-ink: oklch(22% 0.03 75);  }
+.slide[data-accent="cinnabar"],.deck[data-accent="cinnabar"]{ --accent: var(--pal-cinnabar); --accent-ink: oklch(98% 0.01 30);  }
+.slide[data-accent="olive"],   .deck[data-accent="olive"]   { --accent: var(--pal-olive);    --accent-ink: oklch(20% 0.03 130); }
+.slide[data-accent="mint"],    .deck[data-accent="mint"]    { --accent: var(--pal-mint);     --accent-ink: oklch(22% 0.04 160); }
+.slide[data-accent="magenta"], .deck[data-accent="magenta"] { --accent: var(--pal-magenta);  --accent-ink: oklch(21% 0.03 348); }
+.slide[data-accent="cyan"],    .deck[data-accent="cyan"]    { --accent: var(--pal-cyan);     --accent-ink: oklch(20% 0.03 215); }
 
 /* ---- 2. Reset & page ----------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }

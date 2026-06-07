@@ -408,6 +408,68 @@ const visibleText = stripToVisibleText(html);
   }
 }
 
+// ---- 11. WARN/ADVISORY: highlight / block contrast (inline literal colors) -
+// The signature highlight (.hl--full / .card--accent / mark) puts text ON a
+// color block — so the text color must contrast with the BAND, not the page.
+// Token combos resolve at render (and the per-palette --accent-ink now follows
+// the band), but HAND-ROLLED inline colors can't be checked at render time, so
+// catch them here: any element whose inline style sets BOTH a foreground color
+// and a background to literal oklch()/#hex → compute WCAG contrast.
+//   < 3.0  → WARN (fails even large text)   · 3.0–4.5 → ADVISORY (ok only大字)
+{
+  // OKLCH → relative luminance (Ottosson matrices); hex → luminance.
+  const oklchY = (L, C, H) => {
+    const a = C * Math.cos((H * Math.PI) / 180), b = C * Math.sin((H * Math.PI) / 180);
+    const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+    const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+    const s_ = L - 0.0894841775 * a - 1.2914855480 * b;
+    const l = l_ ** 3, m = m_ ** 3, s = s_ ** 3;
+    const R = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
+    const G = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
+    const B = -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s;
+    return 0.2126 * Math.max(0, R) + 0.7152 * Math.max(0, G) + 0.0722 * Math.max(0, B);
+  };
+  const srgb2lin = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const hexY = (hex) => {
+    let h = hex.slice(1);
+    if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+    if (h.length === 8) h = h.slice(0, 6);
+    if (h.length !== 6) return null;
+    const r = srgb2lin(parseInt(h.slice(0, 2), 16) / 255);
+    const g = srgb2lin(parseInt(h.slice(2, 4), 16) / 255);
+    const b = srgb2lin(parseInt(h.slice(4, 6), 16) / 255);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const colorY = (str) => {
+    const ok = str.match(/oklch\(\s*([\d.]+)(%?)\s+([\d.]+)\s+([\d.]+)/i);
+    if (ok) {
+      let L = parseFloat(ok[1]); if (ok[2] === "%") L /= 100;
+      return oklchY(L, parseFloat(ok[3]), parseFloat(ok[4]));
+    }
+    const hx = str.match(/#[0-9a-fA-F]{3,8}\b/);
+    return hx ? hexY(hx[0]) : null;
+  };
+  const ratio = (y1, y2) => (Math.max(y1, y2) + 0.05) / (Math.min(y1, y2) + 0.05);
+  const grab = (style, prop) => {
+    const m = style.match(new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*([^;]+)`, "i"));
+    return m ? m[1].trim() : null;
+  };
+  for (const { value, index } of inlineStyles) {
+    const fg = grab(value, "color");
+    const bg = grab(value, "background(?:-color)?");
+    if (!fg || !bg) continue;
+    const yf = colorY(fg), yb = colorY(bg);
+    if (yf == null || yb == null) continue;        // skip token/keyword colors
+    const cr = ratio(yf, yb);
+    if (cr < 3.0)
+      add(warns, `low-contrast inline text-on-color at line ${lineAt(index)}: ratio ${cr.toFixed(2)} (<3) — ` +
+        `text "${fg}" on "${bg}" is unreadable; pick a lighter/darker text for this band`);
+    else if (cr < 4.5)
+      add(advisories, `borderline inline contrast at line ${lineAt(index)}: ratio ${cr.toFixed(2)} ` +
+        `(ok for large bold text ≥3, fails body ≥4.5) — text "${fg}" on "${bg}"`);
+  }
+}
+
 // ---- report ----------------------------------------------------------------
 function section(title, items) {
   if (items.length === 0) return;
