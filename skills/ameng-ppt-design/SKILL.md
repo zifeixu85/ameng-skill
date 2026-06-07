@@ -48,7 +48,8 @@ metadata:
 - **右上角工具栏**：`assets/editor.js`（就地编辑 + 本地保存 + 版本历史）+ `assets/export.js`（PDF/PPTX/PNG/HTML 导出）+ `assets/toolbar.css`
 - **自托管 distinctive 字体**：Bricolage Grotesque（display）/ Host Grotesk（body）/ JetBrains Mono（mono）+ 思源黑/宋（CJK）。`scripts/fetch-fonts.sh` 一次性下载 → 之后全离线。**禁 Inter/Roboto/Playfair/Cormorant/IBM Plex**。
 - **键盘放映运行时**（`runtime.js`）：← → / Space / F 全屏 / S 讲者备注 / O 缩略图总览（每页等比实拍预览，非文字列表）/ T 浅色⇄深色 / **G 安全区参考线+溢出哨兵** / ? 帮助 / `#/N` 深链
-- **纪律工具**：`scripts/render.sh`（逐页 PNG / 像素级 PDF）· `scripts/validate.mjs`（文本纪律：封禁字体/硬编码 hex/禁蓝/缺 alt/缺备注）· **`scripts/check-overflow.mjs`（几何闸门：headless 量每页每元素 vs 安全区，越界 exit 1）** · **`scripts/preview-themes.sh`（用你真实首页内容预览 5 套主题）**
+- **选风格预览页**：`templates/theme-preview.html` —— **一上来就 `open` 给用户选 5 套主题**（通用 demo 内容，不依赖脚手架，`←→`/`1–5`/`D` 实时切）。
+- **纪律工具**：`scripts/render.sh`（逐页 PNG / 像素级 PDF）· `scripts/validate.mjs`（文本纪律：封禁字体/硬编码 hex/禁蓝/缺 alt/缺备注/高亮对比）· **`scripts/check-overflow.mjs`（几何闸门：headless 量每页每元素 vs 安全区，越界 exit 1）**
 
 ## 动手前必做：四道确认闸门（intake gate · 不可跳过）
 
@@ -63,8 +64,9 @@ metadata:
    - **精简 ~10 页**（15min / 电梯版）· **标准 ~18–20 页**（30min）· **详尽 ~28–30 页**（45min）· **自定义 N 页**
    - 档位可按「内容量 + 时长」推导出一个推荐值，但仍要用户确认。
    - **内容塞不下所选页数时，不许偷砍** —— 摆出取舍让用户定：「A 合并这几节 / B 提到 X 页 / C 砍掉某节」。
-3. **风格主题（必让用户看着选，5 套全集）** —— **别只凭文字描述替用户定**：
-   - **第一步永远是打开预览页**（任何宿主，含 Codex）：`open templates/theme-preview.html`（通用 demo 内容版，**不需要先脚手架**，顶部按钮实时切 5 套 + 明暗）。脚手架之后还可用 **`./scripts/preview-themes.sh <name>`** 换成用户真实首页内容再看一遍。**用户实际看过再定。**
+3. **风格主题（一上来就让用户看着选，5 套全集）** —— **别只凭文字描述替用户定**：
+   - **直接打开通用预览页让用户挑**：`open templates/theme-preview.html`（任何宿主含 Codex 都能开；**不依赖内容、不需要脚手架** —— 所以这步可以在最开始就做）。顶部按钮 / `←→` / `1–5` 实时切 5 套 + `D` 明暗。**用户实际看过再定。**
+   - **不做"按真实内容生成预览"那一步** —— 通用 demo 预览已足够选风格，别为了选主题先去脚手架/铺真实内容。
    - **再让用户选**：Claude Code 用 `AskUserQuestion`（每题最多 4 选项+「Other」，5 套列不下就推荐 4 套 + 点名第 5 套在预览页、用 Other 兜底）；**Codex/其它宿主**直接编号列 5 套让用户回「1–5」。**绝不因为列不下或没工具就把某套藏掉、或跳过预览页。**
    - 5 套速记（默认 `industrial-paper`）：要态度→`neo-brutalist`；叙事/品牌→`editorial`；夜场/产品发布→`dark-luxe`；中式/雅致/文化→`ink-wash`。
 4. **比例** —— 16:9（演讲）/ swiss（数据驱动）。
@@ -96,12 +98,9 @@ node scripts/intake.mjs my-talk       # 必须先 RESULT: OK（四道闸门已�
 open slides/my-talk/index.html
 ```
 
-### Step 3 · 选主题（先看，再定）+ 分段色域
-**别让用户只凭文字选主题** —— 两种预览，优先用「内容感知」那种：
-- **`./scripts/preview-themes.sh <name>`（推荐）** —— 把**用户自己 deck 的真实首页**铺进 picker，切 5 套主题 + 明暗看的是自己的内容（`← →` / `1–5` / `D`）。
-- **`templates/theme-preview.html`** —— 通用 demo 内容版，没脚手架时也能看。
+### Step 3 · 应用已选主题 + 分段色域
+主题在**最开始的闸门③就已让用户看着 `templates/theme-preview.html` 选定**（不在这里才选）。这一步只是**把选定的主题接进模板**：在模板里把 `#theme-link` 指到对应 `assets/themes/<name>.css`；放映时 `T` 键在该主题浅/深之间切换。给每段设 `data-section` + `data-accent`，chrome 自动跟随切色域。见 [references/themes.md](references/themes.md)。
 （5 套主题的静态预览图见 `screenshots/`，README 里有画廊。）
-选定后在模板里硬编码 `#theme-link`；放映时 `T` 键在该主题浅/深之间切换。给每段设 `data-section` + `data-accent`，chrome 自动跟随切色域。见 [references/themes.md](references/themes.md)。
 
 ### Step 4 · 逐页搭建（核心规则）
 - **从模板复制最接近的 `.slide` 块**替换内容，不从零写。版式见 [references/layouts.md](references/layouts.md)。
