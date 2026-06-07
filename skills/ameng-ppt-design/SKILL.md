@@ -121,6 +121,10 @@ node scripts/check-overflow.mjs slides/my-talk/index.html   # ② 几何闸门�
 - **放映期哨兵**：浏览器里按 **`G`** 显示安全区参考线；任意页越界会自动画**红色虚线边界 + ⚠ 角标**（标出第几页、溢出多少 px、是哪个元素），并 `console.warn`。仅屏幕可见，导出/放映自动隐藏。
 - **几何闸门**：`check-overflow.mjs` 用 headless Chrome 量**每一页每个元素** vs 安全区（含 nowrap 文字的 ink 溢出），精确报像素、**有越界就 exit 1**。**必须先通过它，再去看 PNG。**
 
+> **⛔ check-overflow FAIL = 这份 deck 还没做完。** 看它报的「第几页、溢出多少 px、哪个元素」，**回去改那一页**（缩内容 / 拆两页 / `.slide__safe` 包起来 / 长单行用 `.fit-text`），**改完重跑，循环到 RESULT: PASS 才算完成。绝不把还在溢出的 deck 交付给用户。** 别只报告"有溢出"就停手——你要把它改到不溢出。
+
+> **为什么过去会"用户看到溢出、闸门却没报"**：字号曾用 `vw`（视口单位），用户浏览器越宽字越大就越界，而闸门跑在固定 1280 看不到。**现在已改为 `cqw`（锚定 1280 舞台，见 base.css `.deck__stage{container-type}`）**——每个用户、导出件、闸门三者渲染完全一致，闸门报 PASS 就是真的不溢出。
+
 安全区 = **y ∈ [85, 636]**（顶栏+页脚已避让）；固定 1280×720。最后逐页看 PNG，对照 [references/anti-slop-checklist.md](references/anti-slop-checklist.md)：对比度？AI 味？**有问题就改。**
 **纯文字页先问"它是不是一张图"** —— 流程→stepper、对比→two-zone、放大的边界→scope bars、关系→inline SVG。图形原语与双钻/编排 SVG 见 [references/diagrams.md](references/diagrams.md)。
 

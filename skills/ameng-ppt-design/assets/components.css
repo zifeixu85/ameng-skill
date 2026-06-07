@@ -87,11 +87,11 @@
 .card__tags span::after { content: " ·"; color: var(--line-strong); }
 .card__tags span:last-child::after { content: ""; }
 
-/* ---- Swiss Data Hero (归藏): KPI as the visual subject, ~20vw ----------- */
+/* ---- Swiss Data Hero (归藏): KPI as the visual subject, ~20cqw ----------- */
 .data-hero { display: flex; flex-direction: column; gap: var(--s-3); }
 .data-hero__num {
   font-family: var(--font-display); font-weight: var(--w-bold);
-  font-size: clamp(5rem, 2rem + 14vw, 16rem); line-height: 0.86;
+  font-size: clamp(5rem, 2rem + 14cqw, 16rem); line-height: 0.86;
   letter-spacing: -0.03em; color: var(--ink-1);
   font-variant-numeric: tabular-nums;
 }

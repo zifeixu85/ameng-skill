@@ -17,7 +17,7 @@
   --ppt-body:    "Source Han Serif SC", "Songti SC", Georgia, "Times New Roman", serif;
   --r-1: 2px; --r-2: 3px; --r-3: 4px;
   --track-tight: -0.01em; --leading-body: 1.7;
-  --pad: clamp(3.2rem, 1.4rem + 6vw, 7rem);             /* airy, generous margins */
+  --pad: clamp(3.2rem, 1.4rem + 6cqw, 7rem);             /* airy, generous margins */
   --shadow-1: none; --shadow-2: 0 8px 30px -16px oklch(40% 0.02 50 / 0.2); --shadow-3: 0 16px 44px -22px oklch(40% 0.02 50 / 0.25);
 }
 .deck[data-grain] .deck__stage::after { opacity: 0.28; }   /* faint paper tooth */

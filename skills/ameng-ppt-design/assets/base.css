@@ -33,14 +33,14 @@
   --font-mono:    var(--ppt-mono, "JetBrains Mono", "Sarasa Mono SC", "DejaVu Sans Mono", ui-monospace, monospace);
 
   /* Type scale — fluid, anchored to a 1280-wide stage. Big scale CONTRAST. */
-  --fs-eyebrow: clamp(0.72rem, 0.6rem + 0.4vw, 0.92rem);
-  --fs-body:    clamp(1rem, 0.86rem + 0.55vw, 1.32rem);
-  --fs-lead:    clamp(1.3rem, 1rem + 1vw, 1.9rem);
-  --fs-h3:      clamp(1.5rem, 1.1rem + 1.4vw, 2.3rem);
-  --fs-h2:      clamp(2rem, 1.3rem + 2.4vw, 3.4rem);
-  --fs-h1:      clamp(2.8rem, 1.6rem + 4vw, 5rem);
-  --fs-display: clamp(3.6rem, 1.8rem + 6vw, 7rem);
-  --fs-stat:    clamp(3rem, 1.6rem + 5vw, 6rem);
+  --fs-eyebrow: clamp(0.72rem, 0.6rem + 0.4cqw, 0.92rem);
+  --fs-body:    clamp(1rem, 0.86rem + 0.55cqw, 1.32rem);
+  --fs-lead:    clamp(1.3rem, 1rem + 1cqw, 1.9rem);
+  --fs-h3:      clamp(1.5rem, 1.1rem + 1.4cqw, 2.3rem);
+  --fs-h2:      clamp(2rem, 1.3rem + 2.4cqw, 3.4rem);
+  --fs-h1:      clamp(2.8rem, 1.6rem + 4cqw, 5rem);
+  --fs-display: clamp(3.6rem, 1.8rem + 6cqw, 7rem);
+  --fs-stat:    clamp(3rem, 1.6rem + 5cqw, 6rem);
 
   /* Weights & tracking */
   --w-light: 300; --w-reg: 400; --w-med: 500; --w-semi: 600; --w-bold: 700;
@@ -62,7 +62,7 @@
   /* Deck geometry — a slide is a FIXED stage, scaled to fit the viewport. */
   --slide-w: 1280px;
   --slide-h: 720px;               /* 16:9 fixed stage. */
-  --pad: clamp(2.5rem, 1rem + 4vw, 5.5rem);
+  --pad: clamp(2.5rem, 1rem + 4cqw, 5.5rem);
   --content-max: 1100px;          /* reading width cap so text never over-stretches */
 
   /* Motion */
@@ -134,6 +134,13 @@ body {
   transform-origin: center center;
   background: var(--bg);
   overflow: hidden;
+  /* Make the stage a query container so the type/space scale below resolves in
+     `cqw` (1% of the FIXED 1280 stage = 12.8px), NOT `vw` (1% of the browser
+     viewport). This is the fix for: (a) export looking different per browser
+     size, (b) overflow the headless gate missed — both were caused by vw-based
+     fonts growing on wider viewports. Now every viewport, the export, and the
+     gate all render the identical 1280-anchored layout. */
+  container-type: inline-size;
 }
 /* Center the MAIN stage by pinning its center to the viewport center, then
    scaling about that point. `place-items:center` alone start-anchors an
@@ -442,7 +449,7 @@ mark { background: var(--accent-soft); color: var(--ink-1); padding: 0 0.18em; b
 
 /* CJK display title tiers (Swiss "极致字号对比" — pair a big tier with small body) */
 .zh-mega { font-family: var(--font-display); font-weight: var(--w-bold);
-  font-size: clamp(3.2rem, 1.4rem + 6vw, 7.5rem); line-height: 1.02;
+  font-size: clamp(3.2rem, 1.4rem + 6cqw, 7.5rem); line-height: 1.02;
   letter-spacing: var(--track-tight); text-wrap: balance; }
 
 /* ---- 10. Print / PDF export (one slide per page, no scaling) -------------

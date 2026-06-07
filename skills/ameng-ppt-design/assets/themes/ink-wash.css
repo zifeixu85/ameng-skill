@@ -17,7 +17,7 @@
   --ppt-body:    "Source Han Serif SC", "Songti SC", "STSong", Georgia, serif;
   --r-1: 2px; --r-2: 3px; --r-3: 4px;
   --track-tight: 0em; --leading-body: 1.75;
-  --pad: clamp(3.4rem, 1.6rem + 6vw, 7.2rem);        /* 留白：开阔 */
+  --pad: clamp(3.4rem, 1.6rem + 6cqw, 7.2rem);        /* 留白：开阔 */
   --shadow-1: none; --shadow-2: 0 10px 34px -18px oklch(30% 0.02 60 / 0.22); --shadow-3: 0 18px 48px -22px oklch(30% 0.02 60 / 0.28);
 }
 /* 一角水墨晕染 + 宣纸纹（右下角淡墨，向内化开）*/

@@ -19,7 +19,7 @@
   --shadow-1: 3px 3px 0 var(--ink-1);                    /* HARD offset shadows, no blur */
   --shadow-2: 6px 6px 0 var(--ink-1);
   --shadow-3: 10px 10px 0 var(--ink-1);
-  --pad: clamp(2.2rem, 1rem + 3.4vw, 4.4rem);
+  --pad: clamp(2.2rem, 1rem + 3.4cqw, 4.4rem);
 }
 /* heavy frame around the whole stage */
 .deck__stage { border: 7px solid var(--ink-1); }
