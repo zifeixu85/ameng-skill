@@ -29,8 +29,35 @@
 .chrome-foot .mono { font-family: var(--font-mono); }
 /* when chrome is present, give slides breathing room from the bars */
 .deck--chrome .slide { padding-top: calc(var(--pad) + 1.1rem); padding-bottom: calc(var(--pad) + 1.1rem); }
+/* Full-accent-bg page (.slide--on-accent, e.g. a section divider with
+   background:var(--accent)): the persistent chrome sits ON the accent fill, so
+   flip its text to --accent-ink — otherwise page number / brand / foot go
+   low-contrast on the accent (real bug on divider pages). --accent-ink is
+   available at deck level (runtime mirrors the active slide's data-accent onto
+   .deck). :has() is widely supported. */
+.deck__stage:has(> .slide.is-active.slide--on-accent)
+  :is(.chrome-top, .chrome-top__brand, .chrome-top__brand b, .chrome-top__sec,
+      .chrome-top__page, .chrome-foot, .chrome-foot b, .slide__num) {
+  color: var(--accent-block-ink) !important;   /* on the deep block bg → reversed ink */
+}
 /* chrome already shows the page counter — suppress the auto-injected one */
 .deck--chrome .slide__num { display: none; }
+
+/* ---- Brand logo slots（品牌 LOGO 三槽位：chrome 角标 / 封面 lockup / 收尾页）----
+   决策已锁：不做背景水印（压正文、破对比度）。素材要求见 image-handling.md：
+   透明底 PNG/SVG；明暗各一版时成对放 .brand-logo--light + .brand-logo--dark，
+   T 键切明暗（.deck[data-theme="dark"]）自动换版。单版通吃就只放一个 .brand-logo。 */
+.brand-logo { height: 1.15em; width: auto; display: inline-block; vertical-align: -0.22em; }
+.chrome-top .brand-logo { height: 1.35em; vertical-align: -0.4em; margin-right: 0.45em; }
+.brand-logo--dark { display: none; }
+.deck[data-theme="dark"] .brand-logo--light { display: none; }
+.deck[data-theme="dark"] .brand-logo--dark { display: inline-block; }
+/* 封面/收尾 lockup：LOGO + 1px 竖线 + mono 小字，锁在封面顶部或收尾页居中 */
+.brand-lockup { display: flex; align-items: center; gap: var(--s-4); }
+.brand-lockup .brand-logo { height: clamp(1.6rem, 1rem + 2cqw, 2.6rem); vertical-align: baseline; }
+.brand-lockup__sep { width: 1px; height: 1.7em; background: var(--line-strong); flex: none; }
+.brand-lockup__txt { font-family: var(--font-mono); font-size: var(--fs-eyebrow);
+                     letter-spacing: 0.08em; color: var(--ink-3); }
 
 /* ---- Terminal / code block (the "shipped" feel) ------------------------- */
 .terminal {
@@ -66,12 +93,62 @@
 }
 .frame img, .frame__shot { display: block; width: 100%; height: auto; }
 .frame--shadow { box-shadow: var(--shadow-3); }
+
+/* ---- Image fit: 用户素材比例 ≠ 版位比例时的两种适配 ----------------------
+   Default .frame lets the image dictate height (height:auto) — fine when the
+   aspect roughly matches the slot, but a tall/odd-ratio user photo will blow
+   the layout. Lock the slot with one of these instead (see
+   references/image-handling.md for the decision tree + "look at the image
+   first" workflow):
+
+   .frame--cover    crop-to-fill. Slot keeps --frame-ar; image covers it and is
+                    cropped. Aim the crop at the SUBJECT with an .obj-* utility
+                    (decide by actually viewing the image, not guessing).
+   .frame--contain  letterbox. Whole image visible, slot padded with
+                    --frame-bg (default surface-2; set a tone sampled from the
+                    image so the letterbox doesn't read as a white hole).
+   Override the slot ratio inline: style="--frame-ar: 4/3".                  */
+.frame--cover, .frame--contain { aspect-ratio: var(--frame-ar, 16/10); }
+.frame--cover img, .frame--cover .frame__shot {
+  width: 100%; height: 100%; object-fit: cover; object-position: var(--obj-pos, 50% 50%);
+}
+.frame--contain { background: var(--frame-bg, var(--surface-2)); }
+.frame--contain img, .frame--contain .frame__shot {
+  width: 100%; height: 100%; object-fit: contain;
+}
+/* .frame--browser composes for free: its 2rem bar is padding, and the img's
+   percentage height resolves against the content box (border-box sizing), so
+   height:100% already fills exactly the area under the bar — no offset rule. */
+/* subject-aim utilities for .frame--cover (set on the frame, not the img) */
+.obj-t  { --obj-pos: 50% 0%; }   .obj-b  { --obj-pos: 50% 100%; }
+.obj-l  { --obj-pos: 0% 50%; }   .obj-r  { --obj-pos: 100% 50%; }
+.obj-tl { --obj-pos: 0% 0%; }    .obj-tr { --obj-pos: 100% 0%; }
+.obj-bl { --obj-pos: 0% 100%; }  .obj-br { --obj-pos: 100% 100%; }
+/* ---- frame--scroll: a TALL capture auto-pans inside a fixed window --------
+   For long screenshots (chat logs / 朋友圈长图) where cropping loses content:
+   the full image slowly pans down and back while the slide is active. Set the
+   window shape with --frame-ar and the travel with --pan-to (negative % of the
+   IMAGE height: -(1 - visibleFraction)). Export/print freeze at the TOP frame
+   (keyframes end on 0). Reduced-motion shows the top, static. */
+.frame--scroll { aspect-ratio: var(--frame-ar, 9/16); }
+.frame--scroll img { width: 100%; height: auto; display: block; }
+.slide.is-active .frame--scroll img { animation: ppt-pan var(--pan-dur, 16s) ease-in-out infinite; }
+@keyframes ppt-pan {
+  0%, 10% { transform: translateY(0); }
+  50%, 62% { transform: translateY(var(--pan-to, -60%)); }
+  100% { transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) { .frame--scroll img { animation: none !important; } }
+
 /* drop-in placeholder when a screenshot isn't ready yet (honest, no fake UI) */
 .frame__placeholder {
   aspect-ratio: 16/10; display: grid; place-items: center;
   background: var(--surface-2); color: var(--ink-3);
   font-family: var(--font-mono); font-size: 0.85rem;
 }
+
+/* tags are pills, not bars: don't let a card's column-flex stretch them */
+.card > .tag { align-self: flex-start; }
 
 /* ---- Numbered editorial card (NOT icon-card-shadow) --------------------- */
 .card--num { position: relative; }
@@ -90,7 +167,7 @@
 /* ---- Swiss Data Hero (归藏): KPI as the visual subject, ~20cqw ----------- */
 .data-hero { display: flex; flex-direction: column; gap: var(--s-3); }
 .data-hero__num {
-  font-family: var(--font-display); font-weight: var(--w-bold);
+  font-family: var(--font-display); font-weight: var(--w-stat);
   font-size: clamp(5rem, 2rem + 14cqw, 16rem); line-height: 0.86;
   letter-spacing: -0.03em; color: var(--ink-1);
   font-variant-numeric: tabular-nums;
@@ -107,12 +184,15 @@
   --v: 50; --size: 9.5rem; --thick: 1.15rem;
   width: var(--size); height: var(--size); border-radius: 50%; position: relative;
   display: grid; place-items: center; flex: 0 0 auto;
-  background: conic-gradient(var(--accent) calc(var(--v) * 1%), var(--surface-2) 0);
+  /* track must be visibly grayer than the slide bg for projection — surface-2 alone
+     was nearly invisible (esp. dark mode). Mix ink-3 in so it reads in BOTH modes. */
+  background: conic-gradient(var(--accent) calc(var(--v) * 1%),
+    color-mix(in oklab, var(--ink-3) 38%, var(--surface-2)) 0);
 }
 /* center hole = the slide background (--bg) so it reads as a true ring; on a
    card put --donut-hole:var(--surface-1) to match the card fill. */
 .donut::before { content: ""; position: absolute; inset: var(--thick); border-radius: 50%; background: var(--donut-hole, var(--bg)); }
-.donut__val { position: relative; font-family: var(--font-display); font-weight: var(--w-bold);
+.donut__val { position: relative; font-family: var(--font-display); font-weight: var(--w-stat);
   font-size: 2rem; line-height: 1; color: var(--ink-1); font-variant-numeric: tabular-nums; }
 .donut__val .unit { font-size: 0.5em; color: var(--ink-3); margin-left: 0.05em; }
 .donut__cap { font-size: var(--fs-eyebrow); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
@@ -186,10 +266,12 @@
   width: 2.3rem; height: 2.3rem; border-radius: 50%; background: var(--surface-1);
   border: 3px solid var(--line-strong); display: grid; place-items: center;
   font-family: var(--font-mono); font-weight: var(--w-semi); color: var(--ink-2); z-index: 2; }
-.evo .ev--on .ev__dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.evo .ev--on .ev__dot { background: var(--accent-block); border-color: var(--accent-block); color: var(--accent-block-ink); }
 .evo .ev__v { font-family: var(--font-display); font-weight: var(--w-bold); font-size: 1.6rem;
   margin-top: var(--s-3); text-align: center; }
-.evo .ev--on .ev__v { color: var(--accent); }
+/* keep the ON value in ink-1: accent text on the page bg fails contrast on the
+   lighter palettes (cyan/sand ~2.6) — the accent dot already carries emphasis */
+.evo .ev--on .ev__v { color: var(--ink-1); }
 .evo .ev__d { font-size: 0.95rem; color: var(--ink-3); text-align: center; margin-top: var(--s-2);
   line-height: 1.4; padding: 0 var(--s-3); }
 
@@ -200,20 +282,23 @@
   padding: 0 var(--s-5); }
 .scope .sc__t { font-weight: var(--w-bold); font-size: 1.15rem; white-space: nowrap; }
 .scope .sc__d { font-size: 0.95rem; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.scope .sc--on { background: var(--accent); border-color: var(--accent); }
-.scope .sc--on .sc__t { color: var(--accent-ink); }
-.scope .sc--on .sc__d { color: var(--accent-ink); opacity: .88; }
+.scope .sc--on { background: var(--accent-block); border-color: var(--accent-block); }
+.scope .sc--on .sc__t { color: var(--accent-block-ink); }
+.scope .sc--on .sc__d { color: var(--accent-block-ink); opacity: .88; }
 
 /* two-zone split (A vs B) — one seam, the落点 side gets the accent fill */
 .zones { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--line-strong);
   border-radius: var(--r-2); overflow: hidden; }
 .zones .z { padding: var(--s-5); }
 .zones .z--l { background: var(--surface-2); }
-.zones .z--r { background: var(--accent); color: var(--accent-ink); }
+.zones .z--r { background: var(--accent-block); color: var(--accent-block-ink); }
 .zones .z__ic { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em;
   text-transform: uppercase; opacity: .7; margin-bottom: var(--s-2); }
 .zones .z__h { font-size: 1.35rem; font-weight: var(--w-bold); margin-bottom: var(--s-3); }
 .zones .z__list { display: flex; flex-direction: column; gap: var(--s-2); font-size: 1.05rem; }
+/* left (soft) zone: lift list copy to ink-1 — ink-2 on surface-2 is borderline
+   AA for body size. Right zone inherits --accent-ink from .z--r, leave it. */
+.zones .z--l .z__list { color: var(--ink-1); }
 
 /* big contrast table (A ↔ B rows) — readable from the back row, unlike tiny tags */
 .contrast { display: flex; flex-direction: column; border-top: 2px solid var(--line-strong); }
@@ -228,13 +313,198 @@
   border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono);
   font-weight: var(--w-semi); font-size: 0.9rem; background: var(--surface-1);
   border: 2px solid var(--line-strong); color: var(--ink-2); }
-.card--accent .nbadge { background: oklch(100% 0 0 / .2); border-color: transparent; color: var(--accent-ink); }
+.card--accent .nbadge { background: oklch(100% 0 0 / .2); border-color: transparent; color: var(--accent-block-ink); }
 
 /* inline example chip under a card label: <span class="ex"><b>例</b> Foo</span> */
 .ex { display: inline-flex; align-items: center; gap: .4em; font-family: var(--font-mono);
   font-size: 0.82rem; color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--line);
   border-radius: var(--r-pill); padding: .22em .7em; }
 .ex b { color: var(--accent); font-weight: var(--w-semi); }
+
+/* ---- 12. Diagram vocabulary (内容形状→图形, see references/diagrams.md) -----
+   Pure CSS/SVG, token-only, each with an fx entrance hook. These exist so a
+   "流程/转化/四象限/进度/层级" page becomes a PICTURE, not a row of flat cards.
+   NEVER hand-roll an ad-hoc boxes+arrows strip — use these. ----------------- */
+
+/* flow — generic flow diagram (boxes + real arrows). Horizontal by default;
+   add .flow--v for vertical. Mark the key node .fn--on (accent fill, auto ink).
+   Keep 3–5 nodes; longer chains → .evo stepper instead. */
+.flow { display: flex; align-items: stretch; gap: 0; }
+.flow--v { flex-direction: column; }
+.flow .fn { flex: 1; display: flex; flex-direction: column; justify-content: center;
+  gap: var(--s-1); padding: var(--s-4) var(--s-5); background: var(--surface-1);
+  border: 1px solid var(--line-strong); border-radius: var(--r-2); position: relative; min-width: 0; }
+.flow .fn__t { font-weight: var(--w-bold); font-size: 1.2rem; line-height: 1.25; }
+.flow .fn__d { font-size: 0.98rem; color: var(--ink-3); line-height: 1.35; }
+.flow .fn--on { background: var(--accent-block); border-color: var(--accent-block); }
+.flow .fn--on .fn__t { color: var(--accent-block-ink); }
+.flow .fn--on .fn__d { color: var(--accent-block-ink); opacity: .85; }
+.flow .fa { flex: 0 0 auto; display: grid; place-items: center; padding: 0 var(--s-2);
+  color: var(--accent); font-family: var(--font-mono); font-size: 1.15rem; }
+.flow .fa::before { content: "→"; }
+.flow--v .fa { padding: var(--s-1) 0; }
+.flow--v .fa::before { content: "↓"; }
+
+/* funnel — LEFT-ALIGNED conversion stages (analytics-tool style, à la Amplitude/
+   Mixpanel). Bars are FLUSH-LEFT (align to the slide's content edge / title — do
+   NOT center the container); each is narrower than the one above (width=--w%,
+   mapped from REAL values), so the RIGHT edge steps in like a funnel. Row =
+   label(left) + [value · 转化率](right). Put the step-to-step conversion % in
+   .fu__r (e.g. 7,200/10,000 → 72%). 落点行(.fu--on) is the one deep block. */
+.funnel { display: flex; flex-direction: column; gap: 7px; align-items: stretch; width: 100%; }
+.funnel .fu { display: flex; align-items: center; gap: var(--s-4); }   /* full-width row */
+.funnel .fu__bar { width: var(--w, 100%); min-width: 28%; flex: 0 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-5);
+  height: 3.15rem; padding: 0 var(--s-5); border-radius: var(--r-2);
+  /* surface-2 (not --accent-soft): neutral + mode-robust. --accent-soft is light in
+     most themes and is NOT redefined in dark → light text on light bar (invisible). */
+  background: var(--surface-2); border: 1px solid var(--line); }
+.funnel .fu__t { font-weight: var(--w-semi); font-size: 1.1rem; white-space: nowrap; }
+.funnel .fu__v { font-family: var(--font-mono); font-size: 1.02rem; color: var(--ink-2);
+  font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* conversion % sits OUTSIDE the bar, to its right — bars 2+ are shorter so the
+   right side is free; this keeps the % out of the bar and lets the eye read the
+   drop. Always on the page bg → ink-2 (even next to the landing block). */
+.funnel .fu__r { flex: 0 0 auto; font-family: var(--font-mono); font-size: 0.95rem;
+  color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.funnel .fu--on .fu__bar { background: var(--accent-block); border-color: var(--accent-block); }
+.funnel .fu--on .fu__t, .funnel .fu--on .fu__v { color: var(--accent-block-ink); }
+
+/* matrix2 — 2×2 positioning matrix. Axis labels on the edges, 4 quadrant cells,
+   the落点 quadrant gets .mq--on. Wrap in a sized container (e.g. .fill). */
+.matrix2 { display: grid; grid-template-columns: auto 1fr 1fr; grid-template-rows: 1fr 1fr auto;
+  gap: 0; min-height: 0; }
+/* CJK-safe vertical axis label: vertical-rl WITHOUT rotate keeps汉字 upright */
+.matrix2 .mx-y { grid-row: 1 / 3; writing-mode: vertical-rl;
+  display: grid; place-items: center; font-family: var(--font-mono); font-size: 0.78rem;
+  letter-spacing: 0.08em; color: var(--ink-2); padding-right: var(--s-2); font-size: 0.86rem; }
+.matrix2 .mx-x { grid-column: 2 / 4; display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em;
+  color: var(--ink-2); padding-top: var(--s-2); font-size: 0.86rem; }
+.matrix2 .mq { border: 1px solid var(--line-strong); margin: -0.5px; padding: var(--s-4);
+  display: flex; flex-direction: column; gap: var(--s-1); justify-content: center; min-height: 0; }
+.matrix2 .mq__t { font-weight: var(--w-bold); font-size: 1.18rem; }
+.matrix2 .mq__d { font-size: 0.98rem; color: var(--ink-3); line-height: 1.35; }
+.matrix2 .mq--on { background: var(--accent-block); border-color: var(--accent-block); }
+.matrix2 .mq--on .mq__t { color: var(--accent-block-ink); }
+.matrix2 .mq--on .mq__d { color: var(--accent-block-ink); opacity: .85; }
+
+/* gauge — half-ring progress dial (one real % only). Set --v (0–100).
+   Center value reads from the markup so it exports crisp. */
+.gauge { --v: 50; --size: 11rem; --thick: 1.3rem; position: relative;
+  width: var(--size); height: calc(var(--size) / 2); overflow: hidden; flex: 0 0 auto; }
+.gauge::before { content: ""; position: absolute; inset: 0 0 calc(var(--size) / -2) 0;
+  border-radius: 50%;
+  background: conic-gradient(from 270deg, var(--accent) calc(var(--v) * 0.5%),
+    color-mix(in oklab, var(--ink-3) 38%, var(--surface-2)) 0 50%, transparent 0); }
+.gauge::after { content: ""; position: absolute; inset: var(--thick) var(--thick) calc(var(--size) / -2 + var(--thick)) var(--thick);
+  border-radius: 50%; background: var(--gauge-hole, var(--bg)); }
+.gauge__val { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; text-align: center;
+  font-family: var(--font-display); font-weight: var(--w-bold); font-size: 1.9rem; line-height: 1;
+  color: var(--ink-1); font-variant-numeric: tabular-nums; }
+.gauge__val .unit { font-size: 0.5em; color: var(--ink-3); }
+.gauge__cap { text-align: center; margin-top: var(--s-2); font-size: var(--fs-eyebrow);
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+
+/* layers — stacked hierarchy (体系/层级/金字塔感). Rows narrow upward via --w;
+   the load-bearing layer gets .ly--on. Top = most abstract. */
+.layers { display: flex; flex-direction: column; gap: var(--s-2); align-items: center; }
+.layers .ly { width: var(--w, 100%); display: flex; align-items: center; justify-content: center;
+  gap: var(--s-3); height: 2.9rem; padding: 0 var(--s-5); border-radius: var(--r-2);
+  background: var(--surface-2); border: 1px solid var(--line); }
+.layers .ly__t { font-weight: var(--w-semi); font-size: 1.02rem; white-space: nowrap; }
+.layers .ly__d { font-size: 0.95rem; color: var(--ink-3); white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; }
+.layers .ly--on { background: var(--accent-block); border-color: var(--accent-block); }
+.layers .ly--on .ly__t { color: var(--accent-block-ink); }
+.layers .ly--on .ly__d { color: var(--accent-block-ink); opacity: .85; }
+
+/* entrance hooks: rows/nodes scale or grow in when the slide activates.
+   Put .anim-stagger on the diagram root for sequential reveal (base.css),
+   or .fx-grow-x on funnel/layers rows for a width grow (toolbar-safe). */
+
+/* ---- 13. Page-composition layouts (整页构图版式, see references/layouts.md) ----
+   These shape the WHOLE content area (not an inline chart) so adjacent pages stop
+   reading as the same card row — the cure for "千篇一律套模板". Each page declares
+   data-layout="…" on its .slide; validate.mjs reads those for the diversity gate.
+   Token-only · --accent-block reversal · cqw not vw · reuse existing fx (.fx-pop/
+   .fx-grow-x/.anim-stagger) — NO new keyframes, so the 4 export-freeze paths are
+   untouched. Their multi-cell children auto-stagger (added to base.css AUTO-MOTION). */
+
+/* asym-split — Swiss asymmetric statement: a narrow label rail + a wide claim,
+   split by a 1px hairline. NOT a card grid — one statement set off-center. Flip
+   the ratio with .asym--flip (wide rail left). Wrap big claims in .measure. */
+.asym { display: grid; grid-template-columns: 5fr 7fr; gap: 0; align-items: start; min-height: 0; }
+.asym.asym--flip { grid-template-columns: 7fr 5fr; }
+.asym > * { min-width: 0; }
+.asym__rail { padding-right: var(--s-6); display: flex; flex-direction: column; gap: var(--s-3); }
+.asym__main { padding-left: var(--s-6); border-left: 1px solid var(--line-strong); }
+.asym--flip .asym__rail { padding-right: 0; padding-left: var(--s-6); border-left: 1px solid var(--line-strong); }
+.asym--flip .asym__main { padding-left: 0; padding-right: var(--s-6); border-left: 0; }
+/* ink-2 not --accent: accent at L~64% fails AA on light bgs (back-row legibility);
+   the asym statement's accent lives in its .hl, not this small kicker. */
+.asym__idx { font-family: var(--font-mono); font-size: 0.84rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+/* two-col — NEUTRAL parallel prose (two equal columns, no winner). This is the
+   sibling of .zones/comparison MINUS the accent landing: use it when both sides
+   are simply two facets, not a recommendation. Add .two-col--rule for a hairline. */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-7); align-items: start; min-height: 0; }
+.two-col > * { min-width: 0; }
+.two-col--rule > * + * { border-left: 1px solid var(--line); padding-left: var(--s-7); }
+
+/* timeline — horizontal DATED axis (年份 / 里程碑 / 演进). Distinct from .evo:
+   the stepper is abstract numbered steps; the timeline carries real dates on a
+   drawn axis. Put a static hairline axis <i class="timeline__axis"> as the FIRST
+   child; nodes are .tl (date above, dot on axis, title+desc below) and stagger in
+   via AUTO-MOTION (.timeline is in the --i cascade). Mark a key node .tl--on. */
+.timeline { position: relative; display: flex; gap: 0; }
+.timeline__axis { position: absolute; left: 0; right: 0; top: 2.5rem; height: 2px;
+  background: var(--line-strong); }
+.timeline .tl { flex: 1; position: relative; padding: 4.4rem var(--s-4) 0 0; min-width: 0; }
+/* ink-2 not --accent: small accent text fails AA on light bgs; the timeline's
+   accent emphasis comes from the .tl--on dot fill, not the date label. */
+.timeline .tl__date { position: absolute; top: 0; left: 0; font-family: var(--font-mono);
+  font-size: 0.86rem; letter-spacing: 0.06em; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.timeline .tl__dot { position: absolute; top: calc(2.5rem - 0.52rem); left: 0;
+  width: 1.04rem; height: 1.04rem; border-radius: 50%; background: var(--surface-1);
+  border: 3px solid var(--line-strong); z-index: 2; }
+.timeline .tl--on .tl__dot { background: var(--accent-block); border-color: var(--accent-block); }
+.timeline .tl__t { font-family: var(--font-display); font-weight: var(--w-bold);
+  font-size: 1.4rem; line-height: 1.2; }
+.timeline .tl__d { font-size: 0.96rem; color: var(--ink-3); line-height: 1.4; margin-top: var(--s-2); }
+
+/* image-hero — full-bleed photo with a legible caption in the safe band. The
+   image fills the content area; .imghero__scrim guarantees text contrast over ANY
+   photo (tokenized --scrim / --on-media, neutral hue → 禁蓝-safe). Keep the caption
+   short and inside the safe area. Aim the crop with an .obj-* utility on the img. */
+.imghero { position: relative; height: 100%; min-height: 0; border-radius: var(--r-2);
+  overflow: hidden; background: var(--surface-2); }
+.imghero img, .imghero .frame__shot { width: 100%; height: 100%; object-fit: cover;
+  object-position: var(--obj-pos, 50% 50%); display: block; }
+.imghero .frame__placeholder { height: 100%; aspect-ratio: auto; }
+.imghero__scrim { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(0deg, var(--scrim) 0%, transparent 54%); }
+.imghero__cap { position: absolute; left: var(--s-6); right: var(--s-6); bottom: var(--s-6);
+  display: flex; flex-direction: column; gap: var(--s-3); z-index: 1; }
+.imghero__cap .eyebrow { color: var(--on-media); opacity: 0.82; background: transparent; }
+.imghero__t { font-family: var(--font-display); font-weight: var(--w-bold);
+  font-size: var(--fs-h2); line-height: 1.08; color: var(--on-media); text-wrap: balance; max-width: 26ch; }
+
+/* image-grid — fixed-HEIGHT photo grid. Lock the cell height in cqw (anchored to
+   the 1280 stage) — NOT aspect-ratio — so a tall photo can't blow the row; cells
+   cover-crop. .cell--wide spans 2 columns for a bento beat. Cells stagger via
+   AUTO-MOTION (.imggrid is in the --i cascade). Set --cols / --cell-h inline. */
+.imggrid { display: grid; grid-template-columns: repeat(var(--cols, 3), 1fr); gap: var(--s-3); }
+.imggrid .cell { height: var(--cell-h, 21cqw); border-radius: var(--r-2); overflow: hidden;
+  position: relative; background: var(--surface-2); border: 1px solid var(--line); }
+.imggrid .cell img, .imggrid .cell .frame__shot { width: 100%; height: 100%;
+  object-fit: cover; object-position: var(--obj-pos, 50% 50%); display: block; }
+.imggrid .cell--wide { grid-column: span 2; }
+.imggrid .cell .frame__placeholder { height: 100%; aspect-ratio: auto; }
+.imggrid .cell__cap { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--s-2) var(--s-3);
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--on-media);
+  background: linear-gradient(0deg, var(--scrim), transparent); }
 
 /* product card with a faux browser bar (for "tool/product" rows, no fake screenshot) */
 .prod { display: flex; flex-direction: column; background: var(--surface-1); border: 1px solid var(--line);

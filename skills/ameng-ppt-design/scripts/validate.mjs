@@ -7,14 +7,17 @@
 // Reads the deck HTML as TEXT (no DOM lib) and enforces the house discipline
 // from 设计基线 + the skill's token system:
 //   FAIL      · a BANNED font name appears anywhere in markup
+//   FAIL      · eyebrow abuse (>6) · aphoristic cadence (≥5「不是…而是…」)
 //   WARN      · hardcoded hex color inside an inline style="" (use tokens / OKLCH)
 //   WARN      · 禁蓝 — a blue-hue oklch()/hex used as inline accent/foreground
 //   WARN      · <img> without a non-empty alt
 //   WARN      · a .slide with no .notes child (missing speaker notes)
+//   WARN      · layout diversity — missing data-layout / 3+ same-layout run / <variety floor / card-grid >1/3
 //   WARN      · em-dash overuse (≥5 in visible body text)
 //   WARN      · eyebrow overuse (>3 .eyebrow elements)
 //   WARN      · marketing buzzwords in visible text
 //   WARN      · aphoristic「不是X，是Y」cadence (≥3)
+//   WARN      · emoji as icons/decoration in visible text (AI tell)
 //   ADVISORY  · numbered section markers (01/02/03… ≥3 distinct, ≥2 consecutive)
 //   INFO      · slide count + how many declare data-accent / data-section
 //
@@ -227,13 +230,27 @@ let withAccent = 0;
 let withSection = 0;
 const missingNotes = [];
 
+// graphic primitives that make a page "a picture" (diagrams.md decision table)
+const GRAPHIC_RE =
+  /\bclass\s*=\s*("[^"]*\b(?:flow|funnel|matrix2|gauge|layers|evo|bars|donut|linechart|zones|scope|contrast|data-hero|bento)\b[^"]*"|'[^']*\b(?:flow|funnel|matrix2|gauge|layers|evo|bars|donut|linechart|zones|scope|contrast|data-hero|bento)\b[^']*')|<svg\b|<img\b/i;
+let graphicSlides = 0;
+let nonCenterCount = 0;
+let graphicNonCenter = 0;
+let withLayout = 0;
+const layoutSeq = []; // {idx, layout} in document order — feeds the 5d diversity gate
+
 let so;
 while ((so = slideOpenRe.exec(html)) !== null) {
   const classVal = so[2] ?? so[3] ?? "";
   if (!/\bslide\b/.test(classVal)) continue;
   slideCount++;
+  const isCenter = /\bcenter\b/.test(classVal);
+  if (!isCenter) nonCenterCount++;
 
   const openTag = so[0];
+  const dlm = openTag.match(/\bdata-layout\s*=\s*("([^"]*)"|'([^']*)')/i);
+  const layout = dlm ? (dlm[2] ?? dlm[3] ?? "").trim() : "";
+  if (layout) { withLayout++; layoutSeq.push({ idx: slideCount, layout }); }
   // Determine this slide's body: from end of open tag to the next slide's
   // <section …slide…> open, or to </body>/EOF.
   const bodyStart = so.index + openTag.length;
@@ -254,6 +271,7 @@ while ((so = slideOpenRe.exec(html)) !== null) {
 
   if (/\bdata-accent\s*=/.test(openTag)) withAccent++;
   if (/\bdata-section\s*=/.test(openTag)) withSection++;
+  if (GRAPHIC_RE.test(body)) { graphicSlides++; if (!isCenter) graphicNonCenter++; }
 
   // A .notes child = an element carrying the "notes" class within the body.
   if (!/\bclass\s*=\s*("([^"]*\bnotes\b[^"]*)"|'([^']*\bnotes\b[^']*)')/.test(body)) {
@@ -271,8 +289,139 @@ if (missingNotes.length > 0) {
 
 add(
   infos,
-  `slides: ${slideCount} · with data-accent: ${withAccent} · with data-section: ${withSection}`,
+  `slides: ${slideCount} · with data-accent: ${withAccent} · with data-section: ${withSection} · with data-layout: ${withLayout} · with graphics: ${graphicSlides}`,
 );
+
+// ---- 5b. WARN: graphic density — a deck of flat text cards reads as slop ----
+// diagrams.md rule: every 流程/对比/层级/占比 page should be a PICTURE. .center
+// statement pages (big-statement / quote / divider) are excluded — type IS their
+// picture. Among the remaining content pages, if under 40% carry any graphic
+// primitive (.flow/.evo/.bars/.donut/.matrix2/.funnel/.gauge/.layers/…/svg/img),
+// the deck almost certainly degraded into rows of flat cards.
+if (nonCenterCount >= 6) {
+  const density = graphicNonCenter / nonCenterCount;
+  if (density < 0.4) {
+    add(
+      warns,
+      `graphic density ${(density * 100).toFixed(0)}% (${graphicNonCenter}/${nonCenterCount} content slides, ` +
+        `center statement pages excluded) — under 40%: most content pages are flat text/cards; ` +
+        `re-run the 内容形状→图形 decision table (references/diagrams.md) and convert ` +
+        `流程/对比/层级/占比 pages into .flow/.zones/.layers/.donut etc.`,
+    );
+  }
+}
+
+// ---- 5c. WARN: self-made component classes in a deck-level <style> ----------
+// The #1 real-world failure: the agent invents its own .am-card/.my-flow inside
+// a <style> block, bypassing tokens, --accent-ink auto-flip, and the contrast/
+// overflow guardrails. Small positional tweaks are fine; defining a component
+// vocabulary is not. Heuristic: count class-definition rules inside <style>.
+{
+  const styleBlocks = [...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)];
+  let classDefs = 0;
+  for (const m of styleBlocks) {
+    const defs = m[1].match(/\.[a-zA-Z][\w-]*\s*[^{}]*\{/g) || [];
+    classDefs += defs.length;
+  }
+  if (classDefs > 8) {
+    add(
+      warns,
+      `self-made component classes: ${classDefs} class rules defined in deck <style> — ` +
+        `house rule forbids inventing a component vocabulary (it bypasses tokens/--accent-ink/contrast guards); ` +
+        `use components.css primitives (flow/funnel/matrix2/gauge/layers/evo/zones/…) and keep <style> to minor tweaks`,
+    );
+  }
+}
+
+// ---- 5d. WARN: layout diversity — the cure for "千篇一律套模板" --------------
+// Pillar 3: every .slide should declare data-layout="…" (a named page archetype,
+// see references/layouts.md). With those names we can mechanically catch a deck
+// that degraded into the same page over and over — the #1 "this is an AI template"
+// tell that the graphic-density rule (5b) alone misses (a deck can be 100% .flow
+// and still be monotonous). Three teeth, thresholds scaled by deck length:
+//   · adjacency  — no two CONSECUTIVE slides share a layout
+//   · variety    — distinct layouts ≥ a length-scaled floor (caps at 6)
+//   · card ratio — card-grid pages (numbered-cards/bento/grid) ≤ 1/3 of the deck
+// Missing data-layout is itself a WARN (the gate can't judge what isn't named).
+{
+  const CARD_FAMILY = new Set(["numbered-cards", "bento", "grid"]);
+  const LAYOUT_VOCAB = new Set([
+    "cover", "big-statement", "quote", "section-divider", "manifesto", "close",
+    "data-hero", "big-number", "gauge", "donut",
+    "flow", "stepper", "funnel", "matrix", "layers", "scope", "timeline",
+    "comparison", "contrast", "two-zone", "asym-split", "two-col",
+    "bars", "screenshot", "terminal", "image-hero", "image-grid",
+    "numbered-cards", "bento", "grid",
+  ]);
+  const missingLayout = slideCount - withLayout;
+  if (missingLayout > 0) {
+    add(
+      warns,
+      `${missingLayout}/${slideCount} slide(s) without data-layout="…" — name each page's ` +
+        `archetype (references/layouts.md vocabulary) so the diversity gate can see it; ` +
+        `an unnamed deck silently drifts back into one repeated layout`,
+    );
+  }
+  if (layoutSeq.length >= 4) {
+    // adjacency: a RUN of ≥3 consecutive same-layout slides reads as a template.
+    // A run of 2 is fine on purpose — repeating a layout for genuinely same-shaped
+    // content (a series of like items, parallel comparisons) is intentional
+    // consistency, NOT monotony. So we only nudge at 3+, and it stays a dismissible
+    // WARN: the author judges whether the repeat is deliberate.
+    const runs = [];
+    let runStart = 0;
+    for (let i = 1; i <= layoutSeq.length; i++) {
+      const cont =
+        i < layoutSeq.length &&
+        layoutSeq[i].idx === layoutSeq[i - 1].idx + 1 &&
+        layoutSeq[i].layout === layoutSeq[i - 1].layout;
+      if (!cont) {
+        const len = i - runStart;
+        if (len >= 3) runs.push(`#${layoutSeq[runStart].idx}–#${layoutSeq[i - 1].idx}(${layoutSeq[runStart].layout}×${len})`);
+        runStart = i;
+      }
+    }
+    if (runs.length) {
+      add(
+        warns,
+        `same layout repeated: ${runs.join(", ")} — ${runs.length === 1 ? "a run" : "runs"} of 3+ identical pages ` +
+          `reads as a template; vary one or two — unless it's a deliberate same-shape series (then it's intentional, ignore this)`,
+      );
+    }
+    // variety floor (scaled by deck length, caps at 6)
+    const distinct = new Set(layoutSeq.map((s) => s.layout)).size;
+    const need = layoutSeq.length >= 10 ? 6 : layoutSeq.length >= 7 ? 5 : 3;
+    if (distinct < need) {
+      add(
+        warns,
+        `low layout variety: ${distinct} distinct layout(s) across ${layoutSeq.length} slides ` +
+          `(want ≥${need}) — reusing 2–3 page shapes reads as a template; pull more archetypes ` +
+          `from references/layouts.md (flow/timeline/asym-split/two-col/data-hero/matrix/…)`,
+      );
+    }
+    // card-grid family overload
+    if (layoutSeq.length >= 6) {
+      const cardPages = layoutSeq.filter((s) => CARD_FAMILY.has(s.layout)).length;
+      if (cardPages / layoutSeq.length > 1 / 3 + 1e-9) {
+        add(
+          warns,
+          `card-grid overload: ${cardPages}/${layoutSeq.length} pages are numbered-cards/bento/grid ` +
+            `(>1/3) — flat card rows are the AI-deck default; convert 流程/对比/层级/趋势 pages into ` +
+            `.flow/.zones/.layers/.timeline/charts instead`,
+        );
+      }
+    }
+    // unknown vocabulary (typo / off-list new archetype) → ADVISORY, non-blocking
+    const unknown = [...new Set(layoutSeq.map((s) => s.layout))].filter((l) => !LAYOUT_VOCAB.has(l));
+    if (unknown.length) {
+      add(
+        advisories,
+        `data-layout value(s) not in the known vocabulary: ${unknown.join(", ")} — ` +
+          `typo, or a genuinely new archetype to add to references/layouts.md + this gate`,
+      );
+    }
+  }
+}
 
 // ---- text-content prep (shared by the AI-slop copy rules) ------------------
 // Strip everything that is NOT human-readable prose so CLI flags (`--watch`),
@@ -286,9 +435,10 @@ function stripToVisibleText(src) {
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
     // drop whole elements whose class contains terminal / cmd (CLI evidence
-    // blocks legitimately carry --flags and dashes we don't want to count).
+    // blocks legitimately carry --flags and dashes we don't want to count), and
+    // speaker .notes (audience never sees them — copy rules don't apply there).
     .replace(
-      /<([a-z][\w-]*)\b[^>]*\bclass\s*=\s*("[^"]*\b(?:terminal|cmd)\b[^"]*"|'[^']*\b(?:terminal|cmd)\b[^']*')[^>]*>[\s\S]*?<\/\1>/gi,
+      /<([a-z][\w-]*)\b[^>]*\bclass\s*=\s*("[^"]*\b(?:terminal|cmd|notes)\b[^"]*"|'[^']*\b(?:terminal|cmd|notes)\b[^']*')[^>]*>[\s\S]*?<\/\1>/gi,
       " ",
     )
     // drop inline <code>…</code> (var(--x), --flags inside prose).
@@ -327,7 +477,18 @@ const visibleText = stripToVisibleText(html);
     const classVal = m[2] ?? m[3] ?? "";
     if (/\beyebrow\b/.test(classVal)) eyebrowCount++;
   }
-  if (eyebrowCount > 3) {
+  // Card-anatomy labels are NOT page kickers — exclude cell labels that sit on
+  // the same line as their card element (<div class="card …">…<span class="eyebrow">).
+  // Page kickers (the AI-scaffolding tell) are standalone spans under the section.
+  const cardInline = (html.match(/^.*class="[^"]*\bcard\b[^"]*".*<span class="eyebrow"/gm) || []).length;
+  eyebrowCount = Math.max(0, eyebrowCount - cardInline);
+  if (eyebrowCount > 6 && slideCount > 0 && eyebrowCount / slideCount > 0.6) {
+    add(
+      fails,
+      `eyebrow abuse: ${eyebrowCount} .eyebrow on ${slideCount} slides (kicker-on-every-heading, hard FAIL) — ` +
+        `house guardrail is ≤2–3, cover / section heroes only; delete the rest, use scale & position for hierarchy`,
+    );
+  } else if (eyebrowCount > 3) {
     add(
       warns,
       `eyebrow overuse: ${eyebrowCount} .eyebrow elements — house guardrail is ≤2–3 tracked-caps kickers ` +
@@ -373,11 +534,36 @@ const visibleText = stripToVisibleText(html);
   // 不是 … （是 | 而是） … — the comma/word between is tolerated.
   const reNotBut = /不是[^。！？；\n]{0,40}?(?:，|,)?\s*(?:而是|是)/g;
   while (reNotBut.exec(visibleText) !== null) count++;
-  if (count >= 3) {
+  if (count >= 5) {
+    add(
+      fails,
+      `aphoristic cadence: ${count}「不是X，是Y」/「不是…而是…」constructions (≥5 = hard FAIL) — ` +
+        `house guardrail is ≤2; rewrite the titles as plain conclusions, the pattern IS the AI tell`,
+    );
+  } else if (count >= 3) {
     add(
       warns,
       `aphoristic cadence: ${count}「不是X，是Y」/「不是…而是…」contrastive constructions — ` +
         `house guardrail is ≤2; once is voice, the pattern is the AI tell`,
+    );
+  }
+}
+
+// ---- 9b. WARN: emoji as icons/decoration ------------------------------------
+// 🚀✨✅📈-style emoji bullets are one of the loudest AI tells in CJK decks
+// (taste-skill ANTI-EMOJI policy). Visible copy should use the deck's graphic
+// primitives (.tag / .nbadge / inline SVG / type) instead. Scans visibleText so
+// comments, <script>, and .terminal blocks never count; deliberately EXCLUDES
+// dingbats the system itself uses (✎ ⤓ ● ✓ ⚠ live in chrome/JS, not copy).
+{
+  const EMOJI_RE = /[\u{1F000}-\u{1FAFF}]|✅|❌|✨|⭐|❗|❤/gu;
+  const hits = visibleText.match(EMOJI_RE) || [];
+  if (hits.length > 0) {
+    const sample = [...new Set(hits)].slice(0, 6).join(" ");
+    add(
+      warns,
+      `emoji in visible text: ${hits.length} (${sample}) — emoji-as-icon is an AI tell; ` +
+        `use .tag / .nbadge / inline SVG / plain type instead`,
     );
   }
 }

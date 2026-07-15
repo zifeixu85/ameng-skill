@@ -4,6 +4,8 @@
 > 铁律：版式 / slide 里**只写 `var(--token)`，绝不硬编码 hex**；主题文件（`assets/themes/*.css`）
 > 只覆盖 `:root` 里的 token。加载顺序固定：`fonts.css → base.css → components.css → themes/<x>.css`。
 
+> 目录：1. 颜色 · 2. 字体 · 3. 间距 / 圆角 / 阴影 · 4. 舞台几何 & 动效 · 5. 签名原语 · 6. components.css 组件清单 · 7. 铁律 · 8. 如何新建一个主题
+
 ---
 
 ## 1. 颜色（全部 OKLCH，无纯黑白）
@@ -54,12 +56,22 @@ base.css 备好一组可换的 accent，按 `data-accent` 给某段重绑 `--acc
 
 字号阶（fluid `clamp()`，锚定 1280 宽舞台，**大对比**制造层级）：
 `--fs-eyebrow` < `--fs-body` < `--fs-lead` < `--fs-h3` < `--fs-h2` < `--fs-h1` <
-**`--fs-display`**（`clamp(3.6rem,1.8rem+6vw,7rem)`）；外加 `--fs-stat`（大数字）。
-CJK 巨标题用 `.zh-mega`（`clamp(3.2rem,1.4rem+6vw,7.5rem)`，瑞士式极致字号对比）。
+**`--fs-display`**（`clamp(3.6rem,1.8rem+6cqw,7rem)`，cqw 锚定 1280 舞台）；外加 `--fs-stat`（大数字）。
+CJK 巨标题用 `.zh-mega`（`clamp(3.2rem,1.4rem+6cqw,7.5rem)`，瑞士式极致字号对比）。
 
 字重：`--w-light 300` / `--w-reg 400` / `--w-med 500` / `--w-semi 600` / `--w-bold 700`。
-字距：`--track-tight -0.02em`（大标题收紧） / `--track-wide 0.16em`（仅 eyebrow/label）。
+字距：`--track-tight -0.02em`（大标题收紧） / `--track-wide 0.12em`（仅 eyebrow/label）。
 行高：`--leading-tight 1.08` / `--leading-body 1.62`。
+
+**字重阶梯（越大越细、越小越粗，借自归藏的反向字重纪律）**：
+- display 级超大字（`.display`/`.zh-mega`）与数据大数字（`.data-hero__num`/`.stat__num`/`.donut__val`）
+  走 **`--w-display` / `--w-stat`**（默认 semi 600）——100px+ 的 bold 会糊成一块砖，降一档才透气。
+- `h1` 及以下维持原字重（h1 bold / h2·h3 semi）；**小字（caption/label/来源注）不低于 `--w-med`**，
+  投屏时细小字会被距离吃掉。
+- 主题按气质覆盖：neo-brutalist 锁 800（粗野就是要重）、dark-luxe display 更细（奢感）、
+  editorial/ink-wash 本就 semi。**别在 deck 里手写 font-weight 数字，走 token。**
+- **投屏最小字号**：正文等效 `--fs-body`（1280 舞台上 ≈21px）为下限；任何要读的字不得小于
+  `--fs-eyebrow`（≈15px）——更小的只能当装饰，不能承载信息。
 
 ### 2.1 字号纪律（借自 impeccable typeset）
 
@@ -129,3 +141,18 @@ CJK 巨标题用 `.zh-mega`（`clamp(3.2rem,1.4rem+6vw,7.5rem)`，瑞士式极�
 6. **加深色变体**（`T` 键浅/深切换的另一半）：在主题文件末尾写一个 `.deck[data-theme="dark"] { … }` 块，**重定义** `--bg / --surface-* / --line* / --ink-1/2/3 / --accent*`（深底用暖/冷要跟 light 同色相，别突然冷蓝；`--ink-1` 要在深底上够亮，禁纯黑底）。需要时再补 `--shadow-*` 和 `.deck[data-theme="dark"][data-grain] .deck__stage::after { opacity:.25 }`（深色下颗粒调淡）。
 7. **文字色继承的坑（必读）**：标题（`.h1/.zh-mega` 等）**不写自己的 color**，靠继承。`base.css` 已在 **`.deck { color: var(--ink-1) }`** 处统一兜底——因为 `data-theme="dark"` 加在 `.deck` 上，而 `body` 是 `.deck` 的祖先，文字色若只挂在 `body` 上会在深色作用域**外**解析、停在浅色墨色 → 标题在深底上隐形。所以：**别把正文色只写在 `body`/`html` 上**；只要主题在 `.deck[data-theme="dark"]` 里重定义了 `--ink-1`，继承的标题会自动翻白。`.lead/.body/.hl` 各自显式 `color:var(--ink-*)` 不受影响。
 8. 交付：把模板 `#theme-link` 的 `href` 锁成这个主题文件即可；放映 `T` 在该主题的 `:root`（浅）与 `.deck[data-theme="dark"]`（深）之间切换，不再是多主题循环。
+
+## 9. 卡片是一条规则，不是每个版式一套（关键）
+
+> 主题里改 `.card` 时**只能定义一条卡片语言**，让所有卡片版式（编号卡 `grid-3` / 便当 `bento` /
+> 对比 `grid-2` / 任意 grid）**都遵循它**——绝不「便当一套、对比一套、编号卡又一套」。否则同一份
+> deck 各页卡片长得不一样，且新版式无规可循。判断标准：改完后，**新加的卡片版式不写任何特例就该长对**。
+
+**统一卡片规则（每个主题各自实现一次，但 deck 内一致）**：
+- `.card` = 一种**块**：填充（`--surface-2`）或描边或顶线，**全场同一种**；内容顶对齐（`justify-content:flex-start`），eyebrow→正文 gap 用 `--s-2`（别让卡片把内容上下撑开）。
+- `.card--soft` = 同语言的**弱**变体（更淡的填充，如 `--surface-1`）——对比页的非落点侧。
+- `.card--accent` = **落点**：统一实色块 `--accent-block` + 反白 `--accent-block-ink`，**双模式都达标**（别用 `--accent-soft`，深色常没定义它 → 落点变浅块、字隐形）。块内文字/标签靠 `:where(...)` 一律翻 `--accent-block-ink`，**别手动设色**。
+- 同理：图表落点（`.fn--on/.fu--on/.mq--on/.ly--on/.z--r/.sc--on`）也都吃 `--accent-block`，和卡片落点同一个块色。
+
+> 反面教训（editorial 踩过）：先给 `.bento .card` 填充、再给 `.grid-2>.card` 填充、编号卡却留顶线——
+> 三套规则，同一页色块语言打架。**统一成一条 `.card` 规则后，编号卡/便当/对比/任意 grid 全部自动一致。**

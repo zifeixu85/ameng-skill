@@ -17,7 +17,7 @@
   --ppt-body:    "Source Han Serif SC", "Songti SC", Georgia, "Times New Roman", serif;
   --r-1: 2px; --r-2: 3px; --r-3: 4px;
   --track-tight: -0.01em; --leading-body: 1.7;
-  --pad: clamp(3.2rem, 1.4rem + 6cqw, 7rem);             /* airy, generous margins */
+  --pad: clamp(2.8rem, 1.2rem + 5cqw, 5.6rem);           /* airy but not overflow-prone on dense pages */
   --shadow-1: none; --shadow-2: 0 8px 30px -16px oklch(40% 0.02 50 / 0.2); --shadow-3: 0 16px 44px -22px oklch(40% 0.02 50 / 0.25);
 }
 .deck[data-grain] .deck__stage::after { opacity: 0.28; }   /* faint paper tooth */
@@ -38,22 +38,33 @@
   text-decoration-thickness: 0.07em; text-underline-offset: 0.14em; }
 .hl::before { display: none; }
 
-/* drop-cap on the first body paragraph of a slide — signature editorial move */
-.slide p.body:first-of-type::first-letter,
-.slide .lead:first-of-type::first-letter {
-  font-family: var(--ppt-display); font-size: 3.1em; line-height: 0.74; float: left;
-  margin: 0.04em 0.1em 0 0; color: var(--accent); font-weight: var(--w-bold); font-style: normal;
-}
+/* NO drop-cap: a CJK 首字下沉 splits a word in half — a giant rust「标」next to a
+   small「题」(标题), or「便」/「当」— which reads as broken, not editorial. Chinese
+   has no "first letter" concept the way Latin does. Editorial character here comes
+   from serif + whitespace + hairlines + the underline-hl, NOT a drop-cap gimmick. */
 
-/* cards become ruled sections (top hairline), not boxes */
-.card { background: transparent; border: 0; border-top: 2px solid var(--ink-1); border-radius: 0;
-  box-shadow: none; padding: var(--s-4) 0 0; }
-.card--soft { background: transparent; }
-.card--accent { background: transparent; border-top-color: var(--accent); }
-.card--accent :where(.h2, .h3, .lead, .body, p, h2, h3, li) { color: var(--ink-1); }
+/* ════ ONE card rule, every card layout follows it (numbered-cards / bento /
+   comparison / any grid) — NOT a special rule per page. ═══════════════════════
+   A card is a subtle FILLED BLOCK: surface fill + hairline + small radius +
+   even padding, content TOP-ALIGNED & tight (no big eyebrow→body gap). This is
+   restrained enough for editorial (paper-toned fills, thin lines) yet gives the
+   block definition that bento (cell sizes) and comparison (A|B zones) need.
+   The single 落点 per page = .card--accent = solid --accent-block + reversed ink
+   (works light AND dark). Weak side = .card--soft (lighter fill). One mechanism,
+   so the same page reads consistently and new pages inherit it for free. */
+.card { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-2);
+  box-shadow: none; padding: var(--s-4); gap: var(--s-2); justify-content: flex-start; }
+.card--soft { background: var(--surface-1); border-color: var(--line); }
+.card--accent { background: var(--accent-block); border-color: var(--accent-block); }
+.card--accent :where(.h2, .h3, .lead, .body, .eyebrow, .num, p, h2, h3, li) { color: var(--accent-block-ink); }
+.card--accent :where(.body, .muted, .eyebrow, .num) { opacity: .9; }
+/* tags: editorial underline pill; reversed inside an accent block */
 .tag { background: transparent; border: 0; border-bottom: 1px solid var(--line-strong);
   border-radius: 0; padding: 0 0 0.15em; color: var(--ink-2); font-family: var(--ppt-body); }
+.card--accent .tag { background: transparent; color: var(--accent-block-ink); border-bottom-color: color-mix(in oklab, var(--accent-block-ink) 50%, transparent); }
+.card--num .num { color: var(--ink-2); }   /* corner index readable on the card surface (ink-3 was 4.2:1) */
 .rule { background: var(--line-strong); }
+/* (funnel bars are surface-2 in base now — no editorial override needed) */
 
 /* code/terminal: soften to a paper code block (editorial doesn't do dark terminals) */
 .terminal { background: var(--surface-2); color: var(--ink-1); border: 1px solid var(--line);
@@ -76,5 +87,26 @@
   --bg: oklch(19% 0.012 60); --surface-1: oklch(23% 0.012 60); --surface-2: oklch(22% 0.012 60);
   --line: oklch(34% 0.012 60); --line-strong: oklch(58% 0.012 60);
   --ink-1: oklch(94% 0.012 86); --ink-2: oklch(78% 0.012 84); --ink-3: oklch(60% 0.012 78);
+  --accent: oklch(68% 0.15 32); --accent-ink: oklch(16% 0.02 40);
+}
+
+/* unified solid-block color (deepened accent, white ink ≥4.5 vs white) — blocks
+   stay ONE color across the deck; per-section accents only recolor chrome/hl */
+.deck { --accent-block: oklch(50% 0.15 28); --accent-block-ink: oklch(98% 0.01 30); }
+
+/* ── 分段色策略 A（editorial 专属）：锁死朱砂红 ──────────────────────────────
+   杂志正典是「一个克制的强调色贯穿全场」，节奏靠留白与栏宽、不靠每页换色相。
+   所以 editorial 里 data-accent 只保留分段标签的语义，不再把 --accent 重绑成
+   绿/青/橙（base.css 的 per-accent 覆盖在这里被中和）。editorial 后于 base 加载，
+   同特异度即胜。--accent-ink 锁成白：深朱砂底（分节页/色块）上文字翻白，对比达标。*/
+.slide[data-accent], .deck[data-accent] {
+  --accent:       oklch(50% 0.15 28);
+  --accent-ink:   oklch(98% 0.01 80);   /* 白字：深朱砂底（分节页/hl--full）上达标 */
+  --accent-2:     oklch(48% 0.055 145);
+  --accent-soft:  oklch(92% 0.04 40);
+  --accent-block: oklch(50% 0.15 28);
+  --accent-block-ink: oklch(98% 0.01 30);
+}
+.deck[data-theme="dark"][data-accent], .deck[data-theme="dark"] .slide[data-accent] {
   --accent: oklch(68% 0.15 32); --accent-ink: oklch(16% 0.02 40);
 }

@@ -38,8 +38,10 @@
 /* 高亮 = 朱批：淡朱砂水墨衬底（不抢、像印泥晕开），文字仍是墨色 */
 .hl { color: var(--ink-1); }
 .hl::before { height: 0.46em; bottom: 0.04em; left: -0.06em; right: -0.06em;
-  background: var(--accent); opacity: 0.24; transform: skewX(-2deg);
+  background: var(--accent); opacity: 0.3; transform: skewX(-2deg);
   border-radius: 2px 7px 3px 6px; }
+/* 巨字（zh-mega/h1）上的朱批带要抬到字腰，贴 baseline 会显得垫块下坠错位 */
+.zh-mega .hl::before, .h1 .hl::before { bottom: 0.12em; height: 0.5em; }
 .hl--full { color: var(--accent-ink); background: var(--accent); border-radius: 2px; }
 
 /* 卡片 = 顶部墨线 + 左上一点朱印，去盒子化 */
@@ -83,3 +85,7 @@
 }
 .deck[data-theme="dark"] .deck__stage { background-image:
   radial-gradient(60% 44% at 96% 98%, oklch(70% 0.02 250 / 0.08), transparent 60%); }
+
+/* unified solid-block color (deepened accent, white ink ≥4.5 vs white) — blocks
+   stay ONE color across the deck; per-section accents only recolor chrome/hl */
+.deck { --accent-block: oklch(50% 0.18 30); --accent-block-ink: oklch(98% 0.01 30); }

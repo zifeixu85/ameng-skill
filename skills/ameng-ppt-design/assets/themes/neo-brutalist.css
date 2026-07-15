@@ -1,17 +1,18 @@
 /* THEME: neo-brutalist — 生（raw）· 响（loud）· 块（blocky）。
-   黑白底 + 一记响色 + 硬边框 + 实心偏移投影（无模糊）+ 零圆角 + 无颗粒。
-   与 industrial-paper 的差异不只在配色：构图更块状、边框更重、阴影是硬投影、强调用实心色块。 */
+   黑白底 + 酸性黄 + 硬边框 + 实心偏移投影（无模糊）+ 零圆角 + 无颗粒。
+   配色是 neo-brutalism 的正典：**黑黄对撞**（警示牌/便利贴感，à la Gumroad），
+   黄色是浅色 → 块底配黑字（不是白字）；除黄外只用黑+灰，不引第二色相。构图块状、边框重、阴影硬。 */
 :root {
-  --bg:          oklch(98% 0 0);
+  --bg:          oklch(98% 0.005 100);      /* faint warm off-white */
   --surface-1:   oklch(100% 0 0);
-  --surface-2:   oklch(95% 0 0);
+  --surface-2:   oklch(95% 0.006 100);
   --line:        oklch(15% 0 0);            /* lines are INK (brutalist draws hard rules) */
   --line-strong: oklch(15% 0 0);
   --ink-1: oklch(15% 0 0); --ink-2: oklch(28% 0 0); --ink-3: oklch(45% 0 0);
-  --accent:      oklch(63% 0.25 28);        /* one loud signal red */
-  --accent-ink:  oklch(99% 0 0);
-  --accent-2:    oklch(80% 0.18 95);        /* loud secondary (amber) */
-  --accent-soft: oklch(90% 0.10 60);
+  --accent:      oklch(87% 0.185 102);      /* ACID YELLOW — the loud color (black text on it) */
+  --accent-ink:  oklch(18% 0 0);            /* BLACK text on yellow (yellow is light) */
+  --accent-2:    var(--ink-2);               /* secondary series = neutral ink (no 2nd hue → 黄黑灰严格统一) */
+  --accent-soft: oklch(93% 0.10 100);       /* pale yellow */
   --ppt-display: "Bricolage Grotesque", "PingFang SC", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
   --ppt-body:    "Host Grotesk", "PingFang SC", "Source Han Sans SC", system-ui, sans-serif;
   --r-1: 0px; --r-2: 0px; --r-3: 0px; --r-pill: 0px;     /* zero radius everywhere */
@@ -30,20 +31,28 @@
   padding: 0.28em 0.7em; letter-spacing: 0.12em; font-weight: var(--w-bold); }
 /* headings: tight, heavy */
 .h1, .display, .zh-mega { font-weight: 800; letter-spacing: -0.035em; }
+/* acid yellow fails AA as bare TEXT on paper (~1.4:1) — big-number units flip to ink.
+   Yellow only ever appears as a FILLED block behind black text, never as glyph color. */
+.data-hero__num .unit { color: var(--ink-2); }
 
-/* highlight = solid block with hard drop-shadow (not a soft band).
-   The accent block is orange in BOTH light/dark, so the text on it must be a
-   FIXED near-white — using var(--bg) flipped it to dark (unreadable) in dark
-   mode. White-on-accent is also the intended brutalist look. */
-.hl { color: oklch(98% 0 0); background: var(--accent); padding: 0 0.14em;
-  box-shadow: 4px 4px 0 var(--ink-1); white-space: nowrap; }
+/* highlight = solid yellow block with hard drop-shadow (not a soft band).
+   The accent block is ACID YELLOW in both light/dark; yellow is LIGHT so the
+   text on it is BLACK (--accent-block-ink). hl/accent fills use --accent-block
+   (the locked yellow), never per-section --accent, so blocks never drift hue. */
+.hl { color: var(--accent-block-ink); background: var(--accent-block); padding: 0 0.14em;
+  box-shadow: 4px 4px 0 var(--ink-1); white-space: nowrap;
+  margin-right: 0.22em; /* clear the hard shadow so trailing punctuation isn't overlapped */ }
 .hl::before { display: none; }
-.hl--full { color: oklch(98% 0 0); background: var(--accent); box-shadow: 4px 4px 0 var(--ink-1); }
+.hl--full { color: var(--accent-block-ink); background: var(--accent-block); box-shadow: 4px 4px 0 var(--ink-1); }
 
 /* cards / tags / frames: thick ink border + hard shadow */
 .card { border: 3px solid var(--ink-1); box-shadow: 6px 6px 0 var(--ink-1); background: var(--bg); }
 .card--soft { background: var(--surface-2); }
-.card--accent { background: var(--accent); color: var(--bg); }
+.card--accent { background: var(--accent-block); color: var(--accent-block-ink); }
+.card--accent :where(.h2, .h3, .lead, .body, .eyebrow, p, li) { color: var(--accent-block-ink); }
+/* eyebrow is an inverted ink block by default; inside an accent card that block
+   collides (white-on-white in dark) — drop the block, keep reversed text. */
+.card--accent .eyebrow { background: transparent; padding-left: 0; }
 .tag { border: 2px solid var(--ink-1); background: var(--bg); color: var(--ink-1);
   text-transform: uppercase; font-weight: var(--w-bold); padding: 0.22em 0.7em; }
 .frame { border: 3px solid var(--ink-1); box-shadow: 6px 6px 0 var(--ink-1); }
@@ -53,7 +62,7 @@
 .terminal .cmd::before { color: var(--accent); }
 
 /* blocky bars: bordered track, square fill */
-.bar__track { border: 2px solid var(--ink-1); background: var(--bg); height: 18px; }
+.bar__track { border: 2px solid var(--ink-1); background: var(--bg); height: 1.6rem; }
 .bar__fill { box-shadow: none; }
 
 /* chrome = bold ruled bars */
@@ -63,11 +72,48 @@
 .chrome-foot { border-top: 3px solid var(--ink-1); color: var(--ink-1); font-weight: var(--w-med); }
 .rule { height: 3px; background: var(--ink-1); }
 
-/* DARK = inverted (black paper, white ink, white offset shadows) */
+/* DARK = inverted (black paper, white ink, white offset shadows). Yellow pops on
+   black even harder — accent stays yellow, blocks stay yellow + black text. */
 .deck[data-theme="dark"] {
   --bg: oklch(16% 0 0); --surface-1: oklch(20% 0 0); --surface-2: oklch(24% 0 0);
   --line: oklch(96% 0 0); --line-strong: oklch(96% 0 0);
   --ink-1: oklch(96% 0 0); --ink-2: oklch(82% 0 0); --ink-3: oklch(64% 0 0);
-  --accent: oklch(70% 0.24 28); --accent-ink: oklch(12% 0 0);
+  --accent: oklch(89% 0.19 102); --accent-ink: oklch(14% 0 0);
   --shadow-1: 3px 3px 0 var(--ink-1); --shadow-2: 6px 6px 0 var(--ink-1); --shadow-3: 10px 10px 0 var(--ink-1);
 }
+
+/* unified solid-block color = the acid yellow itself (yellow IS the loud color),
+   text on it is BLACK (yellow is light). Blocks stay ONE color across the deck. */
+.deck { --accent-block: oklch(87% 0.185 102); --accent-block-ink: oklch(16% 0 0); }
+
+/* ── 分段色策略 A：neo 锁死「酸性黄」──────────────────────────────────────────
+   neo 的身份就是「黑黄对撞」，节奏靠黑块+硬投影、不靠每页换色相。所以 data-accent
+   只保留分段标签语义，不再把 --accent 换成 mint/cyan/sand（否则进度条/高亮/图表填充
+   会变青变绿，脱离黄黑色板）。黄是浅色 → 块底一律黑字。 */
+.slide[data-accent], .deck[data-accent] {
+  --accent: oklch(87% 0.185 102); --accent-ink: oklch(18% 0 0);
+  --accent-2: var(--ink-2); --accent-soft: oklch(93% 0.10 100);
+  --accent-block: oklch(87% 0.185 102); --accent-block-ink: oklch(16% 0 0);
+}
+.deck[data-theme="dark"][data-accent], .deck[data-theme="dark"] .slide[data-accent] {
+  --accent: oklch(89% 0.19 102); --accent-ink: oklch(14% 0 0);
+}
+
+/* ── 图表组件也要粗野：粗黑边 + 零圆角 + 落点硬投影 ─────────────────────────────
+   否则 flow/funnel/matrix/gauge/layers 落进「细线+浅填充」的 Chart.js 外观，和版式页
+   （卡片/对比/便当的粗黑框+硬投影）像两套设计（新鲜眼睛实测 6-11 页全掉档）。 */
+.flow .fn, .funnel .fu__bar, .matrix2 .mq, .layers .ly { border: 2px solid var(--ink-1); }
+.flow .fn--on, .funnel .fu--on .fu__bar, .layers .ly--on { box-shadow: 5px 5px 0 var(--ink-1); }
+.flow .fa { color: var(--ink-1); font-weight: 900; font-size: 1.4rem; }       /* bolder arrows */
+.evo .ev__dot { border-width: 3px; box-shadow: 3px 3px 0 var(--ink-1); }
+.scope .sc, .zones { border-width: 2px; }
+/* rings: acid-yellow segment on a BLACK track (黑黄对撞) — a light track would
+   wash the yellow out. Thicker ring reads bolder than a thin dashboard ring. */
+.donut { --thick: 1.4rem; background: conic-gradient(var(--accent) calc(var(--v) * 1%), var(--ink-1) 0); }
+.gauge { --thick: 1.7rem; }
+.gauge::before { background: conic-gradient(from 270deg, var(--accent) calc(var(--v) * 0.5%), var(--ink-1) 0 50%, transparent 0); }
+/* bars: bordered track is already brutalist; series = yellow / dark-ink / gray
+   (no 2nd hue) after the accent lock above. nothing else needed. */
+
+/* quote: use the heavy display sans, not a stray serif/round face */
+.quote { font-family: var(--ppt-display); font-weight: var(--w-bold); font-style: normal; letter-spacing: -0.02em; }

@@ -7,6 +7,8 @@
 > 结构移植自 工业纸感基线 的 `设计基线`。把它当 fill-in 模板：复制到
 > `decks/<name>/design-direction.md`，按本 deck 改字段，方括号是你要替换的部分。
 
+> 目录：Project · Users · Brand Personality · Register · Aesthetic Direction · Theme · Anti-References · Color · Typography · Composition · Motion · Design Principles · Responsive · Accessibility
+
 ---
 
 ## Project（这份 deck 是什么）

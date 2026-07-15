@@ -103,8 +103,12 @@ try {
 // ---- report ----------------------------------------------------------------
 const slides = report.slides || [];
 const bad = slides.filter((s) => s.overflow);
+const lowContrast = slides.filter((s) => (s.contrast || []).length > 0);
 console.log(`ameng-ppt overflow · ${basename(dirname(abs))}/${basename(abs)}  (stage ${report.w}×${report.h})`);
-console.log(`slides: ${slides.length} · within safe zone: ${slides.length - bad.length} · overflowing: ${bad.length}`);
+console.log(
+  `slides: ${slides.length} · within safe zone: ${slides.length - bad.length} · overflowing: ${bad.length}` +
+    ` · low-contrast: ${lowContrast.length}`,
+);
 
 if (bad.length) {
   console.log(`\nOVERFLOW (${bad.length})`);
@@ -120,8 +124,37 @@ if (bad.length) {
     `\nFix: shorten copy, drop a row, split into two slides, or shrink the offending block.\n` +
       `Re-check in-browser by pressing G (safe-zone guides + live ⚠ badge).`,
   );
+}
+
+// rendered WCAG contrast < 3.0 fails even large text — the green-on-green class
+// of bug that static token checks can't see (computed colors, post-theme).
+if (lowContrast.length) {
+  console.log(`\nCONTRAST < 3.0 (${lowContrast.length} slide(s)) — unreadable text on its band:`);
+  for (const s of lowContrast)
+    for (const c of s.contrast)
+      console.log(`  - slide ${String(s.n).padStart(2, "0")}: ratio ${c.ratio}  · ${c.el}`);
+  console.log(
+    `Fix: text on an accent fill must use the auto-flip components (.card--accent/.fn--on/.fu--on/.mq--on/.ly--on\n` +
+      `give --accent-ink for free) — don't hand-roll colored boxes with hand-picked text colors.`,
+  );
+}
+
+// vertical balance advisory: a non-center slide whose content leaves a third of
+// the safe zone empty at the bottom reads as top-heavy dead space (not a FAIL —
+// judge it in the PNG pass; .center statement pages are exempt by design).
+const underfilled = slides.filter(
+  (s) => !s.center && !s.overflow && s.gapBottom != null && s.gapBottom > (report.h ? (report.h - 84 - 84) : 551) / 3,
+);
+if (underfilled.length) {
+  console.log(`\nADVISORY · top-heavy layout (${underfilled.length} slide(s), bottom third+ of safe zone empty):`);
+  for (const s of underfilled)
+    console.log(`  - slide ${String(s.n).padStart(2, "0")}: content fills ${s.fill}% · ${s.gapBottom}px dead band at bottom`);
+  console.log(`Consider: .center the slide, let the main block .fill, or upgrade the page to a fuller diagram/layout.`);
+}
+
+if (bad.length || lowContrast.length) {
   console.log(`\nRESULT: FAIL`);
   exit(1);
 }
-console.log(`\nRESULT: PASS`);
+console.log(`\nRESULT: PASS${underfilled.length ? "-WITH-ADVISORIES" : ""}`);
 exit(0);

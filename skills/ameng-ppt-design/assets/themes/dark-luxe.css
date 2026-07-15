@@ -25,7 +25,9 @@
 .deck[data-grain] .deck__stage::after { opacity: 0.18; mix-blend-mode: screen; }
 
 .eyebrow { color: var(--accent); letter-spacing: 0.18em; text-shadow: 0 0 16px oklch(82% 0.13 85 / 0.5); }
-.h1, .display, .zh-mega { font-weight: var(--w-bold); letter-spacing: -0.02em; }
+.h1 { font-weight: var(--w-bold); letter-spacing: -0.02em; }
+/* 奢感=大而细：display 级跟字重阶梯走（semi），暗底光晕下更透气 */
+.display, .zh-mega { font-weight: var(--w-display); letter-spacing: -0.02em; }
 
 /* highlight = soft glowing gold band */
 .hl { color: var(--ink-1); text-shadow: 0 0 20px oklch(82% 0.13 85 / 0.45); }
@@ -47,11 +49,17 @@
 .terminal .cmd::before { color: var(--accent); }
 
 /* glowing data bars + KPI */
-.bar__track { background: oklch(100% 0 0 / 0.08); }
-.bar__fill { box-shadow: 0 0 14px oklch(82% 0.13 85 / 0.6); }
+.bar__track { background: oklch(100% 0 0 / 0.05); }
+/* keep the glow subtle: a 14px halo used to blur the fill/track boundary so a 50%
+   bar read almost as long as a 100% bar — the data encoding must stay legible */
+.bar__fill { box-shadow: 0 0 6px oklch(82% 0.13 85 / 0.3); }
 .data-hero__num { text-shadow: 0 0 40px oklch(82% 0.13 85 / 0.25); }
 
 .chrome-top__sec { color: var(--accent); }
 .rule { background: var(--line); }
 
 /* dark-only luxe — T toggle is intentionally a no-op (no light counterpart). */
+
+/* unified solid-block color (deepened accent, white ink ≥4.5 vs white) — blocks
+   stay ONE color across the deck; per-section accents only recolor chrome/hl */
+.deck { --accent-block: oklch(50% 0.10 80); --accent-block-ink: oklch(98% 0.01 80); }

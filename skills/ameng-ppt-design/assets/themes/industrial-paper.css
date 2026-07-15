@@ -58,3 +58,7 @@
 }
 /* 深色下纸感颗粒过重 → 调淡 */
 .deck[data-theme="dark"][data-grain] .deck__stage::after { opacity: 0.25; }
+
+/* unified solid-block color (deepened accent, white ink ≥4.5 vs white) — blocks
+   stay ONE color across the deck; per-section accents only recolor chrome/hl */
+.deck { --accent-block: oklch(52% 0.14 50); --accent-block-ink: oklch(98% 0.01 80); }

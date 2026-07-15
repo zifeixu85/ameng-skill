@@ -37,3 +37,16 @@ fi
 echo "✓ ejected $NAME → $DEST"
 echo "  open:   cd '$(dirname "$DEST")' && python3 -m http.server   # then /$(basename "$DEST")/index.html"
 echo "  note:   editor/export work best over http://, not file:// (browser blocks screenshot/font reads)"
+
+# drop a double-clickable local server so export always runs over http://
+cat > "$DEST/serve.command" <<'EOSRV'
+#!/bin/bash
+# 双击启动本地服务器并打开 deck（导出 PDF/PPTX/PNG 必须从 http:// 打开）
+cd "$(dirname "$0")"
+PORT=8123
+( sleep 1; open "http://localhost:$PORT/index.html" ) &
+echo "Serving at http://localhost:$PORT — 关闭此窗口即停止"
+python3 -m http.server $PORT
+EOSRV
+chmod +x "$DEST/serve.command"
+echo "  serve:  双击 $DEST/serve.command 即从 http:// 打开（导出必需）"

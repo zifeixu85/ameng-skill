@@ -6,10 +6,58 @@
 > hub-and-spoke. One graphic per slide, then verify with `scripts/render.sh`.
 > All primitives below are in `assets/components.css` (token-driven, no hex, 禁蓝-safe).
 
-## When to reach for which
+> 目录：内容形状 → 图形 · When to reach for which · Flow / Funnel / Matrix / Gauge / Layers · Stepper · Expanding scope · Two-zone split · Inline SVG — keep colors as tokens · Motion that survives export · Safe-area discipline
+
+## 内容形状 → 图形（每页搭建前必答的一道题）
+
+**写每一页之前先问：这页内容的"形状"是什么？** 按形状选图形，**不许把流程/对比/层级
+退化成一排扁卡片 + 小箭头**（那是 AI deck 最常见的偷懒），更不许自造 div 拼装——
+组件全在 `components.css`，模板 `layouts-gallery.html` 每个都有可拷的实例页。
+
+| 内容的形状 | 图形 | 组件 |
+|---|---|---|
+| 顺序 / 流程 / 管线（3–5 节点） | **流程图** | `.flow`（横）/ `.flow--v`（纵），落点 `.fn--on` |
+| 步骤 / 阶段 / 生命周期（4–6 步） | **步骤器** | `.evo`，关键步 `.ev--on` |
+| 转化 / 筛选 / 漏损 | **漏斗** | `.funnel`，`--w` 按真实数值映射 |
+| 定位 / 取舍（两个维度） | **2×2 矩阵** | `.matrix2`，落点象限 `.mq--on` |
+| 进度 / 完成度（一个 %） | **仪表盘** | `.gauge`（半环，`--v:0–100`） |
+| 体系 / 架构 / 沉淀层级 | **分层图** | `.layers`，`--w` 上窄下宽，承重层 `.ly--on` |
+| 对比有明确赢家 | **两区对比** | `.zones`（落点 `.z--r`）/ `.contrast` |
+| 排名 / 量级（2–5 个值） | **条形图** | `.bars`，`.fx-grow-x` 长出来 |
+| 占比（一个比例） | **环形图** | `.donut` + `.fx-pop` |
+| 趋势（随时间变化） | **折线图** | `.linechart` 内联 SVG + `.fx-dash` |
+| 一个英雄数字 | **Data Hero** | `.data-hero` + `.fx-pop` |
+| 范围扩张 | **扩张条** | `.scope` |
+
+### ⚖️ 两类图分治（关键：什么图需要真数，什么图鼓励多用）
+
+上表分成性质完全不同的两类，纪律也不同：
+
+**① 数据图（需真实可溯源数字）** —— `bars` / `donut` / `funnel` / `gauge` / `linechart` / `data-hero` / `scope`
+里面的**数字必须真实**（条形百分比、漏斗各层数值、仪表 %、折线点位）。**没有真实数据就不画这一类**——
+不许编数字、不许造假图表（反幻觉红线，不松）。无数可画时退回文字版式或换成下面的概念图。
+
+**② 概念 / 结构图（不需要任何数字，鼓励放手用）** —— `flow` / `evo` / `matrix2` / `layers` / `zones` / `contrast` / 关系 SVG / 双钻
+它们画的是**逻辑、顺序、结构、取舍、关系**，不是数量。**没有数据≠只能上文字**——
+一段「录音→处理→入库」的流程、一个「里外两套」的结构、一组「过去 vs 现在」的对比，
+用概念图比堆文字**更有张力、更好懂、更经得起后排看**。**鼓励对没有数据的内容也画概念图**来增强表达力。
+
+> 一句话：**数据图守真实，概念图放开画。** 别再被「没数据→只能文字」误导——那条只管数据图。
+
+**变化纪律**：相邻两页不用同一种图形；全 deck「纯文字卡片行」页 ≤ 1/3——
+连排第三页还是卡片网格，就必须把其中一页改成上表里的图。
+**动效纪律**：每个图表都挂入场 fx（条→`.fx-grow-x`、数字/环/表→`.fx-pop`、
+SVG 线→`.fx-dash`、行列→父级 `.anim-stagger`）——图表不许静止地"躺"在页上。
+
+## When to reach for which（速查全表）
 
 | If the content is… | Use | Class / shape |
 |---|---|---|
+| an ordered pipeline (3–5 nodes) | flow diagram | `.flow` / `.flow--v` (key node `.fn--on`) |
+| conversion / filtering | funnel | `.funnel` + `.fu` (real `--w:%`, 落点 `.fu--on`) |
+| 2-axis positioning | 2×2 matrix | `.matrix2` (quadrants `.mq`, 落点 `.mq--on`) |
+| progress toward a goal | gauge dial | `.gauge` (set `--v:0–100`) |
+| system / hierarchy strata | layer stack | `.layers` + `.ly` (`--w` narrows upward) |
 | ranked values (2–5) | horizontal bars | `.bars` + `.bar` (fill `--v:%`, add `.fx-grow-x`) |
 | a single percentage / ratio | donut ring | `.donut` (set `--v:0–100`, add `.fx-pop`) |
 | a trend over time | line chart | `.linechart` inline `<svg>` (points from real data) |
@@ -43,6 +91,49 @@
 </svg>
 ```
 Map each real value to `y` (smaller `y` = higher). No real series → don't draw it.
+
+## Flow / Funnel / Matrix / Gauge / Layers（新图形，gallery 6b–6f 页可直接拷）
+
+```html
+<!-- 流程图：真箭头 + 唯一落点。竖排：.flow--v -->
+<div class="flow anim-stagger">
+  <div class="fn"><div class="fn__t">输入</div><div class="fn__d">原始素材</div></div>
+  <div class="fa"></div>
+  <div class="fn fn--on"><div class="fn__t">知识库</div><div class="fn__d">落点</div></div>
+  <div class="fa"></div>
+  <div class="fn"><div class="fn__t">产出</div></div>
+</div>
+
+<!-- 漏斗：左对齐(无 margin-inline:auto，左边与标题齐)。--w=value/max 绝对占比。
+     bar(.fu__bar) 里放 label+value；转化率 .fu__r 放 bar 外侧右边(对上一步:7200/10000=72%)。 -->
+<div class="funnel anim-stagger" style="max-width:60rem">
+  <div class="fu" style="--w:100%"><div class="fu__bar"><span class="fu__t">曝光</span><span class="fu__v">10,000</span></div></div>
+  <div class="fu" style="--w:72%"><div class="fu__bar"><span class="fu__t">点击</span><span class="fu__v">7,200</span></div><span class="fu__r">72%</span></div>
+  <div class="fu fu--on" style="--w:16%"><div class="fu__bar"><span class="fu__t">成交</span><span class="fu__v">1,600</span></div><span class="fu__r">42%</span></div>
+</div>
+
+<!-- 2×2 矩阵：markup 顺序 = 左上/右上/左下/右下；包一层 .slide__safe 防溢出 -->
+<div class="matrix2 fill" data-anim="rise">
+  <div class="mx-y">价值</div>
+  <div class="mq">…</div><div class="mq mq--on">…落点…</div>
+  <div class="mq">…</div><div class="mq">…</div>
+  <div class="mx-x">实现难度 →</div>
+</div>
+
+<!-- 仪表盘（半环，进度感）；占比感用 .donut -->
+<div class="gauge fx-pop" style="--v:68"><div class="gauge__val">68<span class="unit">%</span></div></div>
+<div class="gauge__cap">迁移进度 · 出处</div>
+
+<!-- 分层图：--w 上窄下宽；承重层 .ly--on -->
+<div class="layers anim-stagger" style="max-width:46rem;margin-inline:auto">
+  <div class="ly" style="--w:46%"><span class="ly__t">产出层</span></div>
+  <div class="ly ly--on" style="--w:68%"><span class="ly__t">知识库层</span><span class="ly__d">落点</span></div>
+  <div class="ly" style="--w:100%"><span class="ly__t">原始素材层</span></div>
+</div>
+```
+
+落点节点（`.fn--on/.fu--on/.mq--on/.ly--on`）内文字自动翻 `--accent-ink`，
+**别再手动设色**。数据型图（funnel/gauge/donut/bars/linechart）只画真实数据。
 
 ## Stepper (process line)
 

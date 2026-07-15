@@ -22,6 +22,8 @@
 
 **铁律：一份 deck 里所有截图用同一套框 + 同一档阴影。** 混用框/阴影是廉价感的来源。
 `.frame img` / `.frame__shot` 已设 `width:100%;height:auto`，图片自动贴合框。
+**图片比例 ≠ 版位比例**（用户给的高图/竖图/信息图）→ 别用裸 `.frame` 硬放，
+走 [image-handling.md](image-handling.md) 的 `.frame--cover`（裁切对主体）/ `.frame--contain`（留白配底色）决策树。
 
 ## 裁切原则
 
