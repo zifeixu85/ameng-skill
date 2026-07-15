@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="../assets/components.css">
 <link rel="stylesheet" id="theme-link" href="../assets/themes/industrial-paper.css">
 <link rel="stylesheet" href="../assets/toolbar.css">
+<link rel="stylesheet" href="../assets/presenter.css">
 </head>
 <body>
 <!-- data-grain = film grain · deck--chrome = 留白避让顶/脚栏 · T 键明暗切换 -->
@@ -30,7 +31,7 @@
     <!-- 1 · COVER：大标题走【全宽】，下方 [lead | terminal] 一行（工业纸感 签名）
          CJK 大标题用 zh-mega 时务必全宽：每个汉字 ~99px，塞进 grid-2 半栏（~520px）会反复折行。
          半栏放标题只适合 ≤5 汉字/行 的极短标题；正常长度一律全宽。-------------------- -->
-    <section class="slide center" data-section="开场 · OPEN" data-accent="ember">
+    <section class="slide center" data-layout="cover" data-section="开场 · OPEN" data-accent="ember">
       <div class="stack" style="--gap:var(--s-6)">
         <span class="eyebrow" data-anim="fade">DEPLOYMENT &amp; DEBUGGING IN PRACTICE</span>
         <h1 class="zh-mega" data-anim="rise">从 <span class="hl">Demo</span> → 到 <span class="hl">正式产品</span></h1>
@@ -56,14 +57,14 @@
     </section>
 
     <!-- 2 · BIG STATEMENT（说清楚 > 好看） -------------------------------- -->
-    <section class="slide center" data-section="开场 · OPEN" data-accent="ember">
+    <section class="slide center" data-layout="big-statement" data-section="开场 · OPEN" data-accent="ember">
       <h2 class="h1 measure" data-anim="rise">大多数 idea 死于<span class="hl">「没人真的要」</span>，<br>而不是没做出来。</h2>
       <p class="lead muted" style="margin-top:var(--s-6)" data-anim="fade">先验证需求，再写一行代码。</p>
       <div class="notes">核心论点。一句话、大字号、一个高亮短语。标题陈述结论。</div>
     </section>
 
     <!-- 3 · 编号编辑卡（非 icon-card-shadow） ------------------------------ -->
-    <section class="slide" data-section="调试 · DEBUG" data-accent="cinnabar">
+    <section class="slide" data-layout="numbered-cards" data-section="调试 · DEBUG" data-accent="cinnabar">
       <h3 class="h2" data-anim="rise" style="margin:0 0 var(--s-6)">三个工具，按这个顺序看最容易看懂区别</h3>
       <div class="grid-3 fill anim-stagger">
         <div class="card card--num"><span class="num">01</span><span class="eyebrow">SKILL · 接入工作流</span>
@@ -80,7 +81,7 @@
     </section>
 
     <!-- 4 · Swiss Data Hero（KPI 占屏宽 ~20%） ----------------------------- -->
-    <section class="slide center" data-section="调试 · DEBUG" data-accent="cinnabar">
+    <section class="slide center" data-layout="data-hero" data-section="调试 · DEBUG" data-accent="cinnabar">
       <div class="data-hero" data-anim="rise">
         <div class="data-hero__num fx-pop">42<span class="unit">%</span></div>
         <div class="data-hero__label">创业失败归因于「<span class="hl">没有市场需求</span>」，远高于任何技术原因。</div>
@@ -90,7 +91,7 @@
     </section>
 
     <!-- 5 · 截图框 + 文字（截图美化子系统） ------------------------------- -->
-    <section class="slide" data-section="设计 · DESIGN" data-accent="mint">
+    <section class="slide" data-layout="screenshot" data-section="设计 · DESIGN" data-accent="mint">
       <div class="grid-2 fill" style="--gap:var(--s-6);align-items:center">
         <div class="stack" style="--gap:var(--s-4)">
           <h3 class="h2" data-anim="rise">Pencil 帮你<span class="hl">跳出惯性</span>，<br>Claude Design 帮你<span class="hl">看到上限</span>。</h3>
@@ -105,7 +106,7 @@
     </section>
 
     <!-- 6 · 诚实条形图（只画真实数据） ------------------------------------ -->
-    <section class="slide center" data-section="设计 · DESIGN" data-accent="mint">
+    <section class="slide center" data-layout="bars" data-section="设计 · DESIGN" data-accent="mint">
       <span class="eyebrow" data-anim="fade">渠道意愿（示例 · 需替换为真实数据）</span>
       <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">哪个钩子转化最高</h3>
       <div class="bars anim-stagger" style="max-width:48rem">
@@ -117,33 +118,33 @@
     </section>
 
     <!-- 7 · 对比（右侧 accent 落点） -------------------------------------- -->
-    <section class="slide" data-section="部署 · DEPLOY" data-accent="cyan">
+    <section class="slide" data-layout="comparison" data-section="部署 · DEPLOY" data-accent="cyan">
       <h3 class="h2" data-anim="rise" style="margin:0 0 var(--s-6)">先验证 vs 先开发</h3>
       <div class="grid-2 fill" style="--gap:var(--s-5)">
         <div class="card card--soft"><span class="tag">先开发</span>
           <p class="h3 muted">花 3 个月做完美产品</p><p class="body">上线发现没人要 · 沉没成本高 · 难回头</p></div>
-        <div class="card card--accent"><span class="tag" style="background:oklch(100% 0 0 /.18);border-color:transparent;color:var(--accent-ink)">先验证 ✓</span>
+        <div class="card card--accent"><span class="tag">先验证 ✓</span>
           <p class="h3">花 7 天测真实意愿</p><p class="body">便宜 · 可快速转向 · 数据驱动决策</p></div>
       </div>
       <div class="notes">视觉分层不是热闹：右侧用 card--accent 做唯一落点，引导结论。</div>
     </section>
 
     <!-- 8 · 金句 ---------------------------------------------------------- -->
-    <section class="slide center" data-section="部署 · DEPLOY" data-accent="cyan">
+    <section class="slide center" data-layout="quote" data-section="部署 · DEPLOY" data-accent="cyan">
       <blockquote class="quote measure" data-anim="blur" style="max-width:26ch">“Make something people want.”</blockquote>
       <p class="quote__by" data-anim="fade">— Paul Graham, Y Combinator</p>
       <div class="notes">金句页：大字、留白、一个署名。</div>
     </section>
 
     <!-- 9 · 分节页（整页 accent，演示分段色域切换） ----------------------- -->
-    <section class="slide center" data-section="收束 · CLOSE" data-accent="ember" style="background:var(--accent)">
-      <span class="eyebrow" data-anim="fade" style="color:var(--accent-ink);opacity:.75">PART 02</span>
+    <section class="slide center" data-layout="section-divider" data-section="收束 · CLOSE" data-accent="ember" style="background:var(--accent)">
+      <span class="eyebrow" data-anim="fade" style="color:var(--accent-ink);opacity:.92">PART 02</span>
       <h2 class="zh-mega" data-anim="rise" style="color:var(--accent-ink);font-size:clamp(3rem,1rem+6cqw,6.5rem)">现在，开始验证</h2>
       <div class="notes">分节页：整页强调色，作为节奏呼吸点。chrome 的分段标签会跟着切到「收束」。</div>
     </section>
 
     <!-- 10 · 收尾 CTA + terminal ----------------------------------------- -->
-    <section class="slide center" data-section="收束 · CLOSE" data-accent="ember">
+    <section class="slide center" data-layout="close" data-section="收束 · CLOSE" data-accent="ember">
       <div class="grid-2" style="--gap:var(--s-8);align-items:center">
         <div class="stack" style="--gap:var(--s-5)">
           <h2 class="h1" data-anim="rise">现在就<br>做出你的 <span class="hl">第一版</span>。</h2>

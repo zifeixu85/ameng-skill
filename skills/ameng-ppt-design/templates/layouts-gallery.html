@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="../assets/components.css">
 <link rel="stylesheet" id="theme-link" href="../assets/themes/industrial-paper.css">
 <link rel="stylesheet" href="../assets/toolbar.css">
+<link rel="stylesheet" href="../assets/presenter.css">
 </head>
 <body>
 <!-- 版式画廊：每一页 = 一种命名版式，左下角 .slide__foot 标注版式名，
@@ -21,7 +22,7 @@
     <div class="chrome-top">
       <span class="chrome-top__brand">版式画廊 · <b>GALLERY</b></span>
       <span class="chrome-top__meta"><span class="chrome-top__sec">目录 · CATALOG</span>
-        <span class="chrome-top__page">01 / 11</span></span>
+        <span class="chrome-top__page">01 / 21</span></span>
     </div>
     <div class="chrome-foot">
       <span><b>LAYOUTS GALLERY</b> · 每页一种版式</span>
@@ -29,7 +30,7 @@
     </div>
 
     <!-- 1 · COVER WITH TERMINAL ------------------------------------------------ -->
-    <section class="slide center" data-section="目录 · CATALOG" data-accent="ember">
+    <section class="slide center" data-layout="cover" data-section="目录 · CATALOG" data-accent="ember">
       <div class="grid-2" style="--gap:var(--s-8);align-items:center">
         <div class="stack" style="--gap:var(--s-5)">
           <span class="eyebrow" data-anim="fade">A VISUAL CATALOG OF LAYOUTS</span>
@@ -39,7 +40,7 @@
         </div>
         <div class="terminal" data-anim="rise">
           <div class="cmd">open layouts-gallery.html</div>
-          <div class="ok">11 layouts loaded</div>
+          <div class="ok">21 layouts loaded</div>
           <div class="comment"># 每页左下角是版式名</div>
         </div>
       </div>
@@ -48,7 +49,7 @@
     </section>
 
     <!-- 2 · BIG STATEMENT ----------------------------------------------------- -->
-    <section class="slide center" data-section="陈述 · STATE" data-accent="ember">
+    <section class="slide center" data-layout="big-statement" data-section="陈述 · STATE" data-accent="ember">
       <h2 class="h1 measure" data-anim="rise">好版式不是装饰，<br>是把<span class="hl">注意力</span>排好队。</h2>
       <p class="lead muted" style="margin-top:var(--s-6)" data-anim="fade">标题写结论，正文写理由。</p>
       <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · BIG STATEMENT</div>
@@ -56,15 +57,14 @@
     </section>
 
     <!-- 3 · NUMBERED CARDS (3× card--num) ------------------------------------- -->
-    <section class="slide" data-section="编号卡 · CARDS" data-accent="cinnabar">
-      <span class="eyebrow" data-anim="fade">THREE, IN ORDER</span>
+    <section class="slide" data-layout="numbered-cards" data-section="编号卡 · CARDS" data-accent="cinnabar">
       <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">三张编号编辑卡（非 icon-card-shadow）</h3>
       <div class="grid-3 fill anim-stagger">
         <div class="card card--num"><span class="num">01</span><span class="eyebrow">差异化填充</span>
           <p class="h3">编号</p><p class="body">mono 编号挂右上角，衬线标题压住，正文交代细节。</p>
           <div class="card__tags"><span>规则</span><span>顺序</span></div></div>
         <div class="card card--num"><span class="num">02</span><span class="eyebrow">统一描边</span>
-          <p class="h3">层级</p><p class="body">三卡共用一套描边与圆角——是系统，不是模板网格。</p>
+          <p class="h3">层级</p><p class="body">三卡共用一套描边与圆角：是系统，不是模板网格。</p>
           <div class="card__tags"><span>系统</span><span>克制</span></div></div>
         <div class="card card--num"><span class="num">03</span><span class="eyebrow">底部标签</span>
           <p class="h3">收口</p><p class="body">mono 标签沉到底，给每张卡一个一致的落脚线。</p>
@@ -75,11 +75,10 @@
     </section>
 
     <!-- 4 · DATA HERO --------------------------------------------------------- -->
-    <section class="slide center" data-section="数据 · DATA" data-accent="cinnabar">
-      <span class="eyebrow" data-anim="fade">ONE NUMBER, AS THE SUBJECT</span>
+    <section class="slide center" data-layout="data-hero" data-section="数据 · DATA" data-accent="cinnabar">
       <div class="data-hero" data-anim="rise" style="margin-top:var(--s-4)">
         <div class="data-hero__num">3<span class="unit">×</span></div>
-        <div class="data-hero__label">把一个真实大数字当视觉主语——比一句形容词
+        <div class="data-hero__label">把一个真实大数字当视觉主语，比一句形容词
           「<span class="hl">大幅提升</span>」有力得多。</div>
         <div class="data-hero__src">来源：替换为你的真实出处 · 无真实数据就别用这一版式</div>
       </div>
@@ -88,10 +87,9 @@
     </section>
 
     <!-- 5 · SCREENSHOT (frame--browser placeholder) --------------------------- -->
-    <section class="slide" data-section="截图 · SHOT" data-accent="mint">
+    <section class="slide" data-layout="screenshot" data-section="截图 · SHOT" data-accent="mint">
       <div class="grid-2 fill" style="--gap:var(--s-6);align-items:center">
         <div class="stack" style="--gap:var(--s-4)">
-          <span class="eyebrow" data-anim="fade">SCREENSHOT, BEAUTIFIED</span>
           <h3 class="h2" data-anim="rise">截图进统一浏览器框，<br>比裸贴<span class="hl">专业一个量级</span>。</h3>
           <p class="body">同一套框 + 同一档阴影。没图就用诚实占位，绝不画假 UI。</p>
         </div>
@@ -105,8 +103,7 @@
     </section>
 
     <!-- 6 · HONEST BARS ------------------------------------------------------- -->
-    <section class="slide center" data-section="图表 · BARS" data-accent="mint">
-      <span class="eyebrow" data-anim="fade">REAL NUMBERS ONLY</span>
+    <section class="slide center" data-layout="bars" data-section="图表 · BARS" data-accent="mint">
       <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">诚实条形图（只画真实数据）</h3>
       <div class="bars anim-stagger" style="max-width:48rem">
         <div class="bar"><span class="body">主系列</span><div class="bar__track"><div class="bar__fill" style="--v:72%"></div></div><span class="bar__val">72%</span></div>
@@ -117,14 +114,87 @@
       <div class="notes">条形图版式：纯 CSS，--v 是真实百分比。强调=accent，副系列=accent-2，参照=ink-3。绝不编数字。</div>
     </section>
 
+    <!-- 6b · FLOW (流程图：真箭头，别用裸卡片行) ------------------------------- -->
+    <section class="slide center" data-layout="flow" data-section="流程 · FLOW" data-accent="ember">
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">流程页：让箭头和落点替你讲顺序</h3>
+      <div class="flow anim-stagger">
+        <div class="fn"><div class="fn__t">输入</div><div class="fn__d">原始素材</div></div>
+        <div class="fa"></div>
+        <div class="fn"><div class="fn__t">处理</div><div class="fn__d">清洗 / 结构化</div></div>
+        <div class="fa"></div>
+        <div class="fn fn--on"><div class="fn__t">知识库</div><div class="fn__d">长期上下文 · 唯一落点</div></div>
+        <div class="fa"></div>
+        <div class="fn"><div class="fn__t">产出</div><div class="fn__d">内容 / 决策</div></div>
+      </div>
+      <p class="body" data-anim="fade" style="margin-top:var(--s-6)">3–5 个节点用 .flow；更长的链路换 .evo 步骤器。竖排加 .flow--v。</p>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · FLOW 流程图</div>
+      <div class="notes">流程版式：.flow 真箭头 + .fn--on 落点（自动反白）。严禁自造 div+小箭头的扁卡片行。</div>
+    </section>
+
+    <!-- 6c · FUNNEL (转化漏斗：宽度=真实数据) ---------------------------------- -->
+    <section class="slide center" data-layout="funnel" data-section="漏斗 · FUNNEL" data-accent="sand">
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">漏斗页：宽度收窄就是结论</h3>
+      <!-- 左对齐（无 margin-inline:auto），左边与标题齐。bar 里 label+value；转化率 fu__r 放 bar 外侧右边 -->
+      <div class="funnel anim-stagger" style="max-width:60rem;width:100%">
+        <div class="fu" style="--w:100%"><div class="fu__bar"><span class="fu__t">曝光（示例·需替换）</span><span class="fu__v">10,000</span></div></div>
+        <div class="fu" style="--w:72%"><div class="fu__bar"><span class="fu__t">点击</span><span class="fu__v">7,200</span></div><span class="fu__r">72%</span></div>
+        <div class="fu" style="--w:38%"><div class="fu__bar"><span class="fu__t">留资</span><span class="fu__v">3,800</span></div><span class="fu__r">53%</span></div>
+        <div class="fu fu--on" style="--w:16%"><div class="fu__bar"><span class="fu__t">成交</span><span class="fu__v">1,600</span></div><span class="fu__r">42%</span></div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · FUNNEL 漏斗</div>
+      <div class="notes">漏斗版式：--w 是真实比例（按数值线性映射），最窄一层 .fu--on 落点。没有真实转化数据就不用漏斗。</div>
+    </section>
+
+    <!-- 6d · MATRIX 2×2 (四象限定位) ------------------------------------------ -->
+    <section class="slide" data-layout="matrix" data-section="矩阵 · MATRIX" data-accent="olive">
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-5)">四象限：位置本身就是论点</h3>
+      <div class="slide__safe">
+        <div class="matrix2 fill" data-anim="rise">
+          <div class="mx-y">价值 ↑</div>
+          <div class="mq"><div class="mq__t">高价值 · 难做</div><div class="mq__d">值得长期投入</div></div>
+          <div class="mq mq--on"><div class="mq__t">高价值 · 易做</div><div class="mq__d">先做这个 · 落点</div></div>
+          <div class="mq"><div class="mq__t">低价值 · 难做</div><div class="mq__d">放弃</div></div>
+          <div class="mq"><div class="mq__t">低价值 · 易做</div><div class="mq__d">顺手做</div></div>
+          <div class="mx-x">实现难度 →</div>
+        </div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · MATRIX 2×2</div>
+      <div class="notes">矩阵版式：markup 顺序=左上/右上/左下/右下，.mq--on 标落点象限。轴标签写量纲，别写虚词。</div>
+    </section>
+
+    <!-- 6e · GAUGE + DONUT (进度仪表 / 单占比) --------------------------------- -->
+    <section class="slide center" data-layout="gauge" data-section="仪表 · GAUGE" data-accent="cinnabar">
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">进度/占比：一个数也要成图</h3>
+      <div class="cluster" style="--gap:var(--s-9);justify-content:center">
+        <div data-anim="rise"><div class="gauge fx-pop" style="--v:68"><div class="gauge__val">68<span class="unit">%</span></div></div>
+          <div class="gauge__cap">进度 · 示例需替换</div></div>
+        <div class="donut-row" data-anim="rise"><div class="donut fx-pop" style="--v:42"><div class="donut__val">42<span class="unit">%</span></div></div>
+          <div><span class="donut__cap">占比 · 示例需替换</span><p class="body" style="max-width:18ch">半环=进度感，整环=占比感，一页只用一个。</p></div></div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · GAUGE 仪表 / DONUT 环</div>
+      <div class="notes">仪表版式：.gauge 半环（--v 0–100）配 .gauge__val；占比用 .donut。都必须真实数据+出处。</div>
+    </section>
+
+    <!-- 6f · LAYERS (分层/体系结构) -------------------------------------------- -->
+    <section class="slide center" data-layout="layers" data-section="分层 · LAYERS" data-accent="cyan">
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">体系/层级：上层抽象，下层支撑</h3>
+      <div class="layers anim-stagger" style="max-width:46rem;width:100%;margin-inline:auto">
+        <div class="ly" style="--w:46%"><span class="ly__t">产出层</span><span class="ly__d">内容 / 决策</span></div>
+        <div class="ly ly--on" style="--w:68%"><span class="ly__t">知识库层</span><span class="ly__d">长期上下文 · 落点</span></div>
+        <div class="ly" style="--w:86%"><span class="ly__t">工具层</span><span class="ly__d">采集 / 清洗 / 检索</span></div>
+        <div class="ly" style="--w:100%"><span class="ly__t">原始素材层</span><span class="ly__d">录音 / 笔记 / 截图</span></div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · LAYERS 分层</div>
+      <div class="notes">分层版式：--w 上窄下宽成金字塔感，承重层 .ly--on。讲「体系/架构/沉淀」用它，别用 bullet。</div>
+    </section>
+
     <!-- 7 · COMPARISON (right accent 落点) ------------------------------------ -->
-    <section class="slide" data-section="对比 · VS" data-accent="cyan">
-      <span class="eyebrow" data-anim="fade">A VERSUS B</span>
+    <section class="slide" data-layout="comparison" data-section="对比 · VS" data-accent="cyan">
       <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">对比页：右侧是唯一落点</h3>
       <div class="grid-2 fill" style="--gap:var(--s-5)">
         <div class="card card--soft"><span class="tag">方案 A</span>
           <p class="h3 muted">看起来都行，但没有重心</p><p class="body">两边等权 · 读者不知道你推荐谁</p></div>
-        <div class="card card--accent"><span class="tag" style="background:oklch(100% 0 0 /.18);border-color:transparent;color:var(--accent-ink)">方案 B ✓</span>
+        <div class="card card--accent"><span class="tag">方案 B ✓</span>
           <p class="h3">用 card--accent 指明结论</p><p class="body">唯一的实色块 · 视线终点 · 推荐项</p></div>
       </div>
       <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · COMPARISON</div>
@@ -132,7 +202,7 @@
     </section>
 
     <!-- 8 · QUOTE ------------------------------------------------------------- -->
-    <section class="slide center" data-section="金句 · QUOTE" data-accent="cyan">
+    <section class="slide center" data-layout="quote" data-section="金句 · QUOTE" data-accent="cyan">
       <blockquote class="quote measure" data-anim="blur" style="max-width:24ch">“Less, but better.”</blockquote>
       <p class="quote__by" data-anim="fade">— Dieter Rams</p>
       <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · QUOTE</div>
@@ -140,34 +210,112 @@
     </section>
 
     <!-- 9 · SECTION DIVIDER (full accent bg) ---------------------------------- -->
-    <section class="slide center" data-section="分节 · PART" data-accent="ember"
-             style="background:var(--accent)">
-      <span class="eyebrow" data-anim="fade" style="color:var(--accent-ink);opacity:.75">PART 02</span>
+    <section class="slide center slide--on-accent" data-layout="section-divider" data-section="分节 · PART" data-accent="ember"
+             style="background:var(--accent-block)">
+      <span class="eyebrow" data-anim="fade" style="background:transparent;color:var(--accent-block-ink);opacity:.85">PART 02</span>
       <h2 class="zh-mega" data-anim="rise"
-          style="color:var(--accent-ink);font-size:clamp(3rem,1rem+6cqw,6.5rem)">进入下一节</h2>
-      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem);color:var(--accent-ink);opacity:.7">版式 · SECTION DIVIDER</div>
+          style="color:var(--accent-block-ink);font-size:clamp(3rem,1rem+6cqw,6.5rem)">进入下一节</h2>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem);color:var(--accent-block-ink);opacity:.7">版式 · SECTION DIVIDER</div>
       <div class="notes">分节版式：整页强调色作呼吸点。文字翻成 accent-ink。chrome 的分段标签会跟着切。</div>
     </section>
 
     <!-- 10 · BENTO ------------------------------------------------------------ -->
-    <section class="slide" data-section="便当 · BENTO" data-accent="olive">
-      <span class="eyebrow" data-anim="fade">DELIBERATE ASYMMETRY</span>
+    <section class="slide" data-layout="bento" data-section="便当 · BENTO" data-accent="olive">
       <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-5)">便当版式：非均匀但守网格</h3>
       <div class="bento fill anim-stagger" style="grid-auto-rows:minmax(0,1fr)">
         <div class="card col-4 row-2" style="justify-content:space-between">
-          <span class="eyebrow">主格 · col-4 row-2</span>
+          <span class="tag">主格 · col-4 row-2</span>
           <div class="stat__num" style="font-size:clamp(2.6rem,7cqw,5rem)">大块<span class="unit">放重点</span></div>
           <p class="body">最大的格子承载最重的信息，其余按 6 列底栅切分。</p></div>
         <div class="card col-2"><span class="eyebrow">col-2</span><p class="h3">附信息</p></div>
         <div class="card col-2"><span class="eyebrow">col-2</span><p class="h3">附信息</p></div>
-        <div class="card col-2 card--accent"><span class="eyebrow" style="color:var(--accent-ink);opacity:.85">col-2 · 落点</span><p class="h3">视线终点</p></div>
+        <div class="card col-2 card--accent"><span class="eyebrow" style="opacity:.85">col-2 · 落点</span><p class="h3">视线终点</p></div>
       </div>
       <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · BENTO</div>
       <div class="notes">便当版式：col-4/row-2 主格 + 三个 col-2，全部吸附 6 列底栅。最后一格用 card--accent 收住视线。</div>
     </section>
 
+    <!-- 10b · ASYM SPLIT (非对称双栏 + 1px hairline) ---------------------------- -->
+    <section class="slide center" data-layout="asym-split" data-section="陈述 · SPLIT" data-accent="sand">
+      <div class="asym">
+        <div class="asym__rail">
+          <span class="asym__idx">03 — 论点</span>
+          <span class="eyebrow">非对称双栏</span>
+          <p class="body muted">窄栏放标号与小标签，宽栏放结论；一条 1px 竖线把两边锁进同一个版心——是瑞士纪律，不是装饰。</p>
+        </div>
+        <div class="asym__main">
+          <h2 class="h1 measure">版式不是把内容<br>填进格子，<span class="hl">是给注意力定向</span>。</h2>
+        </div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · ASYM SPLIT 非对称双栏</div>
+      <div class="notes">非对称双栏：5:7 偏置 + 1px hairline。窄栏=标号/eyebrow/小注，宽栏=大结论。区别于均分 grid-2——偏置本身制造张力。换边用 .asym--flip。</div>
+    </section>
+
+    <!-- 10c · TWO-COL (中性双栏正文，无赢家) ------------------------------------ -->
+    <section class="slide" data-layout="two-col" data-section="并列 · TWO-COL" data-accent="olive">
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">中性双栏：两个并列的面，不分高下</h3>
+      <div class="two-col two-col--rule fill">
+        <div class="stack" style="--gap:var(--s-3)">
+          <span class="eyebrow">其一</span>
+          <p class="h3">把内容讲清楚</p>
+          <p class="body">两栏等权、各表一面。和右侧 accent 落点的对比页不同——这里没有推荐项，只是把一件事的两个侧面并排陈述。</p>
+        </div>
+        <div class="stack" style="--gap:var(--s-3)">
+          <span class="eyebrow">其二</span>
+          <p class="h3">把版式留出呼吸</p>
+          <p class="body">一条 1px 细线分隔，比给两张卡片描边更克制；中性双栏适合「背景 / 现状」「定义 / 边界」这类并列陈述。</p>
+        </div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · TWO-COL 中性双栏</div>
+      <div class="notes">中性双栏正文：两栏等权，无 accent 落点（那是 comparison/zones 的活）。加 .two-col--rule 给 1px 竖线。用于并列陈述，不是取舍。</div>
+    </section>
+
+    <!-- 10d · TIMELINE (横向年份时间轴 + 连线) ---------------------------------- -->
+    <section class="slide center" data-layout="timeline" data-section="演进 · TIMELINE" data-accent="cyan">
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-7)">时间轴：让年份和连线替你讲演进</h3>
+      <div class="timeline">
+        <i class="timeline__axis"></i>
+        <div class="tl"><span class="tl__date">2023</span><div class="tl__t">起步</div><div class="tl__d">第一版上线，跑通核心链路。</div></div>
+        <div class="tl"><span class="tl__date">2024 · Q2</span><div class="tl__t">打磨</div><div class="tl__d">稳定、可控、可批量。</div></div>
+        <div class="tl tl--on"><span class="tl__date">2025</span><div class="tl__t">规模化</div><div class="tl__d">成为长期上下文 · 当前落点。</div></div>
+        <div class="tl"><span class="tl__date">2026</span><div class="tl__t">下一步</div><div class="tl__d">把判断也沉淀进来。</div></div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · TIMELINE 时间轴</div>
+      <div class="notes">时间轴：带真实年份/里程碑的横向轴，区别于 .evo 抽象步骤器。axis 是首个子元素（静态 hairline），节点 .tl 自动错峰入场，关键节点 .tl--on。演进/路线图/复盘用它。</div>
+    </section>
+
+    <!-- 10e · IMAGE HERO (满版图 + 安全区叠字) ---------------------------------- -->
+    <section class="slide" data-layout="image-hero" data-section="图像 · HERO" data-accent="ember">
+      <!-- 画廊目录页底部留出 foot 标签位；真实 deck 的 image-hero 不带 foot，可去掉 margin 满铺 -->
+      <div class="imghero fill" style="margin-bottom:1.8rem">
+        <!-- 真实图就 <img src="images/hero.jpg" alt="...">；没图用诚实占位 -->
+        <div class="frame__placeholder">images/hero.jpg · 2400px 宽 · 满版裁切</div>
+        <div class="imghero__scrim"></div>
+        <div class="imghero__cap">
+          <span class="eyebrow">满版图 HERO</span>
+          <p class="imghero__t">让一张图占满版面，<br>关键文字压在安全区里。</p>
+        </div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · IMAGE HERO 满版图</div>
+      <div class="notes">满版图 Hero：图铺满内容区，.imghero__scrim 渐变保证叠字对比（--scrim/--on-media 中性色，禁蓝安全）。关键文字永远落在安全区下方。用 .obj-* 对准主体裁切。无图用诚实占位，不画假图。</div>
+    </section>
+
+    <!-- 10f · IMAGE GRID (定高多图网格) ----------------------------------------- -->
+    <section class="slide" data-layout="image-grid" data-section="图组 · GRID" data-accent="mint">
+      <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">定高图网格：多图也守同一条基线</h3>
+      <div class="imggrid" style="--cols:3;--cell-h:16cqw">
+        <div class="cell cell--wide"><div class="frame__placeholder">images/01.jpg · 主图占两列</div></div>
+        <div class="cell"><div class="frame__placeholder">images/02.jpg</div></div>
+        <div class="cell"><div class="frame__placeholder">images/03.jpg</div></div>
+        <div class="cell"><div class="frame__placeholder">images/04.jpg</div></div>
+        <div class="cell"><div class="frame__placeholder">images/05.jpg</div></div>
+      </div>
+      <div class="slide__foot" style="bottom:calc(var(--pad) + 0.9rem)">版式 · IMAGE GRID 定高图网格</div>
+      <div class="notes">定高图网格：cell 高度锁 cqw（不用 aspect-ratio），object-fit cover 裁切，多图对齐同一基线。.cell--wide 跨两列做主图。没图用 .frame__placeholder，不画假图。</div>
+    </section>
+
     <!-- 11 · CLOSE / CTA ------------------------------------------------------ -->
-    <section class="slide center" data-section="收束 · CLOSE" data-accent="ember">
+    <section class="slide center" data-layout="close" data-section="收束 · CLOSE" data-accent="ember">
       <div class="grid-2" style="--gap:var(--s-8);align-items:center">
         <div class="stack" style="--gap:var(--s-5)">
           <span class="eyebrow" data-anim="fade">YOUR TURN</span>

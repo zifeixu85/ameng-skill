@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="../assets/components.css">
 <link rel="stylesheet" id="theme-link" href="../assets/themes/industrial-paper.css">
 <link rel="stylesheet" href="../assets/toolbar.css">
+<link rel="stylesheet" href="../assets/presenter.css">
 </head>
 <body>
 <!-- Swiss International：纯白 + 无衬线 + 单一信号红 + 强网格 + 大留白。
@@ -30,7 +31,7 @@
     </div>
 
     <!-- 1 · COVER：bg-dots 满铺背景 + 内容压在其上 ----------------------------- -->
-    <section class="slide center" data-section="序 · INTRO">
+    <section class="slide center" data-layout="cover" data-section="序 · INTRO">
       <!-- 全铺装饰背景：绝对定位 inset:0，内容在它之上 -->
       <div class="bg-dots bg-fade" style="position:absolute;inset:0;z-index:0"></div>
       <div style="position:relative;z-index:1" class="stack" data-anim="fade">
@@ -45,7 +46,7 @@
     </section>
 
     <!-- 2 · 极致字号对比（zh-mega + 极小正文） --------------------------------- -->
-    <section class="slide center" data-section="原则 · PRINCIPLE">
+    <section class="slide center" data-layout="big-statement" data-section="原则 · PRINCIPLE">
       <h2 class="zh-mega" data-anim="rise" style="max-width:16ch">少，<br>但更<span class="hl--full">好</span>。</h2>
       <div class="grid-2" style="--gap:var(--s-8);margin-top:var(--s-6);max-width:64rem">
         <p class="body" data-anim="fade">Weniger, aber besser —— Dieter Rams 的第十条原则。在数据汇报里，它意味着：
@@ -57,7 +58,7 @@
     </section>
 
     <!-- 3 · DATA HERO + 折线趋势（数字 + 图表，瑞士 KPI） ---------------------- -->
-    <section class="slide" data-section="数据 · DATA">
+    <section class="slide" data-layout="data-hero" data-section="数据 · DATA">
       <span class="eyebrow" data-anim="fade">RENDER BUDGET · 7-DAY TREND</span>
       <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">单帧渲染中位数，一周降了 <span class="hl">41%</span></h3>
       <div class="grid-2 fill" style="--gap:var(--s-8);align-items:center">
@@ -79,8 +80,7 @@
     </section>
 
     <!-- 4 · 12 栏网格感（grid-3 + bento），hairline 分隔 ----------------------- -->
-    <section class="slide" data-section="网格 · GRID">
-      <span class="eyebrow" data-anim="fade">THREE LAYERS OF THE SYSTEM</span>
+    <section class="slide" data-layout="numbered-cards" data-section="网格 · GRID">
       <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-5)">网格把页面切成可计算的列</h3>
       <hr class="rule" style="background:var(--line-strong);margin:0 0 var(--s-5)">
       <div class="grid-3 fill anim-stagger" style="--gap:var(--s-6)">
@@ -104,8 +104,7 @@
     </section>
 
     <!-- 5 · BENTO：非均匀网格，仍守网格线 ------------------------------------- -->
-    <section class="slide" data-section="网格 · GRID">
-      <span class="eyebrow" data-anim="fade">BENTO · DELIBERATE ASYMMETRY</span>
+    <section class="slide" data-layout="bento" data-section="网格 · GRID">
       <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-5)">不均匀，但不随意</h3>
       <div class="bento fill anim-stagger" style="grid-auto-rows:minmax(0,1fr)">
         <div class="card col-4 row-2" style="justify-content:space-between">
@@ -121,8 +120,7 @@
     </section>
 
     <!-- 6 · COMPARISON（左旧右新，唯一 accent 落点） -------------------------- -->
-    <section class="slide" data-section="对比 · COMPARE">
-      <span class="eyebrow" data-anim="fade">BEFORE / AFTER</span>
+    <section class="slide" data-layout="comparison" data-section="对比 · COMPARE">
       <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-5)">从「凭手感」到「凭网格」</h3>
       <div class="grid-2 fill" style="--gap:0;border:1px solid var(--line-strong)">
         <div class="card card--soft" style="border:0;border-right:1px solid var(--line-strong)">
@@ -132,7 +130,7 @@
           <p class="body">37px、22px、随手敲的对齐 · 改版即返工 · 没人说得清规则</p>
         </div>
         <div class="card" style="border:0">
-          <span class="tag" style="color:var(--accent)">AFTER ✓</span>
+          <span class="tag" style="background:var(--accent);border-color:transparent;color:var(--accent-ink)">AFTER ✓</span>
           <p class="h3">每个间距都来自字阶</p>
           <hr class="rule" style="background:var(--accent)">
           <p class="body">8px 节律 · 一处改全场跟 · 新人当天就能对齐</p>
@@ -143,7 +141,7 @@
 
     <!-- 7 · TERMINAL（落地证据：已上线） ·· ⚠ terminal=技术主题专属（英文 CLI）。
          非技术 deck 把这页换成「指标卡 / 时间线 / 客户证言 / 配图」，别甩英文终端。 -->
-    <section class="slide center" data-section="落地 · SHIP">
+    <section class="slide center" data-layout="terminal" data-section="落地 · SHIP">
       <span class="eyebrow" data-anim="fade">SHIPPED, NOT A SPEC</span>
       <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-5)">规则只有进了构建才算数</h3>
       <div class="terminal" data-anim="rise" style="max-width:46rem">
@@ -157,7 +155,7 @@
     </section>
 
     <!-- 8 · CLOSE（巨标题收束 + 单 accent 句读） ------------------------------ -->
-    <section class="slide center" data-section="收束 · CLOSE">
+    <section class="slide center" data-layout="close" data-section="收束 · CLOSE">
       <h2 class="zh-mega" data-anim="rise" style="max-width:14ch">先定<span class="hl--full">网格</span>，<br>再谈风格。</h2>
       <hr class="rule" style="max-width:30rem;background:var(--line-strong);height:2px;margin-top:var(--s-6)">
       <p class="lead" data-anim="fade" style="margin-top:var(--s-5)">

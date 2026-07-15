@@ -1,0 +1,184 @@
+/* =========================================================================
+   Presenter View — single-window console overlay (runtime.js, key P)
+   -------------------------------------------------------------------------
+   Screen-only: runtime injects it ONLY when !isExportLike, so it never reaches
+   render.sh / @media print / ?audit deliverables. Belt-and-suspenders print
+   guard below in case a stray copy is printed.
+
+   Self-contained container-query context (container-type: inline-size), so all
+   inner sizing uses cqw — no vw/vh — and scales with the presenter screen while
+   the deck's own 1280 stage anchoring stays untouched inside the thumbnails.
+   The script panel height is a JS-driven px var (--pv-read-h) the user drags.
+
+   Colors are stable-dark literal oklch (same precedent as .ppt-notes-overlay):
+   the speaker console stays dark regardless of the slide theme (a light deck
+   must not blind the presenter); the real theme shows through in the thumbnails.
+   Typography uses the deck's self-hosted font tokens (never a banned stack).
+   ========================================================================= */
+
+.ppt-presenter {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: none;
+  container-type: inline-size;
+  grid-template-rows: minmax(0, 1fr) auto minmax(0, var(--pv-read-h, 30%)) auto;
+  gap: clamp(0.5rem, 1.4cqw, 1.1rem);
+  padding: clamp(1rem, 2.6cqw, 2.4rem);
+  background: oklch(14% 0.012 260);
+  color: oklch(95% 0 0);
+  font-family: var(--font-body, system-ui);
+  -webkit-font-smoothing: antialiased;
+  --pv-script-scale: 1;
+}
+.ppt-presenter.is-open { display: grid; }
+
+/* ---- top: big frame + side column (small thumb + timer/clock/page) ------
+   Which page each frame shows is the JS view layout (V / toolbar chip):
+   cur-big · next-big · cur-only · next-only. -only modes widen the big slot. */
+.ppt-pv__stage {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: clamp(0.75rem, 2cqw, 1.75rem);
+  min-height: 0;
+}
+.ppt-presenter[data-pv-layout="cur-only"] .ppt-pv__stage,
+.ppt-presenter[data-pv-layout="next-only"] .ppt-pv__stage { grid-template-columns: 3.5fr 1fr; }
+.ppt-pv__current,
+.ppt-pv__next {
+  position: relative; min-height: 0; min-width: 0;
+  display: flex; align-items: center; justify-content: center;   /* center the self-sized frame */
+}
+.ppt-pv__tag {
+  position: absolute; top: 0.6cqw; left: 0.7cqw; z-index: 2;
+  font-family: var(--font-mono, monospace);
+  font-size: clamp(0.6rem, 1.05cqw, 0.78rem);
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: oklch(72% 0 0);
+  padding: 0.15em 0.5em; border-radius: 4px;
+  background: oklch(0% 0 0 / 0.35);
+}
+/* fitThumbBox() sizes the frame to exactly the scaled deck (bw*s × bh*s), so
+   frame and content are always welded — no letterbox filler, no tear if a
+   measurement is stale. contain:paint hard-clips ANY descendant (incl. fixed). */
+.ppt-pv__frame {
+  position: relative; flex: none; overflow: hidden; contain: paint;
+  border-radius: clamp(4px, 0.9cqw, 12px);
+  background: oklch(20% 0.01 260);
+  box-shadow: 0 6px 30px oklch(0% 0 0 / 0.45);
+}
+
+.ppt-pv__side {
+  display: grid; grid-template-rows: 1fr auto;
+  gap: clamp(0.6rem, 1.6cqw, 1.25rem); min-height: 0;
+}
+/* display:none, NOT visibility — the cloned slide inside carries .is-active
+   whose explicit visibility:visible would pierce an inherited hidden. */
+.ppt-pv__next.is-hidden { display: none; }
+.ppt-pv__meta {
+  display: flex; flex-direction: column; justify-content: center;
+  gap: clamp(0.2rem, 0.6cqw, 0.5rem);
+}
+.ppt-pv__timer {
+  font-family: var(--font-mono, monospace);
+  font-size: clamp(1.8rem, 5cqw, 3.4rem);
+  font-weight: var(--w-semi, 600); line-height: 1;
+  color: oklch(90% 0 0); font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+.ppt-pv__timer.is-running { color: oklch(78% 0.16 145); }   /* running: calm green */
+.ppt-pv__timer.is-over { color: oklch(64% 0.2 25); }        /* count-down overtime: red */
+.ppt-pv__tcontrol {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: clamp(0.25rem, 0.6cqw, 0.5rem);
+}
+.ppt-pv__target { display: inline-flex; align-items: center; gap: clamp(0.2rem, 0.5cqw, 0.4rem); }
+.ppt-pv__target.is-hidden { display: none; }
+.ppt-pv__tinput {
+  font-family: var(--font-mono, monospace); font-variant-numeric: tabular-nums;
+  font-size: clamp(0.8rem, 1.5cqw, 1rem); color: oklch(88% 0 0);
+  width: 4.4em; text-align: center; cursor: text;
+  background: oklch(100% 0 0 / 0.06); color: oklch(88% 0 0);
+  border: 1px solid oklch(72% 0 0 / 0.24); border-radius: clamp(4px, 0.6cqw, 7px);
+  padding: clamp(0.12rem, 0.35cqw, 0.3rem) clamp(0.2rem, 0.5cqw, 0.4rem);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.ppt-pv__tinput:hover { background: oklch(100% 0 0 / 0.1); }
+.ppt-pv__tinput:focus { outline: none; border-color: oklch(80% 0 0 / 0.5); background: oklch(100% 0 0 / 0.12); }
+.ppt-pv__chip {
+  font-family: var(--font-body, system-ui);
+  font-size: clamp(0.7rem, 1.3cqw, 0.9rem); font-weight: var(--w-med, 500);
+  padding: clamp(0.15rem, 0.4cqw, 0.35rem) clamp(0.5rem, 1cqw, 0.8rem);
+  border-radius: 999px; border: 1px solid oklch(72% 0 0 / 0.24);
+  background: oklch(100% 0 0 / 0.06); color: oklch(80% 0 0); cursor: pointer;
+  transition: background 0.15s ease; line-height: 1.1;
+}
+.ppt-pv__chip:hover { background: oklch(100% 0 0 / 0.14); }
+.ppt-pv__submeta {
+  display: flex; align-items: baseline; gap: clamp(0.5rem, 1.4cqw, 1rem);
+  font-family: var(--font-mono, monospace);
+  font-size: clamp(0.78rem, 1.6cqw, 1.05rem);
+  letter-spacing: 0.08em; color: oklch(66% 0 0);
+}
+.ppt-pv__submeta [data-role="clock"]::before { content: "🕐 "; }
+
+/* ---- drag grip between stage and script panel --------------------------- */
+.ppt-pv__grip {
+  display: flex; align-items: center; justify-content: center;
+  height: clamp(10px, 1.6cqw, 16px); cursor: ns-resize;
+  touch-action: none;
+}
+.ppt-pv__grip span {
+  display: block; width: clamp(36px, 6cqw, 60px); height: 4px;
+  border-radius: 999px; background: oklch(60% 0 0 / 0.35);
+  transition: background 0.15s ease;
+}
+.ppt-pv__grip:hover span { background: oklch(75% 0 0 / 0.6); }
+
+/* ---- middle: the slide's .notes as a large editable teleprompter --------
+   Same single content the S overlay shows — edit either, both persist. */
+.ppt-pv__read {
+  min-height: 0; overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-direction: column;
+  padding-right: clamp(0.25rem, 1cqw, 0.75rem);
+}
+.ppt-pv__prompt {
+  font-size: calc(clamp(0.95rem, 2cqw, 1.5rem) * var(--pv-script-scale, 1));
+  line-height: 1.55; font-weight: var(--w-reg, 400);
+  color: oklch(93% 0 0); white-space: pre-wrap;
+  cursor: text; outline: none;                       /* click to edit this page's speaker notes */
+  border-radius: clamp(4px, 0.8cqw, 8px);
+  padding: clamp(0.2rem, 0.6cqw, 0.5rem) clamp(0.3rem, 0.8cqw, 0.6rem);
+  margin: calc(-1 * clamp(0.2rem, 0.6cqw, 0.5rem)) calc(-1 * clamp(0.3rem, 0.8cqw, 0.6rem));
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+.ppt-pv__prompt:hover { background: oklch(100% 0 0 / 0.03); }
+.ppt-pv__prompt:focus { background: oklch(100% 0 0 / 0.06); box-shadow: inset 0 0 0 1px oklch(70% 0 0 / 0.3); }
+.ppt-pv__prompt.is-empty { color: oklch(56% 0 0); font-style: italic; }
+.ppt-pv__prompt.is-empty::before { content: "点击写本页讲者备注 · 提词大字，观众不可见（按 S 的浮层是同一份）…"; }
+.ppt-pv__prompt:focus.is-empty::before { opacity: 0.5; }
+
+/* ---- bottom: control bar ------------------------------------------------ */
+.ppt-pv__bar {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: clamp(0.35rem, 0.9cqw, 0.7rem);
+}
+.ppt-pv__seg { display: inline-flex; gap: clamp(0.25rem, 0.5cqw, 0.4rem); }
+.ppt-pv__spacer { flex: 1; }
+.ppt-pv__btn {
+  font-family: var(--font-body, system-ui);
+  font-size: clamp(0.8rem, 1.5cqw, 1rem);
+  font-weight: var(--w-med, 500);
+  padding: clamp(0.35rem, 0.8cqw, 0.65rem) clamp(0.7rem, 1.5cqw, 1.2rem);
+  border-radius: 999px;
+  border: 1px solid oklch(72% 0 0 / 0.28);
+  background: oklch(100% 0 0 / 0.07); color: inherit; cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+}
+.ppt-pv__btn:hover { background: oklch(100% 0 0 / 0.15); border-color: oklch(80% 0 0 / 0.4); }
+.ppt-pv__btn:active { background: oklch(100% 0 0 / 0.22); }
+.ppt-pv__btn--ghost { border-color: transparent; color: oklch(72% 0 0); }
+.ppt-pv__btn--ghost:hover { background: oklch(100% 0 0 / 0.1); }
+
+@media print { .ppt-presenter { display: none !important; } }

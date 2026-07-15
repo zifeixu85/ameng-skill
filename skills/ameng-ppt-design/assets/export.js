@@ -20,7 +20,7 @@
   var SELF = (document.currentScript && document.currentScript.src) || "";
   var VENDOR = SELF.replace(/[^\/]*$/, "") + "vendor/";
   var stageW = stage.offsetWidth || 1280, stageH = stage.offsetHeight || 720;
-  function toast(m) { (window.PptEditor && window.PptEditor.toast) ? window.PptEditor.toast(m) : console.log(m); }
+  function toast(m, ms) { (window.PptEditor && window.PptEditor.toast) ? window.PptEditor.toast(m, ms) : console.log(m); }
   function curIdx() { return window.PptEditor && window.PptEditor.currentIdx ? window.PptEditor.currentIdx() : 0; }
   function show(i) { if (window.PptDeck && window.PptDeck.show) window.PptDeck.show(i); }
   function deckName() {
@@ -62,9 +62,14 @@
   var cctx = document.createElement("canvas").getContext("2d");
   function toHex(c) { try { cctx.fillStyle = "#000000"; cctx.fillStyle = c; cctx.fillRect(0, 0, 1, 1); var d = cctx.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2]].map(function (n) { return ("0" + n.toString(16)).slice(-2); }).join(""); } catch (e) { return "111111"; } }
 
-  /* ---- snapshot the whole stage (slide + chrome) for slide i -------------- */
+  /* ---- snapshot the whole stage (slide + chrome) for slide i --------------
+     Neutralize BOTH the fit transform AND the centering offsets on the clone.
+     The live stage is centered via left/top:50% + translate(-50%,-50%); killing
+     only the transform leaves the clone shifted half a canvas to bottom-right
+     (the "PDF 内容跑到右下角被裁" bug). Pin the clone to 0,0 explicitly. */
+  var SNAP_STYLE = { transform: "none", left: "0px", top: "0px", margin: "0" };
   function snapStage(ms) {
-    return ms.domToPng(stage, { width: stageW, height: stageH, scale: 2, backgroundColor: getComputedStyle(stage).backgroundColor, style: { transform: "none" } });
+    return ms.domToPng(stage, { width: stageW, height: stageH, scale: 2, backgroundColor: getComputedStyle(stage).backgroundColor, style: SNAP_STYLE });
   }
   function captureAll(ms) {
     var saved = curIdx(), cover = showCover();
@@ -84,7 +89,17 @@
   }
 
   /* ---- PDF (image per page) ---------------------------------------------- */
+  /* file:// blocks fetch of fonts/images inside the snapshot clone — the PDF
+     comes out with fallback-font re-wrapping and empty image frames. Refuse
+     loudly instead of silently delivering a broken file. */
+  function guardProtocol() {
+    if (location.protocol !== "file:") return true;
+    toast("file:// 打开时浏览器禁止读取字体/图片，导出会缺字少图。请双击 deck 文件夹里的 serve.command（或运行 python3 -m http.server）后从 http:// 重新打开再导出。", 9000);
+    return false;
+  }
+
   function exportPDF() {
+    if (!guardProtocol()) return;
     toast("正在导出 PDF…");
     Promise.all([ensureLib("modern-screenshot.js", "modernScreenshot"), ensureLib("jspdf.umd.min.js", "jspdf")]).then(function (l) {
       return captureAll(l[0]).then(function (urls) {
@@ -98,6 +113,7 @@
 
   /* ---- PPTX 图片版 (full-bleed image per slide) -------------------------- */
   function exportPPTXImage() {
+    if (!guardProtocol()) return;
     toast("正在导出 PPTX（图片版）…");
     Promise.all([ensureLib("modern-screenshot.js", "modernScreenshot"), ensureLib("pptxgen.bundle.js", "PptxGenJS")]).then(function (l) {
       return captureAll(l[0]).then(function (urls) {
@@ -117,7 +133,7 @@
   function leaves(root) {
     var m = Array.prototype.slice.call(root.querySelectorAll(TEXT_SEL));
     return m.filter(function (el) {
-      if (el.closest(".notes,.ppt-dock,.ppt-history")) return false;
+      if (el.closest(".notes,.script,.ppt-dock,.ppt-history")) return false;
       if (!el.textContent.trim()) return false;
       var cs = getComputedStyle(el); if (cs.visibility === "hidden" || cs.display === "none") return false;
       return !m.some(function (o) { return o !== el && el.contains(o); });
@@ -128,13 +144,14 @@
   // elsewhere), (3) EDITABLE text boxes. Text is never rasterized; background is a
   // separate picture from the decorations.
   function exportPPTXEditable() {
+    if (!guardProtocol()) return;
     toast("正在导出可编辑 PPTX（背景/装饰分层）…");
     Promise.all([ensureLib("modern-screenshot.js", "modernScreenshot"), ensureLib("pptxgen.bundle.js", "PptxGenJS")]).then(function (l) {
       var ms = l[0], Pptx = l[1];
       var saved = curIdx(), cover = showCover(); deck.classList.add("ppt-exporting");
       var p = new Pptx(), in_ = function (px) { return px / 96; }, inW = in_(stageW), inH = in_(stageH);
       p.defineLayout({ name: "PPT", width: inW, height: inH }); p.layout = "PPT";
-      var snapTransparent = function () { return ms.domToPng(stage, { width: stageW, height: stageH, scale: 2, style: { transform: "none" } }); };
+      var snapTransparent = function () { return ms.domToPng(stage, { width: stageW, height: stageH, scale: 2, style: SNAP_STYLE }); };
       var chain = slides.reduce(function (pr, _, i) {
         var els, indiv, bgUrl, decoUrl, indivImgs = [];
         return pr.then(function () { show(i); return settle(); }).then(function () { finalizeAnims(); return raf2(); }).then(function () {
@@ -196,6 +213,7 @@
 
   /* ---- PNG (current / all-zip) ------------------------------------------- */
   function exportPNG(all) {
+    if (!guardProtocol()) return;
     toast(all ? "正在导出全部 PNG…" : "正在导出当前页 PNG…");
     ensureLib("modern-screenshot.js", "modernScreenshot").then(function (ms) {
       if (!all) return captureOne(ms).then(function (u) { download(u, deckName() + "-" + pad(curIdx() + 1) + ".png"); toast("当前页 PNG 已导出"); });
@@ -211,6 +229,7 @@
 
   /* ---- HTML (self-contained) --------------------------------------------- */
   function exportHTML() {
+    if (!guardProtocol()) return;
     toast("正在打包完整 HTML…");
     var links = Array.prototype.slice.call(document.querySelectorAll('link[rel="stylesheet"]'));
     var runtimeSrc = (document.querySelector('script[src*="runtime.js"]') || {}).src;
@@ -232,7 +251,7 @@
         var styles = cssTexts.filter(Boolean).map(function (c) { return "<style>\n" + c + "\n</style>"; }).join("\n");
         return (runtimeSrc ? fetch(runtimeSrc).then(function (r) { return r.text(); }).catch(function () { return ""; }) : Promise.resolve("")).then(function (rt) {
           var clone = document.documentElement.cloneNode(true);
-          Array.prototype.forEach.call(clone.querySelectorAll('link[rel="stylesheet"],script,.ppt-dock,.ppt-history,.ppt-toast,.ppt-overview,.ppt-notes-overlay,.ppt-help,.slide__num,.ppt-export-cover'), function (n) { n.remove(); });
+          Array.prototype.forEach.call(clone.querySelectorAll('link[rel="stylesheet"],script,.script,.ppt-dock,.ppt-history,.ppt-toast,.ppt-overview,.ppt-notes-overlay,.ppt-help,.slide__num,.ppt-export-cover'), function (n) { n.remove(); });
           Array.prototype.forEach.call(clone.querySelectorAll("[contenteditable]"), function (n) { n.removeAttribute("contenteditable"); n.removeAttribute("data-ppt-edit"); });
           var d = clone.querySelector(".deck"); if (d) d.classList.remove("is-editing", "ppt-exporting");
           // inline every <img> as a data: URI (resolve relative src against the live page), else images break when opened elsewhere

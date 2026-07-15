@@ -27,6 +27,11 @@
   --accent-2:   oklch(66% 0.13 184);       /* secondary accent (charts/dual, teal) */
   --accent-soft: oklch(92% 0.05 50);       /* warm tint background for accent */
 
+  /* Media overlay — legibility veil + text for captions ON a photo (image-hero /
+     image-grid). NEUTRAL hue (chroma 0) so 禁蓝 never trips; not pure black/white. */
+  --scrim:    oklch(20% 0 0 / 0.62);       /* darkening veil under text over photos */
+  --on-media: oklch(97% 0 0);              /* caption text sitting on a photo/scrim */
+
   /* Typography families. Theme may swap. Self-hosted/system — NO Inter/Roboto. */
   --font-display: var(--ppt-display, "Source Han Serif SC", "Songti SC", "Noto Serif CJK SC", Georgia, serif);
   --font-body:    var(--ppt-body, "PingFang SC", "HarmonyOS Sans SC", "Source Han Sans SC", "Noto Sans CJK SC", system-ui, sans-serif);
@@ -44,6 +49,11 @@
 
   /* Weights & tracking */
   --w-light: 300; --w-reg: 400; --w-med: 500; --w-semi: 600; --w-bold: 700;
+  /* 字重阶梯（越大越细、越小越粗）：display 级超大字与数据大数字降一档，
+     避免 100px+ 的 bold 糊成一块砖；h1 及以下保持原字重。主题按气质覆盖
+     （neo-brutalist 要 800 的粗野、dark-luxe 要更细的奢感，都在主题里盖）。 */
+  --w-display: var(--w-semi);   /* .display / .zh-mega 超大标题 */
+  --w-stat:    var(--w-semi);   /* .data-hero__num / .stat__num / .donut__val 大数字 */
   --track-tight: -0.02em;
   --track-wide:  0.12em;          /* ALL-CAPS labels only; 0.05–0.12em is the sane band */
   --leading-tight: 1.08;
@@ -99,6 +109,13 @@
 /* ---- 2. Reset & page ----------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
+/* UA block-margin reset: spacing is controlled by flex `gap` / `.stack` /
+   explicit margins — NOT browser-default block margins. Without this a
+   `<p class="h3">` carries ~1em top margin (≈font-size) that COMPOUNDS with the
+   flex `gap`, showing as an oversized eyebrow→title gap (worst in sparse cards,
+   where it shoves the title to the bottom). `:where()` = 0 specificity, so any
+   explicit margin (inline style, .stack, theme) still wins. */
+:where(p, h1, h2, h3, h4, h5, h6, blockquote, figure, ul, ol, dl, dd) { margin: 0; }
 body {
   background: var(--bg);
   color: var(--ink-1);
@@ -146,9 +163,10 @@ body {
    scaling about that point. `place-items:center` alone start-anchors an
    unscaled 1280px box once the viewport is narrower than it, so the scaled
    deck drifts off-center (and clips) at odd window widths — translate(-50%,-50%)
-   fixes that deterministically at any size. Scoped with :not(.ppt-ov__frame …)
-   so the overview thumbnails (which JS scales inline) are left untouched. */
-:not(.ppt-ov__frame) > .deck > .deck__stage {
+   fixes that deterministically at any size. Scoped with :not(.ppt-thumb …) so
+   thumbnail frames (overview + presenter, which JS scales inline) are left
+   untouched. */
+:not(.ppt-thumb) > .deck > .deck__stage {
   position: absolute; left: 50%; top: 50%;
   transform: translate(-50%, -50%) scale(var(--fit, 1));
 }
@@ -159,11 +177,50 @@ body {
   display: flex; flex-direction: column;
   opacity: 0; visibility: hidden;
   pointer-events: none;
+  /* last-resort wrap for unbroken long tokens (URL / long English word / code
+     id) so they fold instead of inking past the safe zone. Only kicks in when
+     wrapping is allowed — nowrap elements (.fit-text, .scope spans) unaffected. */
+  overflow-wrap: break-word;
 }
 .slide.is-active { opacity: 1; visibility: visible; pointer-events: auto; }
 
-/* entry animation runs only when a slide becomes active */
+/* entry animation runs only when a slide becomes active (explicit override) */
 .slide.is-active [data-anim] { animation: var(--anim, ppt-fade-up) var(--dur) var(--ease) both; }
+
+/* ============ AUTO-MOTION — 默认动效（零标签，每页自动活起来） ===============
+   过去：入场动画只对带 data-anim 的元素生效 → 作者漏标 = 该元素静止 → 整页死板。
+   现在：活动页的内容块按文档顺序自动逐个上浮；多项容器(grid/bento/bars/flow/
+   funnel/layers/matrix/list…)改为让其「子项」逐个错峰，而不是整块一起冒出；柱状
+   图自动生长、关键数字自动弹入。写普通 HTML 就有动效，不用给每个元素挂 data-anim。
+   退出：单元素加 data-anim="none"；整个 deck 加 data-automotion="off"。
+   导出/打印/reduced-motion 一律定格到结束帧（freeze 规则在下方 + render VTB=1600）。
+   —— :where() 零特异度，作者用 data-anim 显式覆盖任意元素都赢得过它。 */
+
+/* A) 顶层内容块：直接逐个上浮（叶子型元素，不含多项容器） */
+.deck:not([data-automotion="off"]) .slide.is-active
+  > :where(.eyebrow,.kicker,h1,h2,h3,h4,.h1,.h2,.h3,.h4,.display,.zh-mega,.lead,
+     .body,.measure,p,blockquote,.quote,figure,.frame,.terminal,.data-hero,.rule,
+     .tag,.tag-row,img,.prod,.scope,.evo,.donut,.gauge):not([data-anim]):not([data-anim="none"]):not(.notes) {
+  animation: ppt-fade-up var(--dur) var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+/* B) 多项容器：错峰它的「直接子项」（卡片/柱/步骤逐个进，而非整块） */
+.deck:not([data-automotion="off"]) .slide.is-active
+  :where(.grid-2,.grid-3,.grid-4,.bento,.cards,.bars,.flow,.funnel,.layers,.matrix2,
+     .timeline,.kpi-row,.donut-row,.zones,.contrast,.split,ul,ol)
+  > :not([data-anim]):not([data-anim="none"]):not(.notes) {
+  animation: ppt-fade-up var(--dur) var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 90ms);
+}
+/* 图表自己长出来（柱生长 + 数字弹入），无需手挂 .fx-*；显式 .fx-* 仍可覆盖 */
+.deck:not([data-automotion="off"]) .slide.is-active .bar__fill:not(.fx-grow-y):not(.fx-pop) {
+  transform-origin: left; animation: ppt-grow-x .72s var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 0.12s);
+}
+.deck:not([data-automotion="off"]) .slide.is-active
+  :where(.data-hero__num,.donut__val,.gauge__val,.kpi__num,.stat__num):not([data-anim]) {
+  animation: ppt-pop var(--dur) var(--ease) both; animation-delay: 0.1s;
+}
 
 /* ---- 5. Chrome: progress bar, page number, footer ------------------------ */
 .deck__progress {
@@ -188,11 +245,13 @@ body {
 .eyebrow {
   font-size: var(--fs-eyebrow); font-weight: var(--w-semi);
   letter-spacing: var(--track-wide); text-transform: uppercase;
-  color: var(--accent);
+  /* accent deepened with ink so kickers stay legible on the LIGHT palettes
+     (sand/cyan accents alone wash out to ~2:1 on paper) */
+  color: color-mix(in oklab, var(--accent) 70%, var(--ink-1));
 }
 .display {
   font-family: var(--font-display); font-size: var(--fs-display);
-  font-weight: var(--w-bold); line-height: var(--leading-tight);
+  font-weight: var(--w-display); line-height: var(--leading-tight);
   letter-spacing: var(--track-tight); color: var(--ink-1);
   text-wrap: balance;
 }
@@ -213,7 +272,7 @@ mark { background: var(--accent-soft); color: var(--ink-1); padding: 0 0.18em; b
 
 /* stat / big number */
 .stat { display: flex; flex-direction: column; gap: var(--s-2); }
-.stat__num { font-family: var(--font-display); font-size: var(--fs-stat); font-weight: var(--w-bold);
+.stat__num { font-family: var(--font-display); font-size: var(--fs-stat); font-weight: var(--w-stat);
              line-height: 1; letter-spacing: var(--track-tight); color: var(--ink-1);
              font-variant-numeric: tabular-nums; }
 .stat__num .unit { font-size: 0.42em; color: var(--ink-3); margin-left: 0.15em; font-weight: var(--w-med); }
@@ -264,20 +323,26 @@ mark { background: var(--accent-soft); color: var(--ink-1); padding: 0 0.18em; b
   display: flex; flex-direction: column; gap: var(--s-3);
 }
 .card--soft { background: var(--surface-2); border-color: transparent; }
-.card--accent { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
-/* ALL text inside an accent card flips to ink-on-accent — otherwise .body/.lead/.muted
-   keep their dark color and become unreadable on the accent fill (contrast bug). */
-.card--accent :where(.stat__num, .stat__label, .h2, .h3, .lead, .body, .muted, p, h2, h3, li) {
-  color: var(--accent-ink);
+/* Solid payload blocks (card--accent / z--r / fn--on / fu--on / ly--on / mq--on
+   / sc--on) all draw from ONE deck-wide block color — a DEEPENED accent with
+   near-white ink (house rule: 色块统一一色 + 反白). Themes define the literals;
+   per-section data-accent recolors chrome/eyebrow/hl, NEVER the blocks. */
+.deck { --accent-block: var(--accent); --accent-block-ink: var(--accent-ink); }
+.card--accent { background: var(--accent-block); color: var(--accent-block-ink); border-color: transparent; }
+/* ALL text inside an accent card flips to ink-on-block — otherwise .body/.lead/.muted
+   keep their dark color and become unreadable on the fill (contrast bug). */
+.card--accent :where(.stat__num, .stat__label, .h2, .h3, .lead, .body, .muted, .eyebrow, p, h2, h3, li) {
+  color: var(--accent-block-ink);
 }
 .card--accent :where(.muted, .body, .data-hero__src, .stat__label) { opacity: 0.85; }
-.card--accent .tag { background: oklch(100% 0 0 / 0.18); border-color: transparent; color: var(--accent-ink); }
+.card--accent .tag { background: oklch(100% 0 0 / 0.18); border-color: transparent; color: var(--accent-block-ink); }
 
 /* pill / tag */
 .tag { display: inline-flex; align-items: center; gap: var(--s-2);
        font-size: var(--fs-eyebrow); letter-spacing: 0.04em; color: var(--ink-2);
        background: var(--surface-2); border-radius: var(--r-pill);
-       padding: 0.3em 0.85em; border: 1px solid var(--line); }
+       padding: 0.3em 0.85em; border: 1px solid var(--line);
+       white-space: nowrap; /* pills never wrap internally (fallback-font safety) */ }
 
 /* divider */
 .rule { height: 1px; background: var(--line); border: 0; margin: var(--s-5) 0; }
@@ -285,20 +350,38 @@ mark { background: var(--accent-soft); color: var(--ink-1); padding: 0 0.18em; b
 /* simple bar for honest, real-data charts (no fake numbers) */
 .bars { display: flex; flex-direction: column; gap: var(--s-3); }
 .bar { display: grid; grid-template-columns: 9rem 1fr auto; align-items: center; gap: var(--s-4); }
-.bar__track { height: 10px; background: var(--surface-2); border-radius: var(--r-pill); overflow: hidden; }
+/* 24px 级条厚：10px 细线撑不起「数据是主角」，两轮新鲜眼睛评审都点名过 */
+.bar__track { height: 1.5rem; background: var(--surface-2); border-radius: var(--r-pill); overflow: hidden; }
 .bar__fill { height: 100%; width: var(--v, 0%); background: var(--accent); border-radius: var(--r-pill); }
 .bar__val { font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 
 /* ---- 8. Speaker notes & overview (driven by runtime.js) ------------------ */
-.notes { display: none; }
+.notes, .script { display: none; }
+/* bottom sheet = grip (drag to resize, lives outside the editable body) + body.
+   Height: auto up to 42vh by default; once the user drags, --notes-h wins (≤80vh). */
 .ppt-notes-overlay {
-  position: fixed; inset: auto 0 0 0; max-height: 42vh; overflow: auto;
+  position: fixed; inset: auto 0 0 0;
+  height: var(--notes-h, auto);
+  max-height: min(80vh, max(42vh, var(--notes-h, 0px)));
   background: oklch(15% 0.01 260 / 0.97); color: oklch(96% 0 0);
   font-family: var(--font-body); font-size: 1rem; line-height: 1.6;
-  padding: var(--s-6) var(--s-7); z-index: 50; display: none;
+  z-index: 50; display: none; flex-direction: column;
   border-top: 2px solid var(--accent);
 }
-.ppt-notes-overlay.is-open { display: block; }
+.ppt-notes-overlay.is-open { display: flex; }
+.ppt-notes-overlay__grip {
+  flex: none; display: flex; align-items: center; justify-content: center;
+  height: 18px; cursor: ns-resize; touch-action: none;
+}
+.ppt-notes-overlay__grip span {
+  display: block; width: 44px; height: 4px; border-radius: 999px;
+  background: oklch(70% 0 0 / 0.4); transition: background 0.15s ease;
+}
+.ppt-notes-overlay__grip:hover span { background: oklch(85% 0 0 / 0.65); }
+.ppt-notes-overlay__body {
+  flex: 1; min-height: 0; overflow: auto; outline: none;
+  padding: 0 var(--s-7) var(--s-6);
+}
 .ppt-overview {
   position: fixed; inset: 0; background: oklch(14% 0.012 260 / 0.97); z-index: 60;
   display: none; grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
@@ -319,9 +402,13 @@ mark { background: var(--accent-soft); color: var(--ink-1); padding: 0 0.18em; b
 .ppt-ov__cell:focus-visible { outline: none; }
 .ppt-ov__cell:focus-visible .ppt-ov__frame { border-color: var(--accent); box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.4), 0 6px 22px oklch(0% 0 0 / 0.38); }
 .ppt-ov__cell.is-current .ppt-ov__frame { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 6px 22px oklch(0% 0 0 / 0.38); }
-/* mini deck/stage scaffold so global `.deck--chrome .slide` selectors still match; JS sets the scale */
-.ppt-ov__frame .deck { position: absolute; top: 0; left: 0; width: var(--slide-w, 1280px); height: var(--slide-h, 720px); min-height: 0; display: block; transform: none; background: transparent; }
-.ppt-ov__frame .deck__stage { position: absolute; top: 0; left: 0; transform-origin: top left !important; }
+/* mini deck/stage scaffold (overview + presenter share .ppt-thumb) so global
+   `.deck--chrome .slide` selectors still match. JS scales the mini .deck itself
+   (NOT .deck__stage): the export freeze rule `.deck.ppt-exporting .deck__stage`
+   force-resets the stage transform with !important, which would clobber an
+   inline scale on the stage — scaling the .deck wrapper sidesteps that entirely. */
+.ppt-thumb .deck { position: absolute; top: 0; left: 0; width: var(--slide-w, 1280px); height: var(--slide-h, 720px); min-height: 0; display: block; transform-origin: top left; background: transparent; }
+.ppt-thumb .deck__stage { position: absolute; top: 0; left: 0; }
 .ppt-ov__cap { display: flex; align-items: baseline; gap: 0.55em; padding: 0 2px;
   color: oklch(100% 0 0 / 0.82); font: 500 0.82rem/1.3 var(--font-body); }
 .ppt-ov__cap b { font-family: var(--font-mono); font-size: 0.72rem; color: oklch(100% 0 0 / 0.5); min-width: 1.7em; flex: none; }
@@ -369,12 +456,26 @@ mark { background: var(--accent-soft); color: var(--ink-1); padding: 0 0.18em; b
 [data-anim="rise"]   { --anim: ppt-rise; }
 [data-anim="wipe"]   { --anim: ppt-wipe; }
 [data-anim="blur"]   { --anim: ppt-blur-in; }
-/* stagger children: set --i on each child or use :nth-child below */
+/* explicit stagger group (still supported) */
 .anim-stagger > * { animation: ppt-fade-up var(--dur) var(--ease) both;
   animation-delay: calc(var(--i, 0) * 80ms); }
-.anim-stagger > *:nth-child(1){--i:0} .anim-stagger > *:nth-child(2){--i:1}
-.anim-stagger > *:nth-child(3){--i:2} .anim-stagger > *:nth-child(4){--i:3}
-.anim-stagger > *:nth-child(5){--i:4} .anim-stagger > *:nth-child(6){--i:5}
+
+/* document-order index --i (1..12) — drives BOTH the explicit .anim-stagger and
+   the AUTO-MOTION cascade above. Set on: explicit groups, the active slide's
+   direct children, and every multi-item container's children. Extended to 12
+   (was capped at 6 → 7+ items used to all fire together). */
+.anim-stagger > *:nth-child(1),  .slide.is-active > *:nth-child(1),  .slide.is-active :where(.grid-2,.grid-3,.grid-4,.bento,.cards,.bars,.flow,.funnel,.layers,.matrix2,.timeline,.asym,.two-col,.imggrid,.kpi-row,.donut-row,.zones,.contrast,.split,ul,ol) > *:nth-child(1)  { --i: 0; }
+.anim-stagger > *:nth-child(2),  .slide.is-active > *:nth-child(2),  .slide.is-active :where(.grid-2,.grid-3,.grid-4,.bento,.cards,.bars,.flow,.funnel,.layers,.matrix2,.timeline,.asym,.two-col,.imggrid,.kpi-row,.donut-row,.zones,.contrast,.split,ul,ol) > *:nth-child(2)  { --i: 1; }
+.anim-stagger > *:nth-child(3),  .slide.is-active > *:nth-child(3),  .slide.is-active :where(.grid-2,.grid-3,.grid-4,.bento,.cards,.bars,.flow,.funnel,.layers,.matrix2,.timeline,.asym,.two-col,.imggrid,.kpi-row,.donut-row,.zones,.contrast,.split,ul,ol) > *:nth-child(3)  { --i: 2; }
+.anim-stagger > *:nth-child(4),  .slide.is-active > *:nth-child(4),  .slide.is-active :where(.grid-2,.grid-3,.grid-4,.bento,.cards,.bars,.flow,.funnel,.layers,.matrix2,.timeline,.asym,.two-col,.imggrid,.kpi-row,.donut-row,.zones,.contrast,.split,ul,ol) > *:nth-child(4)  { --i: 3; }
+.anim-stagger > *:nth-child(5),  .slide.is-active > *:nth-child(5),  .slide.is-active :where(.grid-2,.grid-3,.grid-4,.bento,.cards,.bars,.flow,.funnel,.layers,.matrix2,.timeline,.asym,.two-col,.imggrid,.kpi-row,.donut-row,.zones,.contrast,.split,ul,ol) > *:nth-child(5)  { --i: 4; }
+.anim-stagger > *:nth-child(6),  .slide.is-active > *:nth-child(6),  .slide.is-active :where(.grid-2,.grid-3,.grid-4,.bento,.cards,.bars,.flow,.funnel,.layers,.matrix2,.timeline,.asym,.two-col,.imggrid,.kpi-row,.donut-row,.zones,.contrast,.split,ul,ol) > *:nth-child(6)  { --i: 5; }
+.anim-stagger > *:nth-child(7),  .slide.is-active > *:nth-child(7),  .slide.is-active :where(.grid-2,.grid-3,.grid-4,.bento,.cards,.bars,.flow,.funnel,.layers,.matrix2,.timeline,.asym,.two-col,.imggrid,.kpi-row,.donut-row,.zones,.contrast,.split,ul,ol) > *:nth-child(7)  { --i: 6; }
+.anim-stagger > *:nth-child(8),  .slide.is-active > *:nth-child(8),  .slide.is-active :where(.grid-2,.grid-3,.grid-4,.bento,.cards,.bars,.flow,.funnel,.layers,.matrix2,.timeline,.asym,.two-col,.imggrid,.kpi-row,.donut-row,.zones,.contrast,.split,ul,ol) > *:nth-child(8)  { --i: 7; }
+.anim-stagger > *:nth-child(9),  .slide.is-active > *:nth-child(9),  .slide.is-active :where(.grid-2,.grid-3,.grid-4,.bento,.cards,.bars,.flow,.funnel,.layers,.matrix2,.timeline,.asym,.two-col,.imggrid,.kpi-row,.donut-row,.zones,.contrast,.split,ul,ol) > *:nth-child(9)  { --i: 8; }
+.anim-stagger > *:nth-child(10), .slide.is-active > *:nth-child(10), .slide.is-active :where(.grid-2,.grid-3,.grid-4,.bento,.cards,.bars,.flow,.funnel,.layers,.matrix2,.timeline,.asym,.two-col,.imggrid,.kpi-row,.donut-row,.zones,.contrast,.split,ul,ol) > *:nth-child(10) { --i: 9; }
+.anim-stagger > *:nth-child(11), .slide.is-active > *:nth-child(11), .slide.is-active :where(.grid-2,.grid-3,.grid-4,.bento,.cards,.bars,.flow,.funnel,.layers,.matrix2,.timeline,.asym,.two-col,.imggrid,.kpi-row,.donut-row,.zones,.contrast,.split,ul,ol) > *:nth-child(11) { --i: 10; }
+.anim-stagger > *:nth-child(12), .slide.is-active > *:nth-child(12), .slide.is-active :where(.grid-2,.grid-3,.grid-4,.bento,.cards,.bars,.flow,.funnel,.layers,.matrix2,.timeline,.asym,.two-col,.imggrid,.kpi-row,.donut-row,.zones,.contrast,.split,ul,ol) > *:nth-child(12) { --i: 11; }
 
 /* Graphic entrance primitives — for charts/diagrams (bars, rings, flow lines, idle pulse).
    Opt-in classes that fire only when a slide is active, so a graphic "draws itself" on arrival.
@@ -387,11 +488,16 @@ mark { background: var(--accent-soft); color: var(--ink-1); padding: 0 0.18em; b
 @keyframes ppt-breathe{ 50% { transform: scale(1.035); opacity: 0.82; } }
 @keyframes ppt-dash   { to  { stroke-dashoffset: -28; } }                                       /* on an SVG path with stroke-dasharray */
 @keyframes ppt-ring   { from { stroke-dashoffset: var(--ring-circ, 295); } }                    /* donut ring: draw to its --v offset */
+@keyframes ppt-draw   { from { stroke-dashoffset: var(--draw-len, 900); } to { stroke-dashoffset: 0; } } /* one-shot line draw-in */
 .slide.is-active .fx-pop     { animation: ppt-pop var(--dur) var(--ease) both; }
 .slide.is-active .fx-grow-y  { transform-origin: bottom; animation: ppt-grow-y .72s var(--ease) both; }
 .slide.is-active .fx-grow-x  { transform-origin: left; animation: ppt-grow-x .72s var(--ease) both; }
 .slide.is-active .fx-breathe { animation: ppt-breathe 5s ease-in-out infinite; }
 .slide.is-active .fx-dash    { animation: ppt-dash 2.4s linear infinite; }
+/* one-shot SVG stroke draw-in (linechart / 关系连线)：author 可用 --draw-len 精确给
+   path 长度，默认 900 覆盖常见折线。≤1600ms + both fill → 四条导出定帧路径安全。 */
+.slide.is-active .fx-draw    { stroke-dasharray: var(--draw-len, 900);
+                               animation: ppt-draw 1.1s var(--ease) both; }
 
 /* Respect reduced motion — accessibility (web rules). */
 @media (prefers-reduced-motion: reduce) {
@@ -448,7 +554,7 @@ mark { background: var(--accent-soft); color: var(--ink-1); padding: 0 0.18em; b
 .measure { max-width: var(--content-max); }
 
 /* CJK display title tiers (Swiss "极致字号对比" — pair a big tier with small body) */
-.zh-mega { font-family: var(--font-display); font-weight: var(--w-bold);
+.zh-mega { font-family: var(--font-display); font-weight: var(--w-display);
   font-size: clamp(3.2rem, 1.4rem + 6cqw, 7.5rem); line-height: 1.02;
   letter-spacing: var(--track-tight); text-wrap: balance; }
 
@@ -472,6 +578,12 @@ mark { background: var(--accent-soft); color: var(--ink-1); padding: 0 0.18em; b
   }
   .slide:last-child { break-after: auto; page-break-after: auto; }
   .slide [data-anim] { animation: none !important; opacity: 1 !important; transform: none !important; }
+  /* catch-all: AUTO-MOTION animates non-[data-anim] elements too — collapse every
+     entrance to its end frame (both-fill holds it) so print never catches mid-motion. */
+  .slide *, .slide *::before, .slide *::after {
+    animation-duration: 0s !important; animation-delay: 0s !important;
+    transition-duration: 0s !important; transition-delay: 0s !important;
+  }
   /* never print the authoring/runtime chrome */
   .ppt-toolbar, .ppt-history, .ppt-toast, .ppt-help, .ppt-overview,
   .ppt-notes-overlay, .deck__progress, .slide__num { display: none !important; }

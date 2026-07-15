@@ -38,7 +38,7 @@
     slides.forEach(function (s) {
       var m = Array.prototype.slice.call(s.querySelectorAll(EDIT_SEL));
       m.forEach(function (el) {
-        if (el.closest(".notes,.slide__num,.ppt-dock")) return;
+        if (el.closest(".notes,.script,.slide__num,.ppt-dock")) return;
         if (m.some(function (o) { return o !== el && el.contains(o); })) return;
         if (!el.textContent.trim()) return;
         out.push(el);
@@ -52,7 +52,7 @@
       e.removeAttribute("contenteditable"); e.removeAttribute("data-ppt-edit"); e.removeAttribute("spellcheck");
     });
     var n = c.querySelector(".slide__num"); if (n) n.remove();
-    if (dropNotes) { var nt = c.querySelector(".notes"); if (nt) nt.remove(); }
+    if (dropNotes) { Array.prototype.forEach.call(c.querySelectorAll(".notes,.script"), function (e) { e.remove(); }); }
     return c.innerHTML;
   }
   function capture() { return slides.map(function (s) { return cleanClone(s, false); }); }          // full (incl. notes) → persistence
@@ -223,19 +223,31 @@
   mo.observe(stage, { subtree: true, attributes: true, attributeFilter: ["class"] });
   updateBadge();
 
-  // --- speaker notes: the S overlay is directly editable (writes back) -------
+  // --- speaker notes: ONE store (.notes), two editors ------------------------
+  // PptNotes is the single write path: the S overlay (below) and runtime.js's
+  // presenter teleprompter both go through it, so both surfaces edit the same
+  // content and persist with the doc (never versioned).
+  window.PptNotes = {
+    get: function (i) { var n = slides[i] && slides[i].querySelector(".notes"); return n ? n.innerHTML : ""; },
+    set: function (i, html) {
+      var s = slides[i]; if (!s) return;
+      var n = s.querySelector(".notes");
+      if (!n) { n = document.createElement("div"); n.className = "notes"; s.appendChild(n); }
+      n.innerHTML = html;
+      lsSet(K_DOC, capture());                          // persist (notes are saved, but NOT versioned)
+    }
+  };
   (function wireNotes() {
-    var overlay = document.querySelector(".ppt-notes-overlay");
+    // editable target = the overlay body (grip stays outside the editable zone);
+    // fall back to the overlay itself for older runtime.js without the body split.
+    var overlay = document.querySelector(".ppt-notes-overlay__body") || document.querySelector(".ppt-notes-overlay");
     if (!overlay) return;
     overlay.setAttribute("contenteditable", "true"); overlay.spellcheck = false; overlay.classList.add("ppt-notes-edit");
     overlay.addEventListener("focus", function () {
       if (!slides[currentIdx()].querySelector(".notes") && /无讲者备注/.test(overlay.textContent)) overlay.innerHTML = "";
     });
     overlay.addEventListener("input", function () {
-      var s = slides[currentIdx()], n = s.querySelector(".notes");
-      if (!n) { n = document.createElement("div"); n.className = "notes"; s.appendChild(n); }
-      n.innerHTML = overlay.innerHTML;
-      lsSet(K_DOC, capture());                          // persist (notes are saved, but NOT versioned)
+      window.PptNotes.set(currentIdx(), overlay.innerHTML);
     });
   })();
 
@@ -290,7 +302,7 @@
   // --- toast -----------------------------------------------------------------
   var toastEl = document.createElement("div"); toastEl.className = "ppt-toast"; deck.appendChild(toastEl);
   var toastT;
-  function toast(msg) { toastEl.textContent = msg; toastEl.classList.add("is-show"); clearTimeout(toastT); toastT = setTimeout(function () { toastEl.classList.remove("is-show"); }, 2000); }
+  function toast(msg, ms) { toastEl.textContent = msg; toastEl.classList.add("is-show"); clearTimeout(toastT); toastT = setTimeout(function () { toastEl.classList.remove("is-show"); }, ms || 2000); }
 
   window.PptEditor = { capture: capture, deckId: DECK_ID, toast: toast, deck: deck, stage: stage, slides: slides, currentIdx: currentIdx };
 })();

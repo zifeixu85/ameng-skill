@@ -32,6 +32,13 @@
   font: var(--w-semi, 600) 9px/14px var(--font-mono); text-align: center; vertical-align: top;
 }
 .ppt-badge[hidden] { display: none; }
+/* narrow screens: tighten the dock so it doesn't crowd the scaled stage corner;
+   confirm-dialog buttons may wrap instead of overflowing */
+@media (max-width: 520px) {
+  .ppt-dock { top: 6px; right: 6px; }
+  .ppt-act { padding: 0 6px; font-size: 11px; }
+  .ppt-confirm__row { flex-wrap: wrap; }
+}
 
 /* export sub-menu (click to open) */
 .ppt-sub { position: relative; }
@@ -53,11 +60,12 @@
 .deck.is-editing [data-ppt-edit]:hover { outline-style: solid; background: color-mix(in oklab, var(--accent) 7%, transparent); }
 .deck.is-editing [data-ppt-edit]:focus { outline: 2px solid var(--accent); background: color-mix(in oklab, var(--accent) 9%, transparent); }
 
-/* ---- editable speaker-notes overlay (S) --------------------------------- */
-.ppt-notes-overlay.ppt-notes-edit { cursor: text; }
-.ppt-notes-overlay.ppt-notes-edit:focus { outline: 2px solid var(--accent); outline-offset: 3px; }
-.ppt-notes-overlay.ppt-notes-edit::before {
-  content: "讲者备注 · 可直接编辑（不计入版本）"; display: block;
+/* ---- editable speaker-notes overlay (S) ----------------------------------
+   .ppt-notes-edit sits on the overlay BODY (grip stays non-editable). */
+.ppt-notes-edit { cursor: text; }
+.ppt-notes-edit:focus { outline: 2px solid var(--accent); outline-offset: 3px; }
+.ppt-notes-edit::before {
+  content: "讲者备注 · 演讲者视图同款提词（不计入版本）"; display: block;
   font: 500 10px/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 9px;
 }
 
@@ -89,7 +97,7 @@
 /* ---- save/discard confirm (leaving a page mid-edit) --------------------- */
 .ppt-confirm { position: fixed; inset: 0; z-index: 1400; display: none; place-items: center; background: color-mix(in oklab, var(--ink-1) 32%, transparent); }
 .ppt-confirm.is-open { display: grid; }
-.ppt-confirm__card { background: var(--surface-1); border: 1px solid var(--line-strong); border-radius: var(--r-2); box-shadow: var(--shadow-3); padding: 18px 20px; min-width: 300px; max-width: 86vw; }
+.ppt-confirm__card { background: var(--surface-1); border: 1px solid var(--line-strong); border-radius: var(--r-2); box-shadow: var(--shadow-3); padding: 18px 20px; min-width: min(300px, 92vw); max-width: 92vw; }
 .ppt-confirm__msg { font: var(--w-semi, 600) 14px/1.5 var(--font-body); color: var(--ink-1); margin-bottom: 16px; }
 .ppt-confirm__row { display: flex; gap: 8px; justify-content: flex-end; }
 .ppt-confirm__row .ppt-act { border: 1px solid var(--line-strong); height: 30px; padding: 0 12px; }
@@ -105,6 +113,16 @@
 .ppt-toast.is-show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ---- export capture helpers --------------------------------------------- */
+/* Pin the LIVE stage to 0,0 / no transform while capturing: the screen stage is
+   centered via left/top:50% + translate(-50%,-50%) scale(--fit), and the clone
+   inherits those computed styles — without this the snapshot lands half a
+   canvas to the bottom-right ("PDF 内容跑到右下角被裁"). The export overlay
+   covers the viewport, so the user never sees the jump. */
+.deck.ppt-exporting .deck__stage,
+.deck.ppt-cap-bg .deck__stage,
+.deck.ppt-cap-deco .deck__stage {
+  left: 0 !important; top: 0 !important; transform: none !important;
+}
 /* disable entry animation so the activated slide is settled before snapshot */
 .deck.ppt-exporting .slide [data-anim] { animation: none !important; opacity: 1 !important; transform: none !important; }
 /* Catch-all: finalize ANY entrance — including bespoke keyframes like .is-active .bar{animation:grow}
