@@ -5,17 +5,35 @@
     "email": "ameng@ameng.blog"
   },
   "metadata": {
-    "description": "A梦 分享的 Agent Skills 合集 / Agent Skills shared by A梦",
-    "version": "0.1.0"
+    "description": "A梦 分享的 Agent Skills / Agent Skills shared by A梦",
+    "version": "0.3.0"
   },
   "plugins": [
     {
-      "name": "ameng-skill",
-      "description": "A梦 的实用 Agent Skills：调研、内容、工具等，跨 Claude Code / Codex / OpenClaw / Hermes 使用。",
+      "name": "ameng-skill-scout",
+      "description": "调研某主题下「现有的 AI Skill」：搜索→下载→分析→出结构化研究报告。覆盖 Claude Code / Codex / OpenClaw / Hermes 多生态，中英文 Skill 都收录；先做需求澄清，支持仅研究 / +推荐 / +设计方案三档产出。",
       "source": "./",
       "strict": false,
+      "author": { "name": "A梦 (ameng)", "email": "ameng@ameng.blog" },
+      "homepage": "https://github.com/zifeixu85/ameng-skill",
+      "repository": "https://github.com/zifeixu85/ameng-skill",
+      "version": "0.1.0",
+      "tags": ["skill-research", "survey", "claude-code", "agent-skills", "meta"],
       "skills": [
-        "./skills/ameng-skill-scout",
+        "./skills/ameng-skill-scout"
+      ]
+    },
+    {
+      "name": "ameng-ppt-design",
+      "description": "有设计主见的 HTML 演示/PPT 生成器：把大纲/讲稿做成全离线、可放映的静态 HTML 幻灯片。OKLCH 设计系统 + 多主题 + 16:9/9:16/Swiss；右上角就地编辑 + 版本历史 + 一键导出 PDF/PPTX/PNG/HTML。",
+      "source": "./",
+      "strict": false,
+      "author": { "name": "A梦 (ameng)", "email": "ameng@ameng.blog" },
+      "homepage": "https://github.com/zifeixu85/ameng-skill",
+      "repository": "https://github.com/zifeixu85/ameng-skill",
+      "version": "0.1.0",
+      "tags": ["ppt", "slides", "deck", "presentation", "html"],
+      "skills": [
         "./skills/ameng-ppt-design"
       ]
     }

@@ -20,3 +20,14 @@ node_modules/
 # Research output (not part of the published skills)
 design-skills-research/
 *-skills-research/
+
+# Runtime / temp outputs from skills (screenshots, scratch design files)
+.preview/
+.design-review-shots/
+.design/
+
+# Internal planning / handoff docs (kept local, not published)
+docs/
+
+# Playwright MCP session artifacts
+.playwright-mcp/
