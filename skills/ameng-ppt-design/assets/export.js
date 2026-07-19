@@ -10,7 +10,7 @@
    ============================================================================ */
 (function () {
   "use strict";
-  if (/[?&](export|print)\b/.test(location.search)) return;
+  if (/[?&](export|print|audience)\b/.test(location.search)) return;   // audience window: playback only, no export UI
   var deck = document.querySelector(".deck");
   if (!deck) return;
   var stage = deck.querySelector(".deck__stage") || deck;

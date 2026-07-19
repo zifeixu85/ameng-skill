@@ -75,6 +75,7 @@ description: >
 - **右上角工具栏**：`assets/editor.js`（就地编辑 + 本地保存 + 版本历史）+ `assets/export.js`（PDF/PPTX/PNG/HTML 导出）+ `assets/toolbar.css`
 - **自托管 distinctive 字体**：Bricolage Grotesque（display）/ Host Grotesk（body）/ JetBrains Mono（mono）+ 思源黑/宋（CJK）。`scripts/fetch-fonts.sh` 一次性下载 → 之后全离线。**禁 Inter/Roboto/Playfair/Cormorant/IBM Plex**。
 - **键盘放映运行时**（`runtime.js`）：← → / Space / F 全屏 / S 讲者备注 / O 缩略图总览（每页等比实拍预览，非文字列表）/ T 浅色⇄深色 / **G 安全区参考线+溢出哨兵** / ? 帮助 / `#/N` 深链
+- **演讲者套件**（v2，`P` 键）：双屏 presenter view——按 `P` 本窗变演讲者控制台（当前/下一页缩略 + `.notes` 大字提词可就地编辑 + 排练计时正/倒 + 配速绿黄红灯），同时自动弹 `?audience` 纯净观众窗投屏，两窗 BroadcastChannel 实时同步翻页/主题（弹窗被拦自动降级单窗）。`V` 切视图布局（当前大/下一页大/仅一屏）· `R` 重置计时 · deck 标 `data-target-min="20"`（页级 `data-sec`）启用配速。**双屏需 http://（serve.sh），file:// 无法双窗同步**；presenter 任何导出产物零残留
 - **选风格预览页**：`templates/theme-preview.html` —— **一上来就 `open` 给用户选 5 套主题**（通用 demo 内容，不依赖脚手架，`←→`/`1–5`/`D` 实时切）。
 - **纪律工具**：`scripts/render.sh`（逐页 PNG / 像素级 PDF）· `scripts/validate.mjs`（文本纪律：封禁字体/硬编码 hex/禁蓝/缺 alt/缺备注/高亮对比/emoji 当图标）· **`scripts/check-overflow.mjs`（几何闸门：headless 量每页每元素 vs 安全区，越界 exit 1）**
 
@@ -114,6 +115,7 @@ description: >
    ```text
    deck 已完成并启动 → http://localhost:8123/slides/<name>/index.html
    放映 ←→/F · 就地编辑 ✎ · 导出 ⤓（PDF/PPTX/PNG —— 必须从这个 http:// 地址导，file:// 会缺字少图）
+   上台演讲：按 P 开演讲者视图（提词/计时/配速 + 自动弹观众窗投屏，两窗同步翻页）
    已过三道闸门：文本纪律 PASS · 溢出/对比度 PASS · 逐页 PNG 目检。
    要发给别人或长期保存：./scripts/eject.sh <name> <目标目录> —— 自包含文件夹，
    内含 serve.command（双击即起服务并打开）。

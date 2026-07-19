@@ -24,7 +24,16 @@ for p in $(seq "$BASE_PORT" $((BASE_PORT + 9))); do
     # something listens — only reuse if it is OUR root (the deck URL resolves)
     if curl -sf -o /dev/null --max-time 2 "http://localhost:${p}/${REL}"; then PORT="$p"; break; fi
   else
-    (cd "$ROOT" && nohup python3 -m http.server "$p" >/dev/null 2>&1 & disown) || true
+    # no-store handler: stale runtime.js/CSS after skill updates showed up as
+    # "shortcuts stopped working" — never let the browser cache deck assets.
+    (cd "$ROOT" && nohup python3 -c "
+import http.server, functools
+class H(http.server.SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header('Cache-Control', 'no-store, must-revalidate')
+        super().end_headers()
+http.server.ThreadingHTTPServer(('', $p), H).serve_forever()
+" >/dev/null 2>&1 & disown) || true
     sleep 0.7
     if curl -sf -o /dev/null --max-time 2 "http://localhost:${p}/${REL}"; then PORT="$p"; break; fi
   fi

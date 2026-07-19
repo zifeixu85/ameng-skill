@@ -44,19 +44,24 @@
 }
 .ppt-presenter[data-pv-layout="cur-only"] .ppt-pv__stage,
 .ppt-presenter[data-pv-layout="next-only"] .ppt-pv__stage { grid-template-columns: 3.5fr 1fr; }
+/* slot = tag row (normal flow, never clipped or overlapping the thumb) +
+   frame-area (flex-centers the self-sized frame; fitThumbBox measures IT) */
 .ppt-pv__current,
 .ppt-pv__next {
-  position: relative; min-height: 0; min-width: 0;
+  min-height: 0; min-width: 0;
+  display: flex; flex-direction: column;
+  gap: clamp(0.25rem, 0.6cqw, 0.5rem);
+}
+.ppt-pv__frame-area {
+  flex: 1; min-height: 0; min-width: 0; position: relative;
   display: flex; align-items: center; justify-content: center;   /* center the self-sized frame */
 }
 .ppt-pv__tag {
-  position: absolute; top: 0.6cqw; left: 0.7cqw; z-index: 2;
+  flex: none; align-self: flex-start;
   font-family: var(--font-mono, monospace);
   font-size: clamp(0.6rem, 1.05cqw, 0.78rem);
   letter-spacing: 0.16em; text-transform: uppercase;
   color: oklch(72% 0 0);
-  padding: 0.15em 0.5em; border-radius: 4px;
-  background: oklch(0% 0 0 / 0.35);
 }
 /* fitThumbBox() sizes the frame to exactly the scaled deck (bw*s × bh*s), so
    frame and content are always welded — no letterbox filler, no tear if a
@@ -88,6 +93,23 @@
 }
 .ppt-pv__timer.is-running { color: oklch(78% 0.16 145); }   /* running: calm green */
 .ppt-pv__timer.is-over { color: oklch(64% 0.2 25); }        /* count-down overtime: red */
+/* pace light: elapsed vs budget — green on pace / yellow drifting / red off */
+.ppt-pv__pace {
+  display: flex; align-items: center; gap: clamp(0.3rem, 0.7cqw, 0.5rem);
+  font-family: var(--font-mono, monospace); font-variant-numeric: tabular-nums;
+  font-size: clamp(0.75rem, 1.5cqw, 1rem); color: oklch(76% 0 0);
+}
+.ppt-pv__pace.is-hidden { display: none; }
+.ppt-pv__pace i {
+  width: 0.7em; height: 0.7em; border-radius: 50%; flex: none;
+  background: oklch(60% 0 0);
+}
+.ppt-pv__pace.is-ok i   { background: oklch(72% 0.17 145); box-shadow: 0 0 8px oklch(72% 0.17 145 / 0.5); }
+.ppt-pv__pace.is-warn i { background: oklch(80% 0.15 95);  box-shadow: 0 0 8px oklch(80% 0.15 95 / 0.5); }
+.ppt-pv__pace.is-bad i  { background: oklch(62% 0.2 25);   box-shadow: 0 0 8px oklch(62% 0.2 25 / 0.55); }
+.ppt-pv__pace.is-ok   { color: oklch(78% 0.1 145); }
+.ppt-pv__pace.is-warn { color: oklch(82% 0.1 95); }
+.ppt-pv__pace.is-bad  { color: oklch(72% 0.14 25); }
 .ppt-pv__tcontrol {
   display: flex; align-items: center; flex-wrap: wrap;
   gap: clamp(0.25rem, 0.6cqw, 0.5rem);
@@ -121,6 +143,8 @@
   letter-spacing: 0.08em; color: oklch(66% 0 0);
 }
 .ppt-pv__submeta [data-role="clock"]::before { content: "🕐 "; }
+/* the page counter is a first-class signal for a speaker — outrank the clock */
+.ppt-pv__submeta .ppt-pv__page { color: oklch(88% 0 0); font-weight: var(--w-semi, 600); font-size: 1.15em; }
 
 /* ---- drag grip between stage and script panel --------------------------- */
 .ppt-pv__grip {
@@ -145,6 +169,7 @@
 .ppt-pv__prompt {
   font-size: calc(clamp(0.95rem, 2cqw, 1.5rem) * var(--pv-script-scale, 1));
   line-height: 1.55; font-weight: var(--w-reg, 400);
+  max-width: 72ch;                                   /* ~36 CJK chars/line — full 1680px lines are unreadable at a glance */
   color: oklch(93% 0 0); white-space: pre-wrap;
   cursor: text; outline: none;                       /* click to edit this page's speaker notes */
   border-radius: clamp(4px, 0.8cqw, 8px);
@@ -180,5 +205,35 @@
 .ppt-pv__btn:active { background: oklch(100% 0 0 / 0.22); }
 .ppt-pv__btn--ghost { border-color: transparent; color: oklch(72% 0 0); }
 .ppt-pv__btn--ghost:hover { background: oklch(100% 0 0 / 0.1); }
+
+/* transient presenter notice (popup blocked, file:// hint, …) */
+.ppt-pv__notice {
+  position: absolute; left: 50%; bottom: clamp(4rem, 8cqw, 6.5rem);
+  transform: translateX(-50%) translateY(6px);
+  max-width: min(80%, 46rem);
+  padding: clamp(0.5rem, 1cqw, 0.8rem) clamp(0.9rem, 1.8cqw, 1.4rem);
+  border-radius: 999px;
+  background: oklch(30% 0.04 60 / 0.95); color: oklch(92% 0.02 80);
+  border: 1px solid oklch(70% 0.1 70 / 0.35);
+  font-size: clamp(0.8rem, 1.5cqw, 1rem); line-height: 1.4;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.ppt-pv__notice.is-show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* audience-window hint: shown when a suppressed shortcut is pressed while NOT
+   fullscreen (testing/arranging); runtime stays silent once fullscreen. */
+.ppt-aud-hint {
+  position: fixed; left: 50%; bottom: 5vh; z-index: 80;
+  transform: translateX(-50%) translateY(6px);
+  max-width: min(86%, 44rem);
+  padding: 0.55rem 1.2rem; border-radius: 999px;
+  background: oklch(24% 0.02 260 / 0.95); color: oklch(88% 0 0);
+  border: 1px solid oklch(70% 0 0 / 0.25);
+  font-family: var(--font-body, system-ui); font-size: 0.9rem; line-height: 1.4;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.ppt-aud-hint.is-show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 @media print { .ppt-presenter { display: none !important; } }

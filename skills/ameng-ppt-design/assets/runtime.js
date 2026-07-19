@@ -28,6 +28,9 @@
   // overflow audit (?audit) — all suppress on-screen authoring chrome.
   var isAudit = /[?&]audit\b/.test(location.search);
   var isExportLike = /[?&](export|print|audit)\b/.test(location.search);
+  // audience window (?audience): pure playback for the projector — no presenter,
+  // no notes overlay, no help/authoring chrome; still animates & syncs (Phase B).
+  var isAudience = /[?&]audience\b/.test(location.search);
 
   // --- fit the fixed stage to the viewport ----------------------------------
   function fit() {
@@ -264,7 +267,7 @@
     }
     ovf.classList.toggle("is-guide", guidesOn);
   }
-  function toggleGuides() { guidesOn = !guidesOn; drawSentinel(); }
+  function toggleGuides() { if (isAudience) { audienceHint(); return; } guidesOn = !guidesOn; drawSentinel(); }
 
   // --- fit-text: shrink a non-wrapping hero line until it fits its container --
   // Measures against the original font-size (cached) so it's idempotent across
@@ -318,7 +321,7 @@
     })(els[i]);
   }
 
-  function show(n) {
+  function show(n, fromRemote) {
     idx = clamp(n);
     slides.forEach(function (s, i) { s.classList.toggle("is-active", i === idx); });
     var pct = slides.length > 1 ? (idx / (slides.length - 1)) * 100 : 100;
@@ -342,6 +345,10 @@
     clearTimeout(sentinelT);
     sentinelT = setTimeout(function () { drawSentinel(); }, 1100);
     if (history.replaceState) history.replaceState(null, "", "#/" + (idx + 1));
+    // twin-window sync: only LOCAL user navigation broadcasts — remote-driven
+    // show() must not echo (loop guard), and export's page-stepping must not
+    // flip the audience window mid-export.
+    if (!fromRemote && !deck.classList.contains("ppt-exporting")) syncSend({ t: "goto", idx: idx });
   }
 
   // editorial chrome (工业纸感): page counter + section label + accent zone
@@ -384,7 +391,19 @@
     var html = slideNotesHTML(idx);
     notesBody.innerHTML = html || "<em style='opacity:.5'>（本页无讲者备注 · 点击直接写）</em>";
   }
+  // audience window: a suppressed shortcut looks like "keys are broken" when the
+  // window isn't fullscreen yet (user testing / arranging screens) — say why.
+  // Silent when fullscreen: nothing may pollute the live projector.
+  var audHintEl = null, audHintT = null;
+  function audienceHint() {
+    if (!isAudience || document.fullscreenElement) return;
+    if (!audHintEl) { audHintEl = document.createElement("div"); audHintEl.className = "ppt-aud-hint"; document.body.appendChild(audHintEl); }
+    audHintEl.textContent = "这是观众窗（投屏用，快捷键已精简）— 提词 / 备注 / 演讲者操作请回演讲者窗";
+    audHintEl.classList.add("is-show");
+    clearTimeout(audHintT); audHintT = setTimeout(function () { audHintEl.classList.remove("is-show"); }, 4000);
+  }
   function toggleNotes() {
+    if (isAudience) { audienceHint(); return; }         // speaker notes never reach the projector
     if (presenterOpen) return;                          // presenter already shows the same notes, big
     var opening = !notesEl.classList.contains("is-open");
     notesEl.classList.toggle("is-open");
@@ -515,8 +534,23 @@
   }
   // rehearsal timer: count-up (elapsed) OR count-down (target − elapsed).
   // state idle → running ⇄ paused → (reset) idle. accum = ms banked while not
-  // running; since = wall time the current run began.
-  var pvTimer = { state: "idle", accum: 0, since: 0, mode: "up", targetMs: 20 * 60000 };
+  // running; since = wall time the current run began. userSet flips once the
+  // user touches the target (input/±/countdown) — it gates the pace light.
+  var deckTargetMin = parseFloat(deck.getAttribute("data-target-min")) || 0;
+  var pvTimer = { state: "idle", accum: 0, since: 0, mode: "up", userSet: false,
+                  targetMs: (deckTargetMin || 20) * 60000 };
+  // pace budget: cumulative ms that SHOULD be spent once slide i is done.
+  // Slides may pin an exact data-sec; the rest split the remaining target evenly.
+  function pvBudgetMs(i) {
+    var secs = slides.map(function (s) { return Math.max(0, parseFloat(s.getAttribute("data-sec")) || 0); });
+    var known = 0, unknown = 0;
+    secs.forEach(function (v) { if (v > 0) known += v; else unknown++; });
+    var fill = unknown ? Math.max(0, pvTimer.targetMs / 1000 - known) / unknown : 0;
+    var acc = 0;
+    for (var k = 0; k <= i && k < secs.length; k++) acc += secs[k] > 0 ? secs[k] : fill;
+    return acc * 1000;
+  }
+  function pvHasTarget() { return pvTimer.userSet || pvTimer.mode === "down" || deckTargetMin > 0; }
   function pvElapsed() { return pvTimer.accum + (pvTimer.state === "running" ? (Date.now() - pvTimer.since) : 0); }
   function pvFmt(ms) { var neg = ms < 0; ms = Math.abs(ms); var s = Math.floor(ms / 1000); return (neg ? "-" : "") + String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); }
   function pvParseTime(str) {   // "20" → 20min · "20:30" → 20m30s · else null
@@ -544,11 +578,12 @@
     presenterEl.setAttribute("data-pv-layout", pvLayout);
     presenterEl.innerHTML =
       '<div class="ppt-pv__stage">' +
-        '<div class="ppt-pv__current"><span class="ppt-pv__tag" data-role="tagbig">当前</span><div class="ppt-pv__frame" data-role="big"></div></div>' +
+        '<div class="ppt-pv__current"><span class="ppt-pv__tag" data-role="tagbig">当前</span><div class="ppt-pv__frame-area"><div class="ppt-pv__frame" data-role="big"></div></div></div>' +
         '<div class="ppt-pv__side">' +
-          '<div class="ppt-pv__next"><span class="ppt-pv__tag" data-role="tagsmall">下一页</span><div class="ppt-pv__frame" data-role="small"></div></div>' +
+          '<div class="ppt-pv__next"><span class="ppt-pv__tag" data-role="tagsmall">下一页</span><div class="ppt-pv__frame-area"><div class="ppt-pv__frame" data-role="small"></div></div></div>' +
           '<div class="ppt-pv__meta">' +
             '<div class="ppt-pv__timer" data-role="elapsed">00:00</div>' +
+            '<div class="ppt-pv__pace is-hidden" data-role="pace"><i></i><span data-role="pacetxt"></span></div>' +
             '<div class="ppt-pv__tcontrol">' +
               '<button type="button" class="ppt-pv__chip" data-act="mode" data-role="modebtn">正计时</button>' +
               '<span class="ppt-pv__target is-hidden"><button type="button" class="ppt-pv__chip" data-act="tdec" aria-label="目标减一分钟">−</button>' +
@@ -564,7 +599,7 @@
       '<div class="ppt-pv__bar">' +
         '<button type="button" class="ppt-pv__btn" data-act="prev" aria-label="上一页">◀</button>' +
         '<button type="button" class="ppt-pv__btn" data-act="next" aria-label="下一页">▶</button>' +
-        '<span class="ppt-pv__seg"><button type="button" class="ppt-pv__btn" data-act="timer" data-role="timerbtn">▶ 开始</button>' +
+        '<span class="ppt-pv__seg"><button type="button" class="ppt-pv__btn" data-act="timer" data-role="timerbtn">⏱ 开始</button>' +
         '<button type="button" class="ppt-pv__btn ppt-pv__btn--ghost" data-act="reset" aria-label="重置计时">↺</button></span>' +
         '<span class="ppt-pv__seg"><button type="button" class="ppt-pv__btn ppt-pv__btn--ghost" data-act="fdec" aria-label="逐字稿缩小">A−</button>' +
         '<button type="button" class="ppt-pv__btn ppt-pv__btn--ghost" data-act="finc" aria-label="逐字稿放大">A+</button></span>' +
@@ -595,7 +630,7 @@
       sBox.classList.toggle("is-empty", !sBox.textContent.trim());
     });
     var tIn = pvQ("target");                        // countdown target: type minutes or M:SS directly
-    function commitTarget() { var v = pvParseTime(tIn.value); if (v != null) pvTimer.targetMs = Math.max(60000, Math.min(180 * 60000, v)); pvTimerSync(); }
+    function commitTarget() { var v = pvParseTime(tIn.value); if (v != null) { pvTimer.userSet = true; pvTimer.targetMs = Math.max(60000, Math.min(180 * 60000, v)); } pvTimerSync(); }
     tIn.addEventListener("change", commitTarget);
     tIn.addEventListener("keydown", function (e) { if (e.key === "Enter") { commitTarget(); tIn.blur(); } });
     tIn.addEventListener("focus", function () { tIn.select(); });
@@ -623,8 +658,8 @@
     pvTimerSync();
   }
   function pvTimerReset() { pvTimer.state = "idle"; pvTimer.accum = 0; pvTimer.since = 0; pvTimerSync(); }
-  function pvMode() { pvTimer.mode = pvTimer.mode === "down" ? "up" : "down"; pvTimerSync(); }
-  function pvTarget(deltaMin) { pvTimer.targetMs = Math.max(60000, Math.min(180 * 60000, pvTimer.targetMs + deltaMin * 60000)); pvTimerSync(); }
+  function pvMode() { pvTimer.mode = pvTimer.mode === "down" ? "up" : "down"; if (pvTimer.mode === "down") pvTimer.userSet = true; pvTimerSync(); }
+  function pvTarget(deltaMin) { pvTimer.userSet = true; pvTimer.targetMs = Math.max(60000, Math.min(180 * 60000, pvTimer.targetMs + deltaMin * 60000)); pvTimerSync(); }
   function pvRender() {   // paint the live timer value (called by the 500ms tick + on any state change)
     if (!presenterEl) return;
     var el = pvQ("elapsed"), ms = pvTimer.mode === "down" ? (pvTimer.targetMs - pvElapsed()) : pvElapsed();
@@ -632,10 +667,23 @@
     var over = pvTimer.mode === "down" && ms < 0;
     el.classList.toggle("is-running", pvTimer.state === "running" && !over);
     el.classList.toggle("is-over", over);
+    // pace light: linear/data-sec budget vs elapsed — green ≤8% of target off,
+    // yellow ≤18%, red beyond (both too fast and too slow are problems).
+    var pace = pvQ("pace"), show = pvTimer.state !== "idle" && pvHasTarget();
+    pace.classList.toggle("is-hidden", !show);
+    if (show) {
+      var delta = pvElapsed() - pvBudgetMs(idx);
+      var tol = Math.abs(delta) / pvTimer.targetMs;
+      pace.classList.toggle("is-ok", tol <= 0.08);
+      pace.classList.toggle("is-warn", tol > 0.08 && tol <= 0.18);
+      pace.classList.toggle("is-bad", tol > 0.18);
+      pvQ("pacetxt").textContent = tol <= 0.08 ? "配速 · 正点"
+        : (delta < 0 ? "快 " : "慢 ") + pvFmt(Math.abs(delta));
+    }
   }
   function pvTimerSync() {
     if (!presenterEl) return;
-    pvQ("timerbtn").textContent = pvTimer.state === "running" ? "⏸ 暂停" : (pvTimer.state === "paused" ? "▶ 继续" : "▶ 开始");
+    pvQ("timerbtn").textContent = pvTimer.state === "running" ? "⏸ 暂停" : (pvTimer.state === "paused" ? "⏱ 继续" : "⏱ 开始");   // ⏱ so ▶ stays nav-only
     pvQ("modebtn").textContent = pvTimer.mode === "down" ? "倒计时" : "正计时";
     presenterEl.querySelector(".ppt-pv__target").classList.toggle("is-hidden", pvTimer.mode !== "down");
     if (document.activeElement !== pvQ("target")) pvQ("target").value = pvFmt(pvTimer.targetMs);  // don't fight the user mid-type
@@ -687,8 +735,25 @@
     pvQ("clock").textContent = nowClock();
     pvRender();
   }
+  // audience window handle: opened on P, reused on re-open (never a second one)
+  var audienceWin = null;
+  function openAudience() {
+    if (audienceWin && !audienceWin.closed) { try { audienceWin.focus(); } catch (e) {} return; }
+    var url = location.pathname + (location.search ? location.search + "&" : "?") + "audience" + location.hash;
+    audienceWin = window.open(url, "ppt-audience");
+    if (!audienceWin) pvNotice("弹窗被浏览器拦截 — 允许本站弹窗后重按 P 开观众窗（当前先用单窗排练）");
+    else if (location.protocol === "file:") pvNotice("file:// 下双窗无法同步 — 用 ./scripts/serve.sh 起本地服务再开");
+  }
+  function pvNotice(msg) {
+    if (!presenterEl) return;
+    var n = presenterEl.querySelector(".ppt-pv__notice");
+    if (!n) { n = document.createElement("div"); n.className = "ppt-pv__notice"; presenterEl.appendChild(n); }
+    n.textContent = msg; n.classList.add("is-show");
+    clearTimeout(pvNotice._t); pvNotice._t = setTimeout(function () { n.classList.remove("is-show"); }, 6000);
+  }
   function togglePresenter() {
     if (isExportLike) return;
+    if (isAudience) { audienceHint(); return; }                         // audience window never hosts a presenter
     if (!presenterEl) buildPresenter();
     presenterOpen = !presenterOpen;
     deck.classList.toggle("is-presenting", presenterOpen);
@@ -696,6 +761,7 @@
     if (presenterOpen) {
       overview.classList.remove("is-open");                             // presenter replaces overview / notes — never stack
       notesEl.classList.remove("is-open");
+      openAudience();                                                    // pop the clean projector window (B2)
       if (!presenterEl.style.getPropertyValue("--pv-read-h"))            // first open: default script panel ≈ 30% height
         presenterEl.style.setProperty("--pv-read-h", Math.round(presenterEl.clientHeight * 0.3) + "px");
       pvTimerSync();
@@ -712,10 +778,10 @@
   }
 
   // --- keyboard help affordance (hover / click / ? / H) ---------------------
-  // Screen-only: skipped entirely when exporting (render.sh appends ?export),
-  // so it never appears in PNG / PDF deliverables.
-  var isExport = isExportLike;
-  var toggleHelp = function () {};
+  // Screen-only: skipped when exporting (render.sh appends ?export) AND in the
+  // audience window — the projector shows content only.
+  var isExport = isExportLike || isAudience;
+  var toggleHelp = isAudience ? audienceHint : function () {};
   if (!isExport) {
     var help = document.createElement("div");
     help.className = "ppt-help";
@@ -725,7 +791,8 @@
         '<div class="ppt-help__row"><span class="k"><kbd>←</kbd><kbd>→</kbd><kbd>Space</kbd></span><b>翻页</b></div>' +
         '<div class="ppt-help__row"><span class="k"><kbd>1</kbd>–<kbd>9</kbd></span><b>跳到第 N 页</b></div>' +
         '<div class="ppt-help__row"><span class="k"><kbd>0</kbd> / <kbd>O</kbd></span><b>幻灯片总览</b></div>' +
-        '<div class="ppt-help__row"><span class="k"><kbd>P</kbd></span><b>演讲者视图（提词 + 缩略 + 计时）</b></div>' +
+        '<div class="ppt-help__row"><span class="k"><kbd>P</kbd></span><b>演讲者视图（提词 + 计时 + 弹观众窗）</b></div>' +
+        '<div class="ppt-help__row"><span class="k"><kbd>V</kbd></span><b>演讲者视图布局（当前/下一页/仅一屏）</b></div>' +
         '<div class="ppt-help__row"><span class="k"><kbd>R</kbd></span><b>重置排练计时（演讲者视图内）</b></div>' +
         '<div class="ppt-help__row"><span class="k"><kbd>F</kbd></span><b>全屏放映</b></div>' +
         '<div class="ppt-help__row"><span class="k"><kbd>S</kbd></span><b>讲者备注</b></div>' +
@@ -741,10 +808,44 @@
   // --- light / dark toggle (T) ----------------------------------------------
   // Toggles the SAME theme between light and dark (not a jarring multi-theme
   // cycle). Each theme defines a :root (light) + a .deck[data-theme="dark"] block.
-  function toggleDark() {
-    if (deck.getAttribute("data-theme") === "dark") deck.removeAttribute("data-theme");
-    else deck.setAttribute("data-theme", "dark");
+  function applyDark(on, fromRemote) {
+    if (on) deck.setAttribute("data-theme", "dark"); else deck.removeAttribute("data-theme");
+    if (!fromRemote) syncSend({ t: "theme", dark: on });
   }
+  function toggleDark() { applyDark(deck.getAttribute("data-theme") !== "dark"); }
+
+  // --- twin-window sync (Phase B) --------------------------------------------
+  // Presenter laptop + audience projector window stay in step over a
+  // BroadcastChannel named after the deck's pathname (same URL = same channel;
+  // different decks never cross-talk). Symmetric: whichever window the user
+  // drives broadcasts, the other applies with fromRemote=true (no echo).
+  // hello → the other side replies with full state (late joiners catch up).
+  // No BroadcastChannel (ancient browser) → localStorage `storage` fallback.
+  // NOTE: needs http:// (serve.sh) — file:// windows have opaque origins.
+  var syncCh = null, syncLS = false, SYNC_KEY = "ppt:" + location.pathname;
+  function syncSend(m) {
+    if (syncCh) syncCh.postMessage(m);
+    else if (syncLS) { try { localStorage.setItem(SYNC_KEY, JSON.stringify({ m: m, n: Date.now() + Math.random() })); } catch (e) {} }
+  }
+  function syncRecv(m) {
+    if (!m || !m.t) return;
+    if (m.t === "goto" && typeof m.idx === "number") show(m.idx, true);
+    else if (m.t === "theme") applyDark(!!m.dark, true);
+    else if (m.t === "hello") { syncSend({ t: "goto", idx: idx }); syncSend({ t: "theme", dark: deck.getAttribute("data-theme") === "dark" }); }
+  }
+  if (!isExportLike) (function syncInit() {
+    if (typeof BroadcastChannel !== "undefined") {
+      syncCh = new BroadcastChannel(SYNC_KEY);
+      syncCh.onmessage = function (e) { syncRecv(e.data); };
+    } else {
+      syncLS = true;
+      window.addEventListener("storage", function (e) {
+        if (e.key === SYNC_KEY && e.newValue) { try { syncRecv(JSON.parse(e.newValue).m); } catch (err) {} }
+      });
+    }
+    syncSend({ t: "hello" });                        // late joiner asks for state
+    window.addEventListener("beforeunload", function () { syncSend({ t: "bye" }); });
+  })();
 
   // --- fullscreen (F) — fullscreen the DECK so authoring chrome (dock, help)
   //     is excluded from the presentation; CSS :fullscreen hides what remains.
@@ -827,7 +928,7 @@
   window.PptDeck = { show: show, next: next, prev: prev, count: slides.length, fit: fit };
 
   fit();
-  show(fromHash());
+  show(fromHash(), true);   // boot silently: a freshly-opened window must not drag its twin to its own start page
 
   // --- headless overflow audit (?audit) -------------------------------------
   // scripts/check-overflow.mjs loads the deck with ?audit in headless Chrome,
