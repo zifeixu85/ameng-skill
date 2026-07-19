@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A梦 分享的 Agent Skills / Agent Skills shared by A梦",
-    "version": "0.3.0"
+    "version": "0.4.0"
   },
   "plugins": [
     {
@@ -25,14 +25,14 @@
     },
     {
       "name": "ameng-ppt-design",
-      "description": "有设计主见的 HTML 演示/PPT 生成器：把大纲/讲稿做成全离线、可放映的静态 HTML 幻灯片。OKLCH 设计系统 + 多主题 + 16:9/9:16/Swiss；右上角就地编辑 + 版本历史 + 一键导出 PDF/PPTX/PNG/HTML。",
+      "description": "有设计主见的 HTML 演示/PPT 生成器：把大纲/讲稿做成全离线、可放映的静态 HTML 幻灯片。OKLCH 设计系统 + 多主题 + 16:9/9:16/Swiss；右上角就地编辑 + 版本历史 + 一键导出 PDF/PPTX/PNG/HTML。v0.2 新增演讲者套件：按 P 开双屏演讲者视图（大字提词就地编辑 + 排练计时/倒计时 + 配速绿黄红灯 + 自动弹观众窗，双窗实时同步），全离线零依赖。",
       "source": "./",
       "strict": false,
       "author": { "name": "A梦 (ameng)", "email": "ameng@ameng.blog" },
       "homepage": "https://github.com/zifeixu85/ameng-skill",
       "repository": "https://github.com/zifeixu85/ameng-skill",
-      "version": "0.1.0",
-      "tags": ["ppt", "slides", "deck", "presentation", "html"],
+      "version": "0.2.0",
+      "tags": ["ppt", "slides", "deck", "presentation", "html", "presenter-view", "teleprompter"],
       "skills": [
         "./skills/ameng-ppt-design"
       ]

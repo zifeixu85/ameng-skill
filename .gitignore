@@ -31,3 +31,4 @@ docs/
 
 # Playwright MCP session artifacts
 .playwright-mcp/
+.gstack/

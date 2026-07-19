@@ -25,6 +25,8 @@ A set of Agent Skills by **A梦 (ameng)**, an ex-designer turned solo product bu
 
 把大纲/讲稿做成**全离线、可放映**的静态 HTML 幻灯片。OKLCH 设计系统 + 多主题 + 16:9/9:16/Swiss；右上角浮动工具栏 = **就地编辑（点文字就改、自动存版本、带 diff）+ 一键导出 PDF / PPTX / PNG / 自包含 HTML**。反 AI 味，禁 Inter/Playfair。
 
+**v0.2 · 演讲者套件**：按 `P` 进双屏演讲——笔记本上是演讲者控制台（当前/下一页缩略 + **大字提词就地编辑** + 排练计时/倒计时 + **配速绿黄红灯**），自动弹出纯净观众窗投屏，两窗实时同步翻页与主题；`V` 切视图布局，弹窗被拦自动降级单窗。全离线零依赖——这是 HTML 演示赛道里少有的完整 presenter view（reveal.js 之外基本没有，而我们不依赖任何 CDN）。
+
 → [`skills/ameng-ppt-design`](skills/ameng-ppt-design)
 
 ```text
