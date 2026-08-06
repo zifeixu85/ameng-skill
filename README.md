@@ -2,8 +2,8 @@
 
 一组面向真实工作任务的通用 Agent Skills。每个 Skill 都可以独立安装，适用于 Claude Code、Codex、WorkBuddy、OpenClaw、Hermes 等支持 `SKILL.md` 的 Agent 产品。
 
-- [在线查看工具箱与使用示例](https://zifeixu85.github.io/ameng-skill/)
-- [下载完整新手包](https://zifeixu85.github.io/ameng-skill/downloads/agent-skills-starter-kit.zip)
+- [在线查看工具箱与使用示例](https://ameng-agent-skills.pages.dev/)
+- [下载完整新手包](https://ameng-agent-skills.pages.dev/downloads/agent-skills-starter-kit.zip)
 
 ## 8 个可以直接安装的 Skill
 
