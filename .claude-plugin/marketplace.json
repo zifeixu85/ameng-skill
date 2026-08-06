@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A梦 分享的 Agent Skills / Agent Skills shared by A梦",
-    "version": "0.4.0"
+    "version": "0.5.0"
   },
   "plugins": [
     {
@@ -36,6 +36,78 @@
       "skills": [
         "./skills/ameng-ppt-design"
       ]
+    },
+    {
+      "name": "ameng-meeting-clarifier",
+      "description": "把会议逐字稿、录音转写和零散笔记整理成结论、决定、行动项与待确认问题。",
+      "source": "./",
+      "strict": false,
+      "author": { "name": "A梦 (ameng)", "email": "ameng@ameng.blog" },
+      "homepage": "https://zifeixu85.github.io/ameng-skill/",
+      "repository": "https://github.com/zifeixu85/ameng-skill",
+      "version": "0.1.0",
+      "tags": ["meeting", "notes", "transcript", "productivity"],
+      "skills": ["./skills/ameng-meeting-clarifier"]
+    },
+    {
+      "name": "ameng-weekly-review",
+      "description": "把一周的零散记录整理成对外周报、个人复盘和下周最重要的三件事。",
+      "source": "./",
+      "strict": false,
+      "author": { "name": "A梦 (ameng)", "email": "ameng@ameng.blog" },
+      "homepage": "https://zifeixu85.github.io/ameng-skill/",
+      "repository": "https://github.com/zifeixu85/ameng-skill",
+      "version": "0.1.0",
+      "tags": ["weekly-review", "report", "reflection", "planning"],
+      "skills": ["./skills/ameng-weekly-review"]
+    },
+    {
+      "name": "ameng-content-repurpose",
+      "description": "把文章、课程、演讲和视频改造成适合不同渠道的长文、短帖、邮件、口播和演示大纲。",
+      "source": "./",
+      "strict": false,
+      "author": { "name": "A梦 (ameng)", "email": "ameng@ameng.blog" },
+      "homepage": "https://zifeixu85.github.io/ameng-skill/",
+      "repository": "https://github.com/zifeixu85/ameng-skill",
+      "version": "0.1.0",
+      "tags": ["content", "repurpose", "writing", "video"],
+      "skills": ["./skills/ameng-content-repurpose"]
+    },
+    {
+      "name": "ameng-data-insight",
+      "description": "检查 Excel、CSV 和结构化数据，找出趋势、异常、分组差异和可验证的下一步。",
+      "source": "./",
+      "strict": false,
+      "author": { "name": "A梦 (ameng)", "email": "ameng@ameng.blog" },
+      "homepage": "https://zifeixu85.github.io/ameng-skill/",
+      "repository": "https://github.com/zifeixu85/ameng-skill",
+      "version": "0.1.0",
+      "tags": ["data", "spreadsheet", "analysis", "insight"],
+      "skills": ["./skills/ameng-data-insight"]
+    },
+    {
+      "name": "ameng-learning-digest",
+      "description": "把文章、PDF、课程字幕和笔记整理成能理解、能复习、能应用的学习材料。",
+      "source": "./",
+      "strict": false,
+      "author": { "name": "A梦 (ameng)", "email": "ameng@ameng.blog" },
+      "homepage": "https://zifeixu85.github.io/ameng-skill/",
+      "repository": "https://github.com/zifeixu85/ameng-skill",
+      "version": "0.1.0",
+      "tags": ["learning", "digest", "study", "review"],
+      "skills": ["./skills/ameng-learning-digest"]
+    },
+    {
+      "name": "ameng-project-validator",
+      "description": "把项目想法拆成事实、假设和未知，找出最危险前提并设计七天内能完成的验证。",
+      "source": "./",
+      "strict": false,
+      "author": { "name": "A梦 (ameng)", "email": "ameng@ameng.blog" },
+      "homepage": "https://zifeixu85.github.io/ameng-skill/",
+      "repository": "https://github.com/zifeixu85/ameng-skill",
+      "version": "0.1.0",
+      "tags": ["validation", "mvp", "interview", "business"],
+      "skills": ["./skills/ameng-project-validator"]
     }
   ]
 }

@@ -27,7 +27,10 @@ design-skills-research/
 .design/
 
 # Internal planning / handoff docs (kept local, not published)
-docs/
+.internal-docs/
+
+# Local packaging workspace; public downloads live under docs/downloads/
+dist/
 
 # Playwright MCP session artifacts
 .playwright-mcp/
