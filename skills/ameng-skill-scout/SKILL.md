@@ -9,6 +9,7 @@ description: >
   支持「仅研究」「研究 + 推荐」「研究 + 设计方案」三种产出模式。
   当用户说「研究 skill」「调研 skill」「收集 skill」「分析 skill」「survey skills for X」
   「what skills exist for X」，或想了解某主题已有哪些 Skill 时触发。
+version: "1.0.0"
 metadata:
   author: A梦 (ameng)
   homepage: https://github.com/zifeixu85/ameng-skill#ameng-skill-scout

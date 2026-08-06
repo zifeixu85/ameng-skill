@@ -1,48 +1,89 @@
-# A梦 Agent Skills 工具箱
+# ameng-skill
 
-一组面向真实工作任务的通用 Agent Skills。每个 Skill 都可以独立安装，适用于 Claude Code、Codex、WorkBuddy、OpenClaw、Hermes 等支持 `SKILL.md` 的 Agent 产品。
+> 我是 **A梦**—— 前阿里体验设计专家 / 现独立产品开发者。
+> 这里是我**按自己真实工作方式**打磨的一组 Agent Skills，跨 **Claude Code / Codex / OpenClaw / Hermes** 使用，持续更新。
+> 每个 Skill 都可**单独安装**，按下面的顺序挑你需要的就行。
 
-- [在线查看工具箱与使用示例](https://zifeixu85.github.io/ameng-skill/)
-- [下载完整新手包](https://zifeixu85.github.io/ameng-skill/downloads/agent-skills-starter-kit.zip)
+A set of Agent Skills by **A梦 (ameng)**, an ex-designer turned solo product builder. Each skill installs independently — pick what you need.
 
-## 8 个可以直接安装的 Skill
+---
 
-| Skill | 用来做什么 | 你可以直接这样说 |
-|---|---|---|
-| [`ameng-skill-scout`](skills/ameng-skill-scout) | 搜索、下载和分析某个主题下已有的 Skill | “帮我研究有哪些适合做市场调研的 Skill” |
-| [`ameng-ppt-design`](skills/ameng-ppt-design) | 生成可放映、可分享链接的 HTML 演示文稿 | “把这份大纲做成一套 16:9 的演示文稿” |
-| [`ameng-meeting-clarifier`](skills/ameng-meeting-clarifier) | 把逐字稿整理成结论、决定和行动项 | “整理这份会议记录，别替我补负责人” |
-| [`ameng-weekly-review`](skills/ameng-weekly-review) | 从零散记录生成周报、复盘和下周计划 | “把这些记录整理成对外周报和个人复盘” |
-| [`ameng-content-repurpose`](skills/ameng-content-repurpose) | 把一份内容改造成长文、短帖、邮件或口播 | “把这次分享改成文章和 60 秒口播” |
-| [`ameng-data-insight`](skills/ameng-data-insight) | 检查表格数据并找出趋势、异常和下一步 | “分析这个 CSV，先告诉我数据质量问题” |
-| [`ameng-learning-digest`](skills/ameng-learning-digest) | 把文章、PDF、字幕变成能理解和复习的材料 | “帮我吃透这份资料，再出 5 道问题检查我” |
-| [`ameng-project-validator`](skills/ameng-project-validator) | 找出项目最危险的假设并设计最小验证 | “别急着夸这个想法，先帮我设计七天验证” |
+## ① 先装这个 · `ameng-skill-scout` —— Skill 调研器 🔭
 
-## 另外推荐的 2 个成熟工具
+**最通用的一个，建议从它开始。** 想知道某个主题下「已经有哪些 AI Skill」？它替你搜索→下载→分析→出一份结构化研究报告：覆盖 Claude Code / Codex / OpenClaw / Hermes 多生态、中英文都收录，做安全审查 + 体验分析 + 组合分析。开工先问一句需求，支持**仅研究 / +推荐 / +设计方案**三档产出。
 
-这两个项目已有成熟入口，我们不重复打包，只提供原作者链接和使用建议。
-
-1. [AI HOT Agent](https://aihot.virxact.com/agent)：直接获取中文 AI 日报、精选和事件时间线，无需 API Key。
-2. [PPT Master](https://github.com/hugohe3/ppt-master)：生成可继续编辑的 PPTX 源文件。我们的 `ameng-ppt-design` 更适合生成 HTML 演示和分享链接，两者解决的问题不同。
-
-## 安装
-
-### Claude Code
-
-先添加一次市场，然后按需安装：
+→ [`skills/ameng-skill-scout`](skills/ameng-skill-scout)
 
 ```text
 /plugin marketplace add zifeixu85/ameng-skill
 /plugin install ameng-skill-scout@ameng-skill
-/plugin install ameng-weekly-review@ameng-skill
 ```
 
-把第二行的 Skill 名替换成表格中的任意名称即可。
+---
 
-### Codex / WorkBuddy / OpenClaw / Hermes
+## ② 顺手装 · `ameng-ppt-design` —— 有设计主见的 PPT 生成器 🖼️
 
-下载仓库或新手包，把需要的整个 Skill 文件夹放进对应产品的 Skills 目录。不要只复制 `SKILL.md`，因为部分 Skill 还会使用同目录中的参考文件、脚本和模板。
+把大纲/讲稿做成**全离线、可放映**的静态 HTML 幻灯片。OKLCH 设计系统 + 多主题 + 16:9/9:16/Swiss；右上角浮动工具栏 = **就地编辑（点文字就改、自动存版本、带 diff）+ 一键导出 PDF / PPTX / PNG / 自包含 HTML**。反 AI 味，禁 Inter/Playfair。
 
-## 许可与来源
+**v0.2 · 演讲者套件**：按 `P` 进双屏演讲——笔记本上是演讲者控制台（当前/下一页缩略 + **大字提词就地编辑** + 排练计时/倒计时 + **配速绿黄红灯**），自动弹出纯净观众窗投屏，两窗实时同步翻页与主题；`V` 切视图布局，弹窗被拦自动降级单窗。全离线零依赖——这是 HTML 演示赛道里少有的完整 presenter view（reveal.js 之外基本没有，而我们不依赖任何 CDN）。
 
-本仓库采用 MIT License。部分通用 Skill 吸收并改写自 MIT 开源项目，完整来源与版权信息见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+→ [`skills/ameng-ppt-design`](skills/ameng-ppt-design)
+
+```text
+/plugin install ameng-ppt-design@ameng-skill
+```
+
+---
+
+## 安装说明
+
+### Claude Code（推荐，自动更新）
+
+先加一次市场，再按需装：
+
+```text
+/plugin marketplace add zifeixu85/ameng-skill
+/plugin install ameng-skill-scout@ameng-skill   # ① Skill 调研器（主推）
+/plugin install ameng-ppt-design@ameng-skill    # ② PPT 生成器
+```
+
+### 手动复制单个 Skill
+
+```bash
+git clone https://github.com/zifeixu85/ameng-skill.git
+cp -r ameng-skill/skills/ameng-skill-scout ~/.claude/skills/ameng-skill-scout
+```
+
+### 其它宿主（OpenClaw / Hermes / Codex）
+
+每个 Skill 都是纯 `SKILL.md`（跨宿主通用），把对应 `skills/<name>` 目录放进各宿主的 skills 目录即可。
+
+---
+
+## 仓库结构
+
+```
+ameng-skill/
+├── .claude-plugin/
+│   └── marketplace.json        # 一个市场，每个 skill 一个独立可装的 plugin
+├── skills/
+│   ├── ameng-skill-scout/      # ① 主推
+│   └── ameng-ppt-design/       # ② 次推
+├── README.md
+└── LICENSE
+```
+
+每个 Skill 一个目录，名字带 `ameng-` 前缀（作者签名）。
+
+## 新增 Skill 的约定
+
+1. 在 `skills/` 下新建 `ameng-<name>/`，至少含 `SKILL.md`。
+2. `SKILL.md` frontmatter 里 `name:` 用 `ameng-<name>`，并写 `version` 与 `metadata.author: A梦 (ameng)`。
+3. 在 `.claude-plugin/marketplace.json` 的 `plugins` 数组里**新增一条 plugin**（默认一 skill 一 plugin；
+   只有概念上属于同一套件、且会合并的，才放进同一个 plugin 的 `skills` 数组）。
+4. 在上面按主推优先级插一节。
+
+## 许可 / License
+
+MIT © A梦 (ameng)。可自由使用、修改、分享，请保留作者署名。
+MIT licensed — free to use, modify, and share; please keep the attribution.
