@@ -50,7 +50,7 @@
 - **类型**：guide-only / script-bundled / api-dependent / mcp-dependent / browser-automation / hybrid
 - **自动化方式**：无 / Playwright / Puppeteer / Chrome CDP / REST API / ...
 - **用户操作复杂度**：即用 / 需配置 / 需开发 + 具体步骤
-- **安全等级**：safe / caution / danger
+- **安全等级**：safe / caution / danger / unverified（未审时写明缺什么）
   - 安全发现：（若有）
   - 发布风险：（若涉及发布：平台、方式、限流风险、建议评级）
 - **能力覆盖**：

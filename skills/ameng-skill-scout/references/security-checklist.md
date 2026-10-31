@@ -1,6 +1,6 @@
 # Skill 安全与风险审查清单
 
-对每个收集到的 Skill，先判断类型，再按对应层级检查。每项标 pass / warn / fail。
+对每个收集到的 Skill，先判断类型，再按对应层级检查。每项标 pass / warn / fail；因为材料不全没法查的项标「未查」，并写明缺什么。
 
 ## 分层检查规则
 
@@ -77,3 +77,6 @@
 | `safe` | 全部 pass |
 | `caution` | 有 warn 但无 fail |
 | `danger` | 有任何 fail |
+| `unverified`（未审） | 没有 fail，但材料不全（只拿到 SKILL.md 或网页摘要、缺 scripts/ 等附属文件），或任一应查项是「未查」 |
+
+**没看全不能判 safe。** 材料不全时：有 fail 照样标 `danger`；没有 fail 就标 `unverified`，并在安全发现里写明缺什么、怎么补（例如「scripts/ 未下载，第 2、4、5 项未查」）。
