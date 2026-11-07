@@ -343,6 +343,11 @@ mark { background: var(--accent-soft); color: var(--ink-1); padding: 0 0.18em; b
        background: var(--surface-2); border-radius: var(--r-pill);
        padding: 0.3em 0.85em; border: 1px solid var(--line);
        white-space: nowrap; /* pills never wrap internally (fallback-font safety) */ }
+/* scenario / illustrative-data badge (事实溯源 D1): flags a made-up KPI on screen
+   so the audience knows the number isn't real. Deliberately quiet + dashed so it
+   reads as a caveat, not a highlight. Pair with data-scenario on the .slide. */
+.tag--scenario { background: transparent; border-style: dashed; border-color: var(--ink-3);
+                 color: var(--ink-3); letter-spacing: 0.06em; }
 
 /* divider */
 .rule { height: 1px; background: var(--line); border: 0; margin: var(--s-5) 0; }

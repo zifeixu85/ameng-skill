@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0f0e0c">
+<meta name="referrer" content="no-referrer">
+<title>手机遥控</title>
+<link rel="stylesheet" href="phone.css">
+</head>
+<body>
+<div class="app" id="app">
+  <div class="banner" id="banner" role="status" aria-live="assertive" hidden>
+    <div><b id="bannerTitle"></b><span id="bannerText"></span></div>
+    <button id="switchRoute" hidden>换一条路</button>
+  </div>
+  <header class="bar">
+    <span class="dot" id="dot" aria-hidden="true"></span>
+    <button class="page" id="pageBtn" aria-label="跳页"><b id="pageNow">–</b><small id="pageAll">/ –</small><i id="stepNow"></i></button>
+    <button class="clock" id="clock" aria-label="开始或暂停计时">00:00</button>
+    <button class="more" id="moreBtn" aria-label="更多">⋯</button>
+  </header>
+  <div class="swipe" id="swipe">
+    <section class="views" id="views" aria-label="当前页和下一页">
+      <figure class="view view--prev" data-v="prev"><img id="prevImg" alt="" width="176" height="99"><figcaption id="prevLabel">上一页</figcaption></figure>
+      <figure class="view view--now" data-v="now"><img id="nowImg" alt="" width="176" height="99"><figcaption id="nowLabel">当前</figcaption></figure>
+      <figure class="view" data-v="next"><img id="nextImg" alt="" width="176" height="99"><figcaption id="nextLabel">下一页</figcaption></figure>
+    </section>
+    <main class="reader">
+      <div class="notes" id="notes" tabindex="0"></div>
+      <div class="below" id="below" hidden>下面还有 ↓</div>
+    </main>
+    <div class="hint" id="hint" aria-hidden="true" hidden></div>
+  </div>
+  <footer class="keys">
+    <button class="prev" id="prev">上一页</button>
+    <button class="go" id="next">下一页</button>
+  </footer>
+</div>
+
+<div class="sheet" id="jump" hidden>
+  <div class="sheet__head"><b>跳到哪一页</b><button id="jumpClose">关闭</button></div>
+  <div class="sheet__body" id="jumpList"></div>
+  <button class="go go--sheet" id="jumpGo" disabled>先选一页</button>
+</div>
+
+<div class="sheet" id="more" hidden>
+  <div class="sheet__head"><b>更多</b><button id="moreClose">关闭</button></div>
+  <div class="sheet__body rows">
+    <div class="row"><span>备注字号</span><span class="row__end"><button id="fontDown" aria-label="缩小字号">A−</button><b id="fontNow"></b><button id="fontUp" aria-label="放大字号">A+</button></span></div>
+    <div class="row"><span>计时</span><span class="row__end"><button id="timerReset">归零</button></span></div>
+    <div class="row"><span>全屏</span><span class="row__end"><button id="fullscreen">切换</button></span></div>
+    <div class="row"><span>连接</span><span class="row__end" id="linkInfo"></span></div>
+    <div class="row"><span>屏幕常亮</span><span class="row__end" id="awakeInfo"></span></div>
+    <div class="row"><span>预览图</span><span class="row__end" id="loadInfo"></span></div>
+    <div id="routes"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+<video id="keepAwake" src="keep-awake.mp4" muted loop playsinline preload="auto" aria-hidden="true"></video>
+<script src="phone.js"></script>
+</body>
+</html>

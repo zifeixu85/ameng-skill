@@ -1,0 +1,35 @@
+/* paper 纸墨 — 方寸无尽的品牌气质：纸、墨、朱砂。Heavy Song headlines, generous
+   margins, one vermilion mark per page. For client decks, courses, brand stories. */
+.deck[data-theme="paper"] {
+  --bg:#f6f2e9; --bg-2:#ece6d8; --panel:#fcfaf4; --ink:#1c1a16; --ink-2:#4b473d; --ink-3:#6d6858;
+  --line:#ddd6c6; --line-2:#b9b09b;
+  --accent:#b5442b; --brand:#b5442b; --fill:var(--brand); --accent-2:#3f5a3a; --accent-soft:#f3e2da;
+  --c1:#b5442b; --c2:#2e2b25; --c3:#8a8170; --c4:#d1bd9a; --c5:#7f7969; --c6:#5e584b;
+  --f-display:"Newsreader","Noto Serif SC","Songti SC","SimSun",serif;
+  --f-num:"Newsreader","Noto Serif SC",serif;
+  --w-display:900; --w-title:800; --track-display:-.01em; --track-title:0em; --lead-display:1.14; --lead-title:1.26;
+  --radius:4px; --radius-sm:2px; --rule:1.5px;
+  --code-bg:#22201b; --code-ink:#efe9dc; --code-mute:#8f8a7c; --code-hot:#e0a184;
+}
+.deck[data-theme="paper"] .stage::after { content:""; position:absolute; inset:0; z-index:5; pointer-events:none; mix-blend-mode:multiply; opacity:.5; background-image:var(--paper-grain); }
+.deck[data-theme="paper"] { --paper-grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .5 0 0 0 0 .4 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.deck[data-theme="paper"] .slide[data-tone="dark"] { --bg:#1f1d18; --bg-2:#2a2720; --panel:#2a2720; --ink:#f3eee2; --ink-2:#c9c2b2; --ink-3:#958e7e; --line:#3a362d; --line-2:#5e584b; --accent:#e0795c; --fill:#b5442b; }
+.deck[data-theme="paper"] .slide[data-tone="accent"] { --bg:var(--brand); --panel:#c25338; --ink:#ffffff; --ink-2:#fbe9e0; --ink-3:#efc4b3; --line:#c9654a; --line-2:#efc4b3; --accent:#ffffff; --fill:#ffffff; --on-fill:var(--brand); }
+.deck[data-theme="paper"] [data-layout="cover"] .meta { color:var(--ink); justify-content:flex-start; gap:var(--s5); }
+.deck[data-theme="paper"] .kicker { font-family:"Newsreader","Noto Serif SC",serif; font-style:italic; font-size:30px; letter-spacing:.01em; text-transform:none; color:var(--accent); }
+.deck[data-theme="paper"] .title em { color:var(--accent); }
+.deck[data-theme="paper"] [data-layout="statement"] .title em { color:inherit; text-emphasis:filled dot var(--accent); -webkit-text-emphasis:filled dot var(--accent); text-emphasis-position:under right; }
+.deck[data-theme="paper"] [data-layout="statement"] .title { line-height:1.5; }
+.deck[data-theme="paper"] [data-layout="cover"] .title { line-height:1.22; grid-column:1 / 10; }
+.deck[data-theme="paper"] [data-layout="section"] .sec-num { font-style:italic; font-weight:400; color:var(--accent); letter-spacing:-.02em; }
+.deck[data-theme="paper"] [data-layout="number"] .hero { font-weight:500; font-style:italic; letter-spacing:-.03em; }
+.deck[data-theme="paper"] .kpi { background:none; padding:var(--s3) 0 0; border-top:var(--rule) solid var(--ink); border-radius:0; }
+.deck[data-theme="paper"] .kpi--hot { padding:var(--s3); }
+.deck[data-theme="paper"] .kpi__value { font-weight:500; }
+.deck[data-theme="paper"] .tl__when, .deck[data-theme="paper"] .agenda .n { font-family:"Newsreader",serif; font-style:italic; }
+.deck[data-theme="paper"] .point-col .n { font-style:italic; font-weight:400; }
+.deck[data-theme="paper"] .mx, .deck[data-theme="paper"] .tier { box-shadow:inset 0 0 0 1px var(--line); }
+.deck[data-theme="paper"] .ring__node { box-shadow:0 0 0 1.5px var(--line-2); }
+.deck[data-theme="paper"] .chrome--top { border-bottom:var(--rule) solid var(--ink); padding-bottom:12px; top:46px; }
+.deck[data-theme="paper"] .seal { position:absolute; right:var(--mx); bottom:96px; width:120px; height:120px; display:grid; place-items:center; background:var(--fill); color:var(--on-fill); font-family:"Noto Serif SC",serif; font-weight:800; font-size:44px; line-height:1.08; text-align:center; border-radius:6px; padding:12px; }
+.deck[data-theme="paper"] .vert { position:absolute; right:calc(var(--mx) - 56px); top:128px; writing-mode:vertical-rl; font-family:"Noto Serif SC",serif; font-size:var(--t-cap); letter-spacing:.3em; color:var(--ink-3); }

@@ -12,6 +12,10 @@
 //   WARN      · 禁蓝 — a blue-hue oklch()/hex used as inline accent/foreground
 //   WARN      · <img> without a non-empty alt
 //   WARN      · a .slide with no .notes child (missing speaker notes)
+//   WARN      · 事实溯源 — a numeric data component (bars/donut/data-hero/funnel/gauge/…) on a
+//              slide that declares neither data-fact (real, sourced) nor data-scenario (illustrative)
+//   WARN      · 情景数据 — a data-scenario slide with no visible 示例数据/情景数据 label
+//   WARN      · 口播稿 — speaker .notes carrying meta-markers ([过渡]/要点：/时长：/停顿) instead of speakable prose
 //   WARN      · layout diversity — missing data-layout / 3+ same-layout run / <variety floor / card-grid >1/3
 //   WARN      · em-dash overuse (≥5 in visible body text)
 //   WARN      · eyebrow overuse (>3 .eyebrow elements)
@@ -239,6 +243,18 @@ let graphicNonCenter = 0;
 let withLayout = 0;
 const layoutSeq = []; // {idx, layout} in document order — feeds the 5d diversity gate
 
+// 事实溯源 (D1): the 数据图 families whose on-screen numbers assert a real quantity
+// (diagrams.md「两类图分治」— DATA charts, not concept graphics like flow/layers/matrix2).
+// Every slide carrying one must declare provenance: data-fact="…" (real, sourced in .notes)
+// OR data-scenario (illustrative/made-up — and then show a visible 示例数据 label). \b keeps
+// "stat" from matching ".stat__num" (the boundary fails at "_"), so it hits the container class.
+const NUMERIC_DATA_RE =
+  /\bclass\s*=\s*("[^"]*\b(?:data-hero|bars|donut|funnel|gauge|linechart|scope|kpi-row|kpi|stat)\b[^"]*"|'[^']*\b(?:data-hero|bars|donut|funnel|gauge|linechart|scope|kpi-row|kpi|stat)\b[^']*')/i;
+const factsMissing = [];    // slides with numeric data but no data-fact/data-scenario
+const scenarioNoLabel = []; // slides with data-scenario but no visible 示例数据 label
+let withFact = 0;           // slides declaring data-fact="…"
+let withScenario = 0;       // slides declaring data-scenario
+
 let so;
 while ((so = slideOpenRe.exec(html)) !== null) {
   const classVal = so[2] ?? so[3] ?? "";
@@ -273,6 +289,25 @@ while ((so = slideOpenRe.exec(html)) !== null) {
   if (/\bdata-section\s*=/.test(openTag)) withSection++;
   if (GRAPHIC_RE.test(body)) { graphicSlides++; if (!isCenter) graphicNonCenter++; }
 
+  // 事实溯源 (D1): does this page put real numbers on screen? If so it must say
+  // where they come from (data-fact) or admit they're illustrative (data-scenario).
+  // Attribute may sit on the section open tag OR anywhere in the body (component-level).
+  // Strip HTML comments first: template pages carry commented「<div class="data-hero">」
+  // examples that would otherwise trip NUMERIC_DATA_RE (false positive on cover pages).
+  const bodyClean = body.replace(/<!--[\s\S]*?-->/g, " ");
+  const span = openTag + bodyClean;
+  if (/\bdata-fact\s*=/.test(span)) withFact++;
+  if (/\bdata-scenario\b/.test(span)) withScenario++;
+  if (NUMERIC_DATA_RE.test(bodyClean)) {
+    const hasProvenance = /\bdata-fact\s*=/.test(span) || /\bdata-scenario\b/.test(span);
+    if (!hasProvenance) factsMissing.push({ idx: slideCount, line: lineAt(so.index) });
+  }
+  // 情景数据: a scenario page must wear a visible「示例数据」badge so the audience
+  // knows the KPI is made up (ppt-master renders this label on the slide itself).
+  if (/\bdata-scenario\b/.test(span) && !/示例数据|情景数据|示意数据/.test(bodyClean)) {
+    scenarioNoLabel.push({ idx: slideCount, line: lineAt(so.index) });
+  }
+
   // A .notes child = an element carrying the "notes" class within the body.
   if (!/\bclass\s*=\s*("([^"]*\bnotes\b[^"]*)"|'([^']*\bnotes\b[^']*)')/.test(body)) {
     missingNotes.push({ idx: slideCount, line: lineAt(so.index) });
@@ -287,9 +322,69 @@ if (missingNotes.length > 0) {
   );
 }
 
+// ---- 5a2. WARN: 事实溯源 — numeric data without provenance (D1) --------------
+// The house rule「数据图守真实」was prose-only; this makes it machine-checkable.
+// A page with a data component (bars/donut/data-hero/…) must declare where its
+// numbers come from: data-fact="…" (real, sourced in .notes) or data-scenario
+// (illustrative — and then a visible 示例数据 label). Not a FAIL: annotating is
+// cheap and existing decks predate the rule, so it's a WARN nudge per page.
+if (factsMissing.length > 0) {
+  add(
+    warns,
+    `事实溯源: ${factsMissing.length} slide(s) with a data component but no data-fact / data-scenario: ` +
+      factsMissing.map((s) => `#${s.idx}(line ${s.line})`).join(", ") +
+      ` — real numbers → add data-fact="…"(source it in .notes); made-up KPIs → data-scenario + a visible 示例数据 tag`,
+  );
+}
+if (scenarioNoLabel.length > 0) {
+  add(
+    warns,
+    `情景数据: ${scenarioNoLabel.length} data-scenario slide(s) with no visible 示例数据/情景数据 label: ` +
+      scenarioNoLabel.map((s) => `#${s.idx}(line ${s.line})`).join(", ") +
+      ` — a scenario page must tell the audience the numbers are illustrative (add a 示例数据 tag on the page)`,
+  );
+}
+
+// ---- 5a3. WARN: 口播稿纪律 — meta-markers in speaker .notes (B1) -------------
+// .notes is the single source for presenter teleprompter AND (future) TTS/video
+// narration. So it must read as speakable prose — not an outline with stage
+// directions. Scaffolding like「[过渡]」「要点：」「时长：3分钟」「【停顿】」can't be
+// spoken and would be read aloud verbatim by TTS. Numbers should be written the
+// way they're said (百分之六十八, not 68%) — that part is prose guidance, not
+// linted. Best-effort: notes are usually flat <div class="notes">text</div>; a
+// note containing a nested block ends the match early, which only under-reports.
+{
+  const NOTE_META = [
+    { re: /[[【（(]\s*过渡\s*[\]】）)]/g, name: "过渡标记" },
+    { re: /[[【（(]\s*停顿\s*[\]】）)]/g, name: "停顿标记" },
+    { re: /[[【（(]\s*强调\s*[\]】）)]/g, name: "强调标记" },
+    { re: /要点\s*[:：]/g, name: "要点：" },
+    { re: /时长\s*[:：]|用时\s*[:：]/g, name: "时长：" },
+  ];
+  const noteBlocks = [
+    ...html.matchAll(
+      /<([a-z][\w-]*)\b[^>]*\bclass\s*=\s*("[^"]*\bnotes\b[^"]*"|'[^']*\bnotes\b[^']*')[^>]*>([\s\S]*?)<\/\1>/gi,
+    ),
+  ];
+  const notesText = noteBlocks.map((m) => m[3]).join("\n");
+  const hits = [];
+  for (const { re, name } of NOTE_META) {
+    const n = (notesText.match(re) || []).length;
+    if (n > 0) hits.push(`${name}×${n}`);
+  }
+  if (hits.length > 0) {
+    add(
+      warns,
+      `口播稿: speaker .notes carry meta-markers (${hits.join(", ")}) — .notes is the teleprompter/TTS ` +
+        `script, so write speakable prose: fold transitions into the opening sentence, spell numbers the way ` +
+        `you say them, drop 要点：/时长：/[过渡] scaffolding (put structure in the slide, not the script)`,
+    );
+  }
+}
+
 add(
   infos,
-  `slides: ${slideCount} · with data-accent: ${withAccent} · with data-section: ${withSection} · with data-layout: ${withLayout} · with graphics: ${graphicSlides}`,
+  `slides: ${slideCount} · with data-accent: ${withAccent} · with data-section: ${withSection} · with data-layout: ${withLayout} · with graphics: ${graphicSlides} · with data-fact: ${withFact} · with data-scenario: ${withScenario}`,
 );
 
 // ---- 5b. WARN: graphic density — a deck of flat text cards reads as slop ----

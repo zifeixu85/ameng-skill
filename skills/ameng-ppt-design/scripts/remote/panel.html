@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>手机遥控 · 电脑面板</title>
+<style>
+:root { --bg:#f6f2e9; --ink:#1c1a16; --mute:#6d6858; --line:#ddd6c6; --main:#b5442b; --panel:#fcfaf4; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 -apple-system,"PingFang SC",sans-serif; }
+main { max-width:1040px; margin:0 auto; padding:32px 24px 48px; }
+h1 { font-size:26px; margin:0 0 4px; }
+.warn { color:var(--main); font-weight:600; margin:0 0 24px; }
+.state { display:flex; flex-wrap:wrap; gap:8px 32px; padding:12px 0; border-block:1px solid var(--line); margin-bottom:24px; }
+.state b { font-variant-numeric:tabular-nums; }
+.open { display:inline-block; background:var(--main); color:#fff; padding:12px 20px; border-radius:8px; font-weight:600; text-decoration:none; margin-bottom:24px; }
+.codes { display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start; }
+figure { margin:0; flex:0 1 300px; background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:16px; }
+figure svg { display:block; width:100%; height:auto; }
+figcaption b { display:block; margin-top:10px; }
+code { font-size:12px; word-break:break-all; color:var(--mute); }
+.none { color:var(--mute); }
+</style>
+</head>
+<body>
+<main>
+  <h1>手机遥控</h1>
+  <p class="warn">二维码等于遥控钥匙，别让这页出现在投影上。扫完码再接投影或全屏放映。</p>
+  <div class="state" id="state">正在读取状态…</div>
+  <a class="open" id="open" target="_blank" rel="noopener">打开放映页</a>
+  <div class="codes" id="codes"></div>
+</main>
+<script>
+const el = (id) => document.getElementById(id);
+let drawn = "";
+function line(k, v) { const s = document.createElement("span"); s.append(k + " "); const b = document.createElement("b"); b.textContent = v; s.append(b); return s; }
+async function tick() {
+  try {
+    const s = await (await fetch("/__remote/status", { cache: "no-store" })).json();
+    el("open").href = s.deckUrl;
+    el("state").replaceChildren(
+      line("放映页", s.decks ? s.decks + " 个窗口" : "没打开"),
+      line("手机", s.phones ? s.phones + " 台已连接" : "没连上"),
+      line("当前", "第 " + (s.position.i + 1) + " 页" + (s.position.step ? " 第 " + s.position.step + " 步" : "")),
+      line("公网", s.tunnel || "没开"));
+    const key = JSON.stringify(s.addresses.map((a) => a.url));
+    if (key === drawn) return;
+    drawn = key;
+    el("codes").replaceChildren(...s.addresses.map((a) => {
+      const f = document.createElement("figure");
+      f.innerHTML = a.qr;   /* server-made SVG from our own address */
+      const c = document.createElement("figcaption"), b = document.createElement("b"), u = document.createElement("code");
+      b.textContent = a.label; u.textContent = a.url;
+      c.append(b, u); f.append(c);
+      return f;
+    }));
+    if (!s.addresses.length) { const p = document.createElement("p"); p.className = "none"; p.textContent = "这台电脑现在没有联网地址，连上 Wi-Fi 或手机热点后这里会更新。"; el("codes").replaceChildren(p); }
+  } catch { el("state").textContent = "服务已停止，回到终端重新启动。"; drawn = ""; }
+}
+tick(); setInterval(tick, 1500);
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+/* fills.css — loaded after the themes on purpose: this rule must win everywhere.
+   Text on a dark or saturated block is white, and everything inside inherits it.
+   Only background-color is set, so a theme may still lay a gradient over the fill. */
+.deck[data-theme] .kpi--hot,
+.deck[data-theme] .versus__side + .versus__side,
+.deck[data-theme] .tier.is-hot,
+.deck[data-theme] .mx.is-hot,
+.deck[data-theme] .layer.is-hot,
+.deck[data-theme] .ring__node.is-hot,
+.deck[data-theme] .ring__core {
+  background-color: var(--fill); color: var(--on-fill);
+  --ink: var(--on-fill); --ink-2: var(--on-fill); --ink-3: var(--on-fill); --accent: var(--on-fill);
+  box-shadow: none; border-color: var(--fill);
+}
+.deck[data-theme] .step.is-hot .step__dot { background-color: var(--fill); color: var(--on-fill); border-color: var(--fill); }

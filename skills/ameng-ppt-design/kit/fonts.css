@@ -1,0 +1,13 @@
+/* Self-hosted, all SIL OFL. CJK files are GB2312 level-1 + punctuation subsets (fonts load only when a theme uses them). */
+@font-face{font-family:"Noto Sans SC";src:url(fonts/NotoSansSC-VF.woff2) format("woff2");font-weight:400 900;font-display:swap}
+@font-face{font-family:"Noto Serif SC";src:url(fonts/NotoSerifSC-VF.woff2) format("woff2");font-weight:500 900;font-display:swap}
+@font-face{font-family:"Smiley Sans";src:url(fonts/SmileySans.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Archivo";src:url(fonts/Archivo-VF.woff2) format("woff2");font-weight:100 900;font-stretch:62% 125%;font-display:swap}
+@font-face{font-family:"Bricolage Grotesque";src:url(fonts/Bricolage-VF.woff2) format("woff2");font-weight:200 800;font-stretch:75% 100%;font-display:swap}
+@font-face{font-family:"Instrument Sans";src:url(fonts/InstrumentSans-VF.woff2) format("woff2");font-weight:400 700;font-stretch:75% 100%;font-display:swap}
+@font-face{font-family:"Instrument Serif";src:url(fonts/InstrumentSerif.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Instrument Serif";src:url(fonts/InstrumentSerif-Italic.woff2) format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"Newsreader";src:url(fonts/Newsreader-VF.woff2) format("woff2");font-weight:200 800;font-style:normal;font-display:swap}
+@font-face{font-family:"Newsreader";src:url(fonts/Newsreader-Italic-VF.woff2) format("woff2");font-weight:200 800;font-style:italic;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(fonts/JetBrainsMono-VF.woff2) format("woff2");font-weight:100 800;font-display:swap}
+@font-face{font-family:"Doto";src:url(fonts/Doto-800.woff2) format("woff2");font-weight:800;font-display:swap}

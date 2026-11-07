@@ -57,8 +57,10 @@
       <div class="notes">极致字号对比：zh-mega 与 .body 拉到 ~5 倍尺度差，层级靠尺度强制，不靠颜色。左对齐、大留白。</div>
     </section>
 
-    <!-- 3 · DATA HERO + 折线趋势（数字 + 图表，瑞士 KPI） ---------------------- -->
-    <section class="slide" data-layout="data-hero" data-section="数据 · DATA">
+    <!-- 3 · DATA HERO + 折线趋势（数字 + 图表，瑞士 KPI） ----------------------
+         事实溯源（D1）：本页数字是占位示例 → 标 data-scenario，src 行已含可见「示例数据」。
+         换成真实数据后：删 data-scenario、改标 data-fact="你的出处"、src 去掉「示例数据」。 -->
+    <section class="slide" data-layout="data-hero" data-section="数据 · DATA" data-scenario>
       <span class="eyebrow" data-anim="fade">RENDER BUDGET · 7-DAY TREND</span>
       <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">单帧渲染中位数，一周降了 <span class="hl">41%</span></h3>
       <div class="grid-2 fill" style="--gap:var(--s-8);align-items:center">

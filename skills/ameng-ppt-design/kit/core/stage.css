@@ -1,0 +1,233 @@
+/* ============================================================================
+   ameng-ppt-design kit · stage.css
+   Fixed 1920×1080 stage (1px = 0.5pt in the exported PPTX), token contract,
+   reset, typographic primitives. Themes override tokens only + their own
+   signature treatments; layouts never hardcode color or font.
+   ============================================================================ */
+
+/* ---- 1. Token contract ---------------------------------------------------- */
+:root {
+  /* Geometry — 12 columns of 112px, 32px gutter, 112px side margins */
+  --mx: 112px;
+  --gut: 32px;
+  --top: 148px;          /* first content line (chrome sits above) */
+  --bot: 116px;          /* last content line (folio sits below) */
+
+  /* Type scale (stage px; pt = px / 2) */
+  /* Hard ceilings for big type. Themes pick a face and a weight, never a bigger size.
+     scripts/check.mjs fails anything above these. */
+  --t-hero: 288px;       /* one big number */
+  --t-mega: 200px;       /* section numeral */
+  --t-display: 136px;    /* cover and closing titles */
+  --t-h1: 96px;          /* statement and section titles */
+  --t-quote: 84px;
+  --t-kpi: 96px;
+  --t-h2: 68px;          /* page titles */
+  --t-h3: 44px;
+  --t-lead: 42px;
+  --t-body: 34px;
+  --t-small: 30px;
+  --t-cap: 23px;
+
+  /* Rhythm */
+  --s1: 8px; --s2: 16px; --s3: 24px; --s4: 32px; --s5: 48px; --s6: 64px; --s7: 96px; --s8: 136px;
+
+  /* Motion defaults (themes override) */
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --dur: 760ms;
+
+  /* Surfaces & ink (themes must define these) */
+  --bg: #f5f2ea;
+  --bg-2: #ebe6da;
+  --panel: #fbf9f3;
+  --ink: #1b1a17;
+  --ink-2: #4b4840;
+  --ink-3: #7c786d;
+  --line: #d9d3c4;
+  --line-2: #b7af9c;
+  --accent: #b5442b;      /* marks, emphasis text, chart highlight */
+  --fill: var(--accent);  /* solid blocks that carry text: dark or saturated */
+  --on-fill: #ffffff;     /* text on --fill is always white */
+  --accent-2: #4c6a2a;
+  --accent-soft: #f2dfd6;
+
+  /* Chart categorical order: fixed, never cycled */
+  --c1: #b5442b; --c2: #1f5f5b; --c3: #b08a2e; --c4: #6f6a5e; --c5: #8b3a62; --c6: #3f6b34;
+
+  /* Families */
+  --f-display: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --f-text: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --f-mono: "JetBrains Mono", "Noto Sans SC", ui-monospace, monospace;
+  --f-num: var(--f-display);
+
+  /* Type voice */
+  --w-display: 800;
+  --w-title: 700;
+  --w-text: 400;
+  --track-display: -0.018em;
+  --track-title: -0.01em;
+  --lead-display: 1.08;
+  --lead-title: 1.2;
+  --lead-text: 1.6;
+
+  /* Shape voice */
+  --radius: 14px;
+  --radius-sm: 8px;
+  --rule: 2px;
+}
+
+/* ---- 2. Reset ------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #111; }
+:where(h1, h2, h3, h4, p, ul, ol, dl, dd, figure, blockquote, table) { margin: 0; padding: 0; }
+:where(ul, ol) { list-style: none; }
+:where(img, svg, canvas, video) { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; }
+
+/* ---- 3. Deck & stage ------------------------------------------------------ */
+.deck {
+  position: fixed; inset: 0; overflow: hidden;
+  background: color-mix(in oklab, var(--bg) 82%, #000);
+  -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision;
+}
+.stage {
+  position: absolute; left: 50%; top: 50%;
+  width: 1920px; height: 1080px;
+  transform: translate(-50%, -50%) scale(var(--fit, 1));
+  background: var(--bg); color: var(--ink);
+  font-family: var(--f-text); font-size: var(--t-body); font-weight: var(--w-text);
+  line-height: var(--lead-text);
+  overflow: hidden;
+  view-transition-name: stage;
+  text-spacing-trim: trim-start;
+  text-autospace: normal;
+  line-break: strict;
+}
+.slide {
+  position: absolute; inset: 0;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: auto minmax(0, 1fr);
+  column-gap: var(--gut);
+  padding: var(--top) var(--mx) var(--bot);
+  background: var(--bg); color: var(--ink);
+  visibility: hidden; opacity: 0; pointer-events: none;
+  isolation: isolate;
+  overflow: hidden;
+}
+.slide.is-active { visibility: visible; opacity: 1; pointer-events: auto; }
+.slide > * { min-width: 0; min-height: 0; }
+.slide > .notes, .notes { display: none !important; }
+
+/* Decorative layer injected by the theme. Sits under content, ignored by the
+   overflow gate, exported as native shapes where it can be. */
+.deco { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.fx { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
+
+/* Chrome: running head + folio. Small but legible (≥ 10pt in the PPTX). */
+.chrome { position: absolute; left: var(--mx); right: var(--mx); z-index: 3; display: flex; justify-content: space-between; align-items: baseline; font-size: var(--t-cap); line-height: 1.2; color: var(--ink-3); pointer-events: none; }
+.chrome--top { top: 60px; }
+.chrome--bot { bottom: 48px; }
+.chrome b { font-weight: 600; color: var(--ink-2); }
+.chrome .folio { font-family: var(--f-mono); font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+.slide[data-chrome="none"] .chrome { display: none; }
+.progress { position: absolute; left: 0; bottom: 0; height: 4px; width: 100%; z-index: 4; pointer-events: none; }
+.progress > i { display: block; height: 100%; width: var(--p, 0%); background: var(--accent); transition: width .5s var(--ease-out); }
+
+/* ---- 4. Typographic primitives -------------------------------------------- */
+.kicker {
+  grid-column: 1 / -1;
+  font-family: var(--f-mono); font-size: var(--t-cap); font-weight: 500;
+  letter-spacing: .12em; line-height: 1.3; text-transform: uppercase;
+  color: var(--accent); margin-bottom: var(--s3);
+}
+.title {
+  grid-column: 1 / -1;
+  font-family: var(--f-display); font-size: var(--t-h2); font-weight: var(--w-title);
+  line-height: var(--lead-title); letter-spacing: var(--track-title);
+  text-wrap: balance; font-feature-settings: "palt" 1;
+  margin-bottom: var(--s5);
+}
+.title em, .lead em, .body em, .quote em { font-style: normal; color: var(--accent); }
+.lead { font-size: var(--t-lead); line-height: 1.45; color: var(--ink-2); text-wrap: balance; font-weight: 400; }
+.body { font-size: var(--t-body); line-height: var(--lead-text); color: var(--ink-2); text-wrap: balance; }
+.step p, .mx span, .point span, .tl p, .point-col p, .tier li, .callout { text-wrap: balance; }
+.small { font-size: var(--t-small); line-height: 1.5; color: var(--ink-2); }
+.cap { font-size: var(--t-cap); line-height: 1.4; color: var(--ink-3); }
+.source { font-size: var(--t-cap); line-height: 1.4; color: var(--ink-3); }
+.mono { font-family: var(--f-mono); }
+.num { font-family: var(--f-num); font-variant-numeric: lining-nums; }
+.ink { color: var(--ink); }
+.accent { color: var(--accent); }
+strong, b { font-weight: 700; color: var(--ink); }
+
+/* Sample-data tag: visible on any page whose numbers are illustrative */
+.tag-sample {
+  position: absolute; right: var(--mx); top: 104px; z-index: 3;
+  font-size: var(--t-cap); line-height: 1; color: var(--ink-3);
+  border: 1px solid var(--line-2); border-radius: 999px; padding: 7px 14px 8px;
+  background: var(--bg);
+}
+
+/* Stacks & splits used inside layouts */
+.stack { display: flex; flex-direction: column; gap: var(--gap, var(--s3)); min-height: 0; }
+.row { display: flex; gap: var(--gap, var(--s3)); align-items: var(--align, stretch); }
+.fill { flex: 1 1 0; min-height: 0; min-width: 0; }
+.span-all { grid-column: 1 / -1; }
+.bottom { align-self: end; }
+
+/* ---- 5. Tone: per-slide inversion ----------------------------------------- */
+/* data-tone="dark"|"accent" re-binds surface/ink tokens inside one slide.
+   Each theme writes its own values under its own selector. */
+.slide[data-tone="accent"] .kicker { color: inherit; opacity: .85; }
+
+
+/* ---- 6. Reduced motion & print --------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .progress > i { transition: none; }
+}
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  html, body { background: none; height: auto; }
+  .deck { position: static; overflow: visible; background: none; }
+  .stage { position: static; transform: none; height: auto; overflow: visible; background: none; }
+  .slide { position: relative; visibility: visible; opacity: 1; width: 1920px; height: 1080px; break-after: page; }
+  .progress, .ui, .stage::after { display: none !important; }
+  .slide { overflow: hidden; }
+  .slide[data-hidden] { display: none !important; }
+}
+
+/* ---- 7. Chart tokens + tip (per-slide so tone inversion carries through) ---- */
+.slide { --chart-mute: color-mix(in oklab, var(--ink) 18%, var(--bg)); --chart-tile: color-mix(in oklab, var(--ink) 9%, var(--bg)); --chart-round: 8; }
+.chart-tip { position: absolute; left: 0; top: 0; z-index: 8; pointer-events: none; opacity: 0; transition: opacity .14s; background: var(--ink); color: var(--bg); padding: 12px 18px; border-radius: 10px; font-size: 24px; line-height: 1.4; white-space: nowrap; }
+.chart-tip b { display: block; font-weight: 700; color: inherit; }
+.chart-tip.is-on { opacity: 1; }
+
+/* ---- 8. Split-line masks used by the entrance engine ------------------------ */
+.ln { display: block; overflow: hidden; padding-block: .16em; margin-block: -.16em; white-space: nowrap; }
+.ln__i { display: block; }
+
+/* ---- 9. Transitions (View Transitions API, with crossfade as the fallback) --- */
+::view-transition-group(stage) { animation-duration: .6s; }
+::view-transition-old(stage), ::view-transition-new(stage) { animation-duration: .6s; animation-timing-function: var(--ease-out, ease); mix-blend-mode: normal; }
+::view-transition-group(*) { animation-duration: .72s; animation-timing-function: cubic-bezier(.65, 0, .2, 1); }
+html[data-trans="push"][data-dir="fwd"]::view-transition-old(stage) { animation-name: vt-out-left; }
+html[data-trans="push"][data-dir="fwd"]::view-transition-new(stage) { animation-name: vt-in-right; }
+html[data-trans="push"][data-dir="back"]::view-transition-old(stage) { animation-name: vt-out-right; }
+html[data-trans="push"][data-dir="back"]::view-transition-new(stage) { animation-name: vt-in-left; }
+html[data-trans="zoom"]::view-transition-old(stage) { animation-name: vt-zoom-out; }
+html[data-trans="zoom"]::view-transition-new(stage) { animation-name: vt-zoom-in; }
+@keyframes vt-out-left { to { transform: translateX(-100%); } }
+@keyframes vt-in-right { from { transform: translateX(100%); } }
+@keyframes vt-out-right { to { transform: translateX(100%); } }
+@keyframes vt-in-left { from { transform: translateX(-100%); } }
+@keyframes vt-zoom-out { to { transform: scale(1.14); opacity: 0; } }
+@keyframes vt-zoom-in { from { transform: scale(.94); opacity: 0; } }
+
+/* ---- 10. Export measuring: every slide laid out and visible at its end frame -- */
+.stage.is-measuring .slide { visibility: visible !important; opacity: 1 !important; }
+
+/* ---- 11. Running loops (runtime only) --------------------------------------- */
+.loop-dot { position: absolute; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px color-mix(in oklab, var(--accent) 22%, transparent); pointer-events: none; z-index: 2; }
+.loop-orbit { position: absolute; width: 0; height: 0; pointer-events: none; z-index: 0; }

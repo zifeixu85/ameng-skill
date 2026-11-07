@@ -54,7 +54,18 @@ const TEMPLATE = `# intake · ${name}
 ## ⑤ 比例
 - 比例: # 16x9(演讲) / swiss(数据驱动)
 
-## ⑥ 逐页大纲（标准通道确认后再搭;快速通道直接来自用户大纲,无需再点头）
+## ⑥ 叙事骨架 mode（决定整份 deck 的骨架,选一个;同素材换 mode 骨架完全不同）
+- 叙事mode: # pyramid 结论先行(默认,汇报/路演首选) / narrative 故事线(起承转合) / instructional 教学步骤(照着做) / showcase 逐项展示(作品/功能巡览) / briefing 简报速览(信息密度高,少铺陈)
+
+## ⑦ 事实溯源（有真实数字就登记;纯概念 deck 无数据可写「无」）
+> 页面上每个真实数据组件(data-hero/bars/donut/funnel/gauge/linechart/…)标 \`data-fact="出处"\`,出处登记到下表;
+> 编造/示例数字则标 \`data-scenario\` + 页面放可见「示例数据」标签(validate 会查)。**发散不是编造许可。**
+- 有无真实数据: # 有 / 无(纯概念)
+| fact | 这个数字说什么 | 出处 | 采集日期 |
+|---|---|---|---|
+| F1 | # 例:42% 创业失败归因于没有市场需求 | # CB Insights 2021 | # 2026-07-20 |
+
+## ⑧ 逐页大纲（标准通道确认后再搭;快速通道直接来自用户大纲,无需再点头）
 1. # 每行一页的标题/要点,行数≈页数
 `;
 
@@ -95,27 +106,29 @@ const checks = [
   { key: "主题", label: "③风格·主题", val: field("主题") },
   { key: "主题色", label: "④主题色(默认/色号/描述/推荐)", val: field("主题色") },
   { key: "比例", label: "⑤比例", val: field("比例") },
+  { key: "叙事mode", label: "⑥叙事mode(pyramid/narrative/instructional/showcase/briefing)", val: field("叙事mode") },
 ];
 
 // outline: count numbered lines that carry real content (after the `1.` marker,
-// excluding the template's `# 提示` placeholder)
-const outline = (md.split(/##\s*⑥[^\n]*\n/)[1] || "")
+// excluding the template's `# 提示` placeholder). ⑧ is the LAST section so its
+// split tail is clean (⑥ mode / ⑦ facts sit above it, no numbered `1.` lines).
+const outline = (md.split(/##\s*⑧[^\n]*\n/)[1] || "")
   .split("\n")
   .map((l) => l.match(/^\s*\d+\.\s*([^#\n]*)/))
   .filter((m) => m && m[1].trim().length > 0).length;
 
 const missing = checks.filter((c) => !c.val).map((c) => c.label);
-if (outline === 0) missing.push("⑥逐页大纲(≥1 行)");
+if (outline === 0) missing.push("⑧逐页大纲(≥1 行)");
 
 console.log(`ameng-ppt intake · slides/${name}/intake.md`);
 for (const c of checks) console.log(`  ${c.val ? "✓" : "✗"} ${c.label}: ${c.val || "—（缺）"}`);
-console.log(`  ${outline ? "✓" : "✗"} ⑥逐页大纲: ${outline} 行`);
+console.log(`  ${outline ? "✓" : "✗"} ⑧逐页大纲: ${outline} 行`);
 
 if (missing.length) {
   console.log(`\n缺 ${missing.length} 项:${missing.join(" · ")}`);
   console.log(`补齐后再进脚手架。\n\nRESULT: INCOMPLETE`);
   exit(1);
 }
-console.log(`\n闸门齐全(页数 ${field("页数") || "?"} · 主题 ${field("主题")} · 主题色 ${field("主题色")} · 比例 ${field("比例")} · 大纲 ${outline} 行)。可进 Step 2。`);
+console.log(`\n闸门齐全(页数 ${field("页数") || "?"} · 主题 ${field("主题")} · 主题色 ${field("主题色")} · 比例 ${field("比例")} · mode ${field("叙事mode") || "?"} · 大纲 ${outline} 行)。可进 Step 2。`);
 console.log(`\nRESULT: OK`);
 exit(0);

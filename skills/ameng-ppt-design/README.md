@@ -1,81 +1,31 @@
 # ameng-ppt-design
 
-> 有设计主见的 HTML 演示文稿/PPT 生成器 —— 全离线、可放映、**可就地编辑、可一键导出**。
+> 把大纲做成动态网页演示，再导出真正可编辑的 PPTX。
 >
-> **作者 / Author: A梦 (ameng)** · 自由分享与使用，请保留署名 · Free to use & share — please keep attribution.
+> **作者 / Author: A梦 (ameng)** · 自由分享与使用，请保留署名。
 
-把大纲/讲稿/想法做成静态 HTML 幻灯片：OKLCH token 系统 + 6 主题 + 版式库 + 16:9/Swiss +
-自托管 distinctive 字体 + 键盘放映。强制 anti-slop（禁蓝、单 accent 60-30-10、禁 Inter/Playfair、**只画真实数据**）。
-
-## 比普通 HTML deck 多的两件事（右上角工具栏）
-
-| ✎ 编辑 | ⤓ 导出（逐页整页截图→拼装，连角标/小标题/页脚都进图） |
-|--------|--------|
-| 点任意文字**就地修改**；按 `S` 打开**讲者备注直接可改**（保留、不计入版本） | **PDF**（每页整图合成，jsPDF） |
-| 点「**完成**」对**正文改过的页**各存一版（恢复不重复存） | **PPTX · 图片版**（每页满版整图，高保真） |
-| **历史只看当前页**：默认版=版本1 + diff 旧→新；**≥2 版才显示数字角标** | **PPTX · 可编辑（分层版）**：背景图 + 装饰图 + 文字框，**文字不切图、可改** |
-| 右上角**常驻低调文字按钮**，随主题变色 | **PNG**（当前页 / 全部 zip）· **HTML**（自包含单文件） |
-
-> 工具栏是右上角一排**低调常驻的文字按钮**（hover 变清晰、不挡内容）；**全屏放映时连同快捷键提示一起隐藏**（纯内容）。
-> 编辑与版本存本浏览器 localStorage，离线、不上传。导出逐页整页截图（modern-screenshot，OKLCH 保真）再拼装，背景/高亮带/grain/chrome 一个都不丢。
-> 键盘：`1–9` 跳页 · `0`/`O` 缩略图总览（每页实拍预览）· `F` 全屏 · `S` 备注 · `T` 明暗。
+- **网页是主产物**：图表自己长出来，文字逐行入场，页面之间有变形过渡，带演讲者视图和网页阅读模式。
+- **PPTX 是可编辑源文件**：文字、形状、表格都是原生的；柱状、折线、环形等九类图表是 PowerPoint 原生图表，「编辑数据」能打开内嵌表格；讲者备注和分步动画都带过去。
+- **六套设计主题**：纸墨、夜幕、网格、规格、色块、董事会。同一份内容切换主题，气质完全不同。
+- **手机遥控**：`node scripts/remote.mjs <deck>`，扫码后手机翻页、看备注和下一页，deck 文件不改动。
+- **改动写回文件**：在网页里改字、换图、改图表数据、调页序，都直接存进 `index.html`。
 
 ## 快速开始
 
 ```bash
-./scripts/fetch-fonts.sh                       # 可选：一次性装字体，之后全离线
-./scripts/new-ppt.sh my-talk 16x9              # swiss 亦可 → slides/my-talk/index.html
-open slides/my-talk/index.html                 # 放映 / 右上角编辑 / 右上角导出
-node scripts/validate.mjs slides/my-talk/index.html   # 纪律自检
-./scripts/render.sh slides/my-talk/index.html pdf      # 像素级 PDF（本地 Chrome）
+node scripts/new-deck.mjs my-talk --theme noir --title "我的分享"
+node scripts/serve.mjs slides/my-talk          # 打开本地地址
+node scripts/check.mjs slides/my-talk          # 质量检查
+node scripts/export.mjs slides/my-talk --pptx  # 导出可编辑 PPTX
 ```
 
-导出库已内置 `assets/vendor/`（开箱离线可用）；要刷新：
-```bash
-./scripts/fetch-export-libs.sh                 # modern-screenshot + jspdf + pptxgenjs + jszip
-```
-> 浏览器导出在 `http://`（本地服务器）下最稳；直接 `file://` 双击可能被浏览器拦截截图，改用本地服务器或 `render.sh`。
+需要 Node 22 以上和 Chrome。完整说明见 [SKILL.md](SKILL.md)。
 
-## 主题 & 比例
+## 样张
 
-- 比例：`16x9`（演讲）· `swiss`（数据驱动）
-- **5 套差异化主题** —— 同一页内容、不同风格。**不是换皮**：排版、构图、密度、装饰、气质都不同。点开 `templates/theme-preview.html` 可**实时切换对比 + 明暗**：
-
-| `industrial-paper` 工业纸感（旗舰） | `neo-brutalist` 新粗野 | `editorial` 杂志 |
-|---|---|---|
-| ![industrial-paper](screenshots/industrial-paper.png) | ![neo-brutalist](screenshots/neo-brutalist.png) | ![editorial](screenshots/editorial.png) |
-| 暖纸 + grain + 软色带 + terminal | 黑框 + 硬投影 + 实心色块 + 零圆角 | 衬线 + 疏朗 + 首字下沉 + 细下划线 |
-
-| `dark-luxe` 暗调质感 | `ink-wash` 中式水墨 | |
-|---|---|---|
-| ![dark-luxe](screenshots/dark-luxe.png) | ![ink-wash](screenshots/ink-wash.png) | |
-| 渐变底 + 毛玻璃 + 暖金辉光 | 宋体 + 朱砂红 + 留白 + 印章式标签 + 墨晕 | |
-
-> 选主题时**打开预览页直观对比**，别只看名字。截图由 `./scripts/shoot-themes.sh` 生成（同一页内容渲染每套主题）。
-
-## 安装
-
-整库装见仓库根 README。单独装这一个：
-
-```bash
-cp -r skills/ameng-ppt-design ~/.claude/skills/ameng-ppt-design
-```
-
-其它宿主（OpenClaw / Hermes / Codex）：把目录放进各自 skills 目录即可。
-
-## 文件结构
-
-```
-ameng-ppt-design/
-├── SKILL.md / README.md
-├── assets/   base.css · components.css · toolbar.css · runtime.js · editor.js · export.js
-│             · fonts.css + fonts/ · vendor/ (modern-screenshot+jspdf+pptxgenjs+jszip) · themes/*.css · fx/
-├── templates/  ppt-16x9 · ppt-swiss · layouts-gallery
-├── scripts/    new-ppt.sh · fetch-fonts.sh · fetch-export-libs.sh · render.sh · validate.mjs
-└── references/ 8 篇按需加载的设计/版式/纪律文档
-```
+- [templates/showcase.html](templates/showcase.html)：18 页样张，工具条「主题」切换六套风格
+- [templates/catalog.html](templates/catalog.html)：全部图表和版式
 
 ## License / 致谢
 
-MIT © **A梦 (ameng)**。内置 vendor（全 MIT）：[modern-screenshot](https://github.com/qq15725/modern-screenshot)、[jsPDF](https://github.com/parallax/jsPDF)、[PptxGenJS](https://github.com/gitbrent/PptxGenJS)、[JSZip](https://github.com/Stuk/jszip)。
-部分反 AI-slop 规则借鉴 [pbakaus/impeccable](https://github.com/pbakaus/impeccable)（Apache-2.0）。
+MIT © **A梦 (ameng)**。字体均为 SIL OFL。内置 [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator)、[JSZip](https://github.com/Stuk/jszip)、[modern-screenshot](https://github.com/qq15725/modern-screenshot)（MIT）。原生图表和切换动画的做法参考了 [ppt-master](https://github.com/hugohe3/ppt-master)（MIT）。

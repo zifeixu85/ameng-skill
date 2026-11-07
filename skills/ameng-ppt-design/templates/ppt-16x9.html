@@ -80,14 +80,17 @@
       <div class="notes">编号卡 = 01 + 衬线标题 + mono 标签。差异化填充、统一描边，不是模板网格。</div>
     </section>
 
-    <!-- 4 · Swiss Data Hero（KPI 占屏宽 ~20%） ----------------------------- -->
-    <section class="slide center" data-layout="data-hero" data-section="调试 · DEBUG" data-accent="cinnabar">
+    <!-- 4 · Swiss Data Hero（KPI 占屏宽 ~20%） -----------------------------
+         事实溯源（D1）：真实数字 → 在 section 上标 data-fact="出处"，并把可核对的来源
+         写进 .notes。改成你自己的数据时，data-fact 也换成你的真实出处。 -->
+    <section class="slide center" data-layout="data-hero" data-section="调试 · DEBUG" data-accent="cinnabar"
+             data-fact="CB Insights · Top Reasons Startups Fail · 2021">
       <div class="data-hero" data-anim="rise">
         <div class="data-hero__num fx-pop">42<span class="unit">%</span></div>
         <div class="data-hero__label">创业失败归因于「<span class="hl">没有市场需求</span>」，远高于任何技术原因。</div>
-        <div class="data-hero__src">来源：CB Insights, Top Reasons Startups Fail（示例，需替换为真实出处）</div>
+        <div class="data-hero__src">来源：CB Insights《Top Reasons Startups Fail》2021</div>
       </div>
-      <div class="notes">Data Hero：一个真实大数字当视觉主角，配出处。无真实数据就别用这版式。</div>
+      <div class="notes">这个百分之四十二来自 CB Insights 二〇二一年的创业失败复盘，是所有失败原因里占比最高的一条——比任何技术问题都高。它说明：先验证需求，比先把产品做完更重要。（真实数据 → section 标 data-fact + 此处留可核对出处）</div>
     </section>
 
     <!-- 5 · 截图框 + 文字（截图美化子系统） ------------------------------- -->
@@ -105,9 +108,15 @@
       <div class="notes">截图是第一公民：统一框、统一阴影。没图用 .frame__placeholder（不造假 UI）。</div>
     </section>
 
-    <!-- 6 · 诚实条形图（只画真实数据） ------------------------------------ -->
-    <section class="slide center" data-layout="bars" data-section="设计 · DESIGN" data-accent="mint">
-      <span class="eyebrow" data-anim="fade">渠道意愿（示例 · 需替换为真实数据）</span>
+    <!-- 6 · 诚实条形图 ----------------------------------------------------
+         事实溯源（D1）：这里的百分比是占位示例 → section 标 data-scenario，并在页面上
+         放一个可见「示例数据」标签，让观众知道这不是真实数据。换成真数据后：删掉
+         data-scenario、改标 data-fact="你的出处"、去掉示例标签。 -->
+    <section class="slide center" data-layout="bars" data-section="设计 · DESIGN" data-accent="mint" data-scenario>
+      <div class="cluster" style="--gap:var(--s-3);align-items:center">
+        <span class="eyebrow" data-anim="fade">渠道意愿</span>
+        <span class="tag tag--scenario">示例数据</span>
+      </div>
       <h3 class="h2" data-anim="rise" style="margin:var(--s-3) 0 var(--s-6)">哪个钩子转化最高</h3>
       <div class="bars anim-stagger" style="max-width:48rem">
         <div class="bar"><span class="body">立即购买</span><div class="bar__track"><div class="bar__fill fx-grow-x" style="--v:78%"></div></div><span class="bar__val">78%</span></div>

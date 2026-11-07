@@ -1,3 +1,5 @@
 # generated presentations (keep templates, assets, screenshots committed)
 slides/
 .DS_Store
+.versions/
+*.single.html

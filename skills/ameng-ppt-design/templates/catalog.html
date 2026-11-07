@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>图表与版式目录</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<script src="../kit/kit.js"></script>
+</head>
+<body>
+<main class="deck" data-theme="paper" data-brand="图表与版式目录" data-title="图表与版式目录">
+<div class="stage">
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">柱状图：比较几个类别</h2>
+  <figure class="chart" data-type="bar" aria-label="柱状图：比较几个类别"><script type="application/json">{"unit": "万", "categories": ["一季度", "二季度", "三季度", "四季度"], "highlight": "三季度", "series": [{"name": "营收", "values": [120, 148, 210, 176]}]}</script></figure>
+  <aside class="notes">bar</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">分组柱：同类别比两组</h2>
+  <figure class="chart" data-type="bar" aria-label="分组柱：同类别比两组"><script type="application/json">{"unit": "%", "labels": "none", "categories": ["华东", "华南", "华北", "西南"], "series": [{"name": "去年", "values": [42, 36, 28, 19]}, {"name": "今年", "values": [58, 49, 33, 31]}]}</script></figure>
+  <aside class="notes">bar 分组</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">堆叠柱：总量和构成都要看</h2>
+  <figure class="chart" data-type="bar" aria-label="堆叠柱：总量和构成都要看"><script type="application/json">{"stacked": true, "unit": "人", "categories": ["1月", "2月", "3月", "4月", "5月"], "series": [{"name": "新客", "values": [20, 28, 33, 41, 52]}, {"name": "老客", "values": [64, 66, 70, 72, 78]}]}</script></figure>
+  <aside class="notes">bar 堆叠</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">面积图：累计趋势</h2>
+  <figure class="chart" data-type="area" aria-label="面积图：累计趋势"><script type="application/json">{"unit": "万", "categories": ["1月", "2月", "3月", "4月", "5月", "6月", "7月"], "series": [{"name": "累计收入", "values": [12, 26, 44, 61, 85, 110, 142]}]}</script></figure>
+  <aside class="notes">area</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">堆叠面积：总量和占比随时间变</h2>
+  <figure class="chart" data-type="area" aria-label="堆叠面积：总量和占比随时间变"><script type="application/json">{"stacked": true, "unit": "小时", "categories": ["W1", "W2", "W3", "W4", "W5", "W6"], "series": [{"name": "人工", "values": [60, 54, 44, 38, 30, 26]}, {"name": "Agent", "values": [6, 14, 26, 34, 44, 52]}]}</script></figure>
+  <aside class="notes">area 堆叠</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">雷达图：多维能力对比</h2>
+  <figure class="chart" data-type="radar" aria-label="雷达图：多维能力对比"><script type="application/json">{"max": 10, "categories": ["理解", "执行", "稳定", "成本", "速度", "可控"], "series": [{"name": "方案 A", "values": [8, 7, 6, 5, 8, 6]}, {"name": "方案 B", "values": [6, 8, 9, 8, 5, 8]}]}</script></figure>
+  <aside class="notes">radar</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">散点图：两个变量的关系</h2>
+  <figure class="chart" data-type="scatter" aria-label="散点图：两个变量的关系"><script type="application/json">{"xLabel": "投入（人天）", "yLabel": "回报（万）", "highlight": "客服", "labels": "none", "points": [{"name": "客服", "x": 12, "y": 86}, {"name": "销售", "x": 30, "y": 62}, {"name": "研发", "x": 46, "y": 70}, {"name": "运营", "x": 20, "y": 38}, {"name": "法务", "x": 38, "y": 24}, {"name": "财务", "x": 26, "y": 52}]}</script></figure>
+  <aside class="notes">scatter</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">气泡图：三个变量</h2>
+  <figure class="chart" data-type="bubble" aria-label="气泡图：三个变量"><script type="application/json">{"xLabel": "频率", "yLabel": "风险", "points": [{"name": "客服", "x": 80, "y": 20, "r": 60}, {"name": "合同", "x": 20, "y": 85, "r": 25}, {"name": "周报", "x": 70, "y": 12, "r": 34}, {"name": "定价", "x": 30, "y": 70, "r": 18}]}</script></figure>
+  <aside class="notes">bubble</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">瀑布图：一步步走到结果</h2>
+  <figure class="chart" data-type="waterfall" aria-label="瀑布图：一步步走到结果"><script type="application/json">{"unit": "万", "steps": [{"name": "期初", "value": 120, "total": true}, {"name": "新签", "value": 86}, {"name": "续费", "value": 44}, {"name": "流失", "value": -38}, {"name": "折扣", "value": -12}, {"name": "期末", "value": 200, "total": true}]}</script></figure>
+  <aside class="notes">waterfall</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">漏斗：转化与流失</h2>
+  <figure class="chart" data-type="funnel" aria-label="漏斗：转化与流失"><script type="application/json">{"unit": "人", "stages": [{"name": "看到方案", "value": 1200}, {"name": "预约演示", "value": 640}, {"name": "进入试点", "value": 280}, {"name": "签约", "value": 96}]}</script></figure>
+  <aside class="notes">funnel</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">仪表：一个有上限的指标</h2>
+  <figure class="chart" data-type="gauge" aria-label="仪表：一个有上限的指标"><script type="application/json">{"value": 72, "max": 100, "target": 85, "unit": "%", "label": "目标 85%"}</script></figure>
+  <aside class="notes">gauge</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">热力图：两个维度下的强度</h2>
+  <figure class="chart" data-type="heatmap" aria-label="热力图：两个维度下的强度"><script type="application/json">{"rows": ["周一", "周二", "周三", "周四", "周五"], "cols": ["9点", "11点", "14点", "16点", "18点", "20点"], "values": [[8, 22, 16, 12, 6, 2], [10, 28, 20, 18, 8, 4], [12, 30, 26, 20, 10, 3], [9, 26, 22, 24, 14, 6], [7, 18, 14, 12, 6, 2]]}</script></figure>
+  <aside class="notes">heatmap</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">矩形树图：大量项目的占比</h2>
+  <figure class="chart" data-type="treemap" aria-label="矩形树图：大量项目的占比"><script type="application/json">{"unit": "万", "items": [{"name": "企业服务", "value": 420}, {"name": "培训", "value": 260}, {"name": "咨询", "value": 180}, {"name": "工具订阅", "value": 120}, {"name": "内容", "value": 70}, {"name": "其他", "value": 40}]}</script></figure>
+  <aside class="notes">treemap</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">斜率图：前后变化</h2>
+  <figure class="chart" data-type="slope" aria-label="斜率图：前后变化"><script type="application/json">{"unit": "%", "labels": ["导入前", "导入后"], "highlight": "交付团队", "items": [{"name": "交付团队", "from": 32, "to": 71}, {"name": "销售团队", "from": 40, "to": 52}, {"name": "运营团队", "from": 26, "to": 34}]}</script></figure>
+  <aside class="notes">slope</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">哑铃图：多项前后差距</h2>
+  <figure class="chart" data-type="dumbbell" aria-label="哑铃图：多项前后差距"><script type="application/json">{"unit": "分钟", "zero": true, "labels": ["以前", "现在"], "items": [{"name": "写周报", "from": 90, "to": 18}, {"name": "整理会议", "from": 60, "to": 12}, {"name": "做方案初稿", "from": 180, "to": 45}, {"name": "客户回复", "from": 30, "to": 8}]}</script></figure>
+  <aside class="notes">dumbbell</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">子弹图：实际对目标</h2>
+  <figure class="chart" data-type="bullet" aria-label="子弹图：实际对目标"><script type="application/json">{"unit": "%", "items": [{"name": "覆盖率", "value": 82, "target": 75, "max": 100}, {"name": "通过率", "value": 64, "target": 80, "max": 100}, {"name": "满意度", "value": 91, "target": 85, "max": 100}]}</script></figure>
+  <aside class="notes">bullet</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">甘特图：时间安排</h2>
+  <figure class="chart" data-type="gantt" aria-label="甘特图：时间安排"><script type="application/json">{"unit": "第", "tasks": [{"name": "需求确认", "start": 0, "end": 2}, {"name": "第一单跑通", "start": 1, "end": 4, "hot": true}, {"name": "技能沉淀", "start": 3, "end": 7}, {"name": "业务接手", "start": 6, "end": 10}]}</script></figure>
+  <aside class="notes">gantt</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">华夫图：一百格看占比</h2>
+  <figure class="chart" data-type="waffle" aria-label="华夫图：一百格看占比"><script type="application/json">{"parts": [{"name": "已自动化", "value": 62}, {"name": "仍需人工", "value": 38}]}</script></figure>
+  <aside class="notes">waffle</aside>
+</section>
+<section class="slide" data-layout="chart-full" data-section="图表" data-sample>
+  <h2 class="title">饼图：简单占比</h2>
+  <figure class="chart" data-type="pie" aria-label="饼图：简单占比"><script type="application/json">{"unit": "%", "parts": [{"name": "企业", "value": 58}, {"name": "个人", "value": 29}, {"name": "其他", "value": 13}]}</script></figure>
+  <aside class="notes">pie</aside>
+</section>
+<section class="slide" data-layout="image-full" data-section="版式" data-chrome="none">
+  <div class="media"><img src="images/sample-photo.jpg" alt="暖色抽象背景"></div>
+  <div class="caption-box"><h2 class="title">满版图：图片是主角</h2><p class="body">文字收进一个小面板，避免压在图上。</p></div>
+  <aside class="notes">满版图版式。</aside>
+</section>
+<section class="slide" data-layout="image-split" data-section="版式">
+  <div class="copy"><h2 class="title">图文各半：<br>一张图讲一件事</h2><p class="lead">文字在左，图片贴到右边缘。</p></div>
+  <div class="media"><img src="images/sample-photo.jpg" alt="暖色抽象背景"></div>
+  <aside class="notes">图文版式。</aside>
+</section>
+<section class="slide" data-layout="shot" data-section="版式">
+  <div class="copy"><h2 class="title">产品截图：<br>放进窗口再讲</h2><p class="callout">左侧导航只留四个入口</p><p class="callout">首屏先看交付结果</p></div>
+  <div class="window"><div class="window__bar"><i></i><i></i><i></i></div><img src="images/sample-ui.png" alt="工作台界面截图"></div>
+  <aside class="notes">截图版式。</aside>
+</section>
+<section class="slide" data-layout="points" data-section="版式">
+  <h2 class="title">三个要点，并列但不做成卡片</h2>
+  <div class="points">
+    <div class="point-col"><span class="n">1</span><h3>先选真实任务</h3><p>有人负责，有验收标准</p></div>
+    <div class="point-col"><span class="n">2</span><h3>人和 Agent 一起跑</h3><p>第一次一定要全程看着</p></div>
+    <div class="point-col"><span class="n">3</span><h3>把判断写下来</h3><p>下一次才不用从头开始</p></div>
+  </div>
+  <aside class="notes">要点版式。</aside>
+</section>
+<section class="slide" data-layout="tiers" data-section="版式">
+  <h2 class="title">三档方案，只推荐一档</h2>
+  <div class="tiers">
+    <div class="tier"><h3>试跑</h3><div class="price">2<small>周</small></div><ul><li>一个场景</li><li>一人跟进</li></ul></div>
+    <div class="tier is-hot"><h3>部门落地</h3><div class="price">6<small>周</small></div><ul><li>三个场景</li><li>技能入库</li><li>业务接手</li></ul></div>
+    <div class="tier"><h3>全公司</h3><div class="price">12<small>周</small></div><ul><li>专项团队</li><li>培训与治理</li></ul></div>
+  </div>
+  <aside class="notes">档位版式。</aside>
+</section>
+<section class="slide" data-layout="duo" data-section="版式" data-sample>
+  <h2 class="title">两张图并排：同一件事的两个侧面</h2>
+  <div class="col"><h3>使用人数</h3><figure class="chart" data-type="bar"><script type="application/json">{"categories":["1月","2月","3月","4月"],"series":[{"name":"人数","values":[34,62,110,148]}]}</script></figure></div>
+  <div class="col"><h3>单次时长</h3><figure class="chart" data-type="line"><script type="application/json">{"unit":"小时","categories":["1月","2月","3月","4月"],"series":[{"name":"时长","values":[22,14,9,6.5]}]}</script></figure></div>
+  <aside class="notes">双图版式。</aside>
+</section>
+<section class="slide" data-layout="layers" data-section="版式">
+  <h2 class="title">分层：<br>从底座到体验</h2>
+  <div class="layers" data-pyramid>
+    <div class="layer is-hot"><b>体验层</b><span>业务人员每天打开的入口</span></div>
+    <div class="layer"><b>技能层</b><span>沉淀下来的判断和流程</span></div>
+    <div class="layer"><b>模型层</b><span>可替换的模型与工具</span></div>
+    <div class="layer"><b>数据层</b><span>客户、项目、知识</span></div>
+  </div>
+  <aside class="notes">分层版式。</aside>
+</section>
+<section class="slide" data-layout="cycle" data-section="版式">
+  <h2 class="title">中心辐射：<br>一个核心连接多方</h2>
+  <div class="ring">
+    <div class="ring__core"><b>工作台</b><span>统一入口</span></div>
+    <div class="ring__node"><b>客户</b></div><div class="ring__node"><b>项目</b></div><div class="ring__node"><b>知识</b></div><div class="ring__node"><b>任务</b></div><div class="ring__node"><b>内容</b></div>
+  </div>
+  <aside class="notes">中心辐射版式。</aside>
+</section>
+<section class="slide" data-layout="code" data-section="版式">
+  <h2 class="title">代码页：只放讲到的那几行</h2>
+  <pre class="code span-all"><span class="c"># 把一次成功写成技能</span>
+<span class="k">skill</span> create weekly-report \
+  --from last-run \
+  --check "数字有出处"</pre>
+  <aside class="notes">代码版式。</aside>
+</section>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,36 @@
+/* block 色块 — 一种主色 + 墨黑 + 奶白，明黄只做小面积点缀。大几何、圆润、弹性动效。
+   For courses, community talks, creative pitches. Shapes travel between pages. */
+.deck[data-theme="block"] {
+  --bg:#fff3e2; --bg-2:#ffe7c8; --panel:#fffaf1; --ink:#161412; --ink-2:#3d3832; --ink-3:#6f675c;
+  --line:#ecdcc4; --line-2:#161412;
+  --accent:#f0431e; --brand:#dc3a16; --fill:var(--brand); --accent-2:#ffc928; --accent-soft:#ffd9c9;
+  --c1:#f0431e; --c2:#161412; --c3:#8f8370; --c4:#d8cdb8; --c5:#6f675c; --c6:#d8cdb8;
+  --f-display:"Bricolage Grotesque","Smiley Sans","Noto Sans SC",sans-serif;
+  --f-num:"Bricolage Grotesque","Noto Sans SC",sans-serif;
+  --w-display:800; --w-title:700; --track-display:-.015em; --track-title:-.005em; --lead-display:1.06; --lead-title:1.16;
+  --t-h2:72px; --t-h3:48px;
+  --radius:36px; --radius-sm:24px; --rule:4px;
+  --ease-out:cubic-bezier(.34,1.46,.5,1); --dur:720ms;
+  --code-bg:#161412; --code-hot:#ffc928;
+}
+.deck[data-theme="block"] .title { font-weight:400; }
+.deck[data-theme="block"] [data-layout] .title { font-weight:400; }
+.deck[data-theme="block"] .slide[data-tone="accent"] { --bg:var(--brand); --panel:#f05a36; --ink:#ffffff; --ink-2:#fff0e9; --ink-3:#ffd9cc; --line:#f26a48; --line-2:#ffffff; --accent:#ffc928; --fill:#ffffff; --on-fill:var(--brand); }
+.deck[data-theme="block"] .slide[data-tone="dark"] { --bg:#161412; --panel:#26221e; --ink:#fff3e2; --ink-2:#d6cbb8; --ink-3:#9e9484; --line:#3a352e; --line-2:#fff3e2; --accent:#ffc928; --fill:var(--brand); }
+.deck[data-theme="block"] .title em { color:inherit; background:linear-gradient(transparent 62%,var(--accent-2) 62% 94%,transparent 94%); }
+.deck[data-theme="block"] .slide[data-tone="accent"] .title em, .deck[data-theme="block"] .slide[data-tone="dark"] .title em { background:linear-gradient(transparent 90%,var(--accent-2) 90% 97%,transparent 97%); color:inherit; }
+.deck[data-theme="block"] .kicker { font-family:var(--f-display); font-weight:700; letter-spacing:0; text-transform:none; font-size:var(--t-small); display:inline-block; justify-self:start; background:var(--ink); color:var(--bg); padding:6px 22px 8px; border-radius:999px; }
+.deck[data-theme="block"] [data-layout="cover"] .title { line-height:1.18; }
+.deck[data-theme="block"] [data-layout="cover"] .meta { color:#ffffff; justify-content:flex-start; gap:var(--s5); }
+.deck[data-theme="block"] .slide:not([data-tone]) table.data .is-hot { color:#c43212; }
+.deck[data-theme="block"] [data-layout="statement"] .title { line-height:1.2; }
+.deck[data-theme="block"] [data-layout="number"] .hero { color:var(--accent); }
+.deck[data-theme="block"] [data-layout="section"] .sec-num { color:var(--ink); }
+.deck[data-theme="block"] .kpi { box-shadow:none; }
+.deck[data-theme="block"] .point-col { border-top:none; background:var(--panel); padding:var(--s4); border-radius:var(--radius); }
+.deck[data-theme="block"] .step__dot { background:var(--ink); border:none; color:var(--bg); }
+.deck[data-theme="block"] .step.is-hot .step__dot { background:var(--fill); }
+.deck[data-theme="block"] .steps__rail { background:var(--ink); height:4px; }
+.deck[data-theme="block"] .ring__node { box-shadow:none; background:var(--panel); }
+.deck[data-theme="block"] .window { box-shadow:0 0 0 4px var(--ink),18px 18px 0 0 var(--ink); }
+.deck[data-theme="block"] .slide { --chart-round:18; }

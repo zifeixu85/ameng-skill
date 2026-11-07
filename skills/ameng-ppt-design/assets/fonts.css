@@ -27,21 +27,11 @@
   font-weight: 400 700; font-display: swap; font-style: normal;
 }
 /* CJK (OPT-IN, off by default): the system CJK stack below (PingFang / Source Han /
-   Noto) is already high quality and zero-weight, so we do NOT @font-face a CJK file
-   by default — that avoided a 404 on every load. To self-host distinctive Chinese,
-   subset 思源黑/宋 to woff2 (see scripts/fetch-fonts.sh "OPTIONAL" section), drop the
-   files in ./fonts/, then UNCOMMENT the two blocks below.
-@font-face {
-  font-family: "PPT Han Serif";
-  src: url("./fonts/SourceHanSerifSC-subset.woff2") format("woff2");
-  font-weight: 400 700; font-display: swap;
-}
-@font-face {
-  font-family: "PPT Han Sans";
-  src: url("./fonts/SourceHanSansSC-subset.woff2") format("woff2");
-  font-weight: 300 700; font-display: swap;
-}
-*/
+   Noto) is already high quality and zero-weight, so we do NOT declare optional CJK
+   webfonts here. If a deck needs self-hosted Chinese, subset 思源黑/宋 to woff2 (see
+   scripts/fetch-fonts.sh "OPTIONAL"), add real @font-face declarations only after
+   the files exist, and keep placeholder URLs out of comments: the self-contained
+   HTML exporter intentionally scans every CSS URL while embedding assets. */
 
 :root {
   /* Display = distinctive Latin grotesque + CJK 黑体/sans. CJK is SANS by default:

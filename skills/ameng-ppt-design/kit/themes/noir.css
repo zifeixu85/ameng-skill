@@ -1,0 +1,29 @@
+/* noir 夜幕 — stage presence. Near-black, one warm light source, huge type.
+   For launches, roadshows, keynotes. Motif: a sunrise glow that moves page to page. */
+.deck[data-theme="noir"] {
+  --bg:#0b0a09; --bg-2:#151311; --panel:#181512; --ink:#f6f1ea; --ink-2:#bdb4a8; --ink-3:#a0978a;
+  --line:#2c2823; --line-2:#50483f;
+  --accent:#ff6a2b; --brand:#cf4710; --fill:var(--brand); --accent-2:#ffc46b; --accent-soft:#3b1d10;
+  --c1:#ff6a2b; --c2:#f2d9a8; --c3:#7f776b; --c4:#d9a93f; --c5:#c98a3a; --c6:#47413a;
+  --f-display:"Archivo","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --f-num:"Archivo","Noto Sans SC",sans-serif;
+  --w-display:900; --w-title:800; --track-display:-.022em; --track-title:-.014em;
+  --radius:22px; --radius-sm:14px;
+  --code-bg:#14110f; --code-ink:#efe9df; --code-mute:#7e766c; --code-hot:#ff8a4c;
+}
+.deck[data-theme="noir"] .slide[data-tone="light"] { --bg:#f3eee6; --bg-2:#e6dfd2; --panel:#fbf8f2; --ink:#14110e; --ink-2:#4a433b; --ink-3:#655e54; --line:#d9d1c3; --line-2:#a89e8e; --accent:#b83d0b; --accent-2:#a85c08; --brand:#b83d0b; --fill:#b83d0b; }
+.deck[data-theme="noir"] .slide[data-tone="accent"] { --bg:var(--brand); --panel:#ee6a30; --ink:#ffffff; --ink-2:#fff0e6; --ink-3:#ffd9c2; --line:#f07a40; --line-2:#ffffff; --accent:#ffffff; --fill:#ffffff; --on-fill:var(--brand); }
+.deck[data-theme="noir"] .title em,
+.deck[data-theme="noir"] .lead em { background:linear-gradient(96deg,var(--accent) 8%,var(--accent-2) 96%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.deck[data-theme="noir"] .slide[data-tone="accent"] .title em { background:none; color:#ffffff; -webkit-text-fill-color:#ffffff; }
+.deck[data-theme="noir"] table.data .is-hot { color:var(--accent); }
+.deck[data-theme="noir"] .kicker { font-family:var(--f-mono); color:var(--accent-2); letter-spacing:.14em; }
+.deck[data-theme="noir"] .kpi { background:linear-gradient(170deg,color-mix(in oklab,var(--panel) 94%,var(--ink)),var(--panel)); box-shadow:inset 0 0 0 1px var(--line); }
+.deck[data-theme="noir"] .kpi--hot { background:linear-gradient(150deg,var(--brand),color-mix(in oklab,var(--brand) 86%,#000)); }
+.deck[data-theme="noir"] .point-col { border-top-color:var(--line-2); }
+.deck[data-theme="noir"] [data-layout="section"] .sec-num { color:transparent; -webkit-text-stroke:3px var(--ink-3); }
+.deck[data-theme="noir"] [data-layout="number"] .hero { background:linear-gradient(100deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent; font-stretch:112%; }
+.deck[data-theme="noir"] .window { box-shadow:0 60px 120px -40px color-mix(in oklab,var(--accent) 34%,transparent),0 0 0 1px var(--line-2); }
+.deck[data-theme="noir"] .ring__core { background:radial-gradient(circle at 34% 28%,color-mix(in oklab,var(--brand) 92%,#fff),var(--brand) 70%); }
+.deck[data-theme="noir"][data-accent] { --accent-2:color-mix(in oklab,var(--accent) 58%,#fff); }
+.deck[data-theme="noir"] .chrome { color:var(--ink-2); }
